@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+# Quick handler for chkhinge26 and X. 
+#
+
+killproc() {            # kill the named process(es)
+        pid=`/bin/ps -e x |
+             /bin/grep $1 |
+             /bin/grep -v grep |
+             /bin/sed -e 's/^  *//' -e 's/ .*//'`
+        [ "$pid" != "" ] && kill $pid
+}
+
+ZD_BINDIR="@bindir@"
+export DISPLAY=:0
+
+if [ -z "$1" ]; then
+   echo "Usage: hinge-handler <state> ( 3 = closed, 0 = landscape, 2 = portrait )"
+   exit 1
+fi
+
+panel_user="`ps aux|grep matchbox-panel|grep -v grep | awk '{print $1}'`"
+
+STATE=$1
+
+# touch ~/.norot can disable rotation.
+if test -f /home/$panel_user/.norot ; then
+  if [ $STATE = "3" ]; then
+	. /etc/zaurusd/hinge-close.d/00-backlight-off
+  else
+	. /etc/zaurusd/hinge-landscape.d/00-backlight-on
+  fi
+  exit
+fi
+
+if [ $STATE = "3" ]; then
+
+  for script in `ls -1 /etc/zaurusd/hinge-close.d`
+  do
+  	. /etc/zaurusd/hinge-close.d/$script
+  done
+
+  exit 0
+fi
+
+if [ $STATE = "0" ]; then
+  #echo "landscape"
+
+  for script in `ls -1 /etc/zaurusd/hinge-landscape.d`
+  do
+  	. /etc/zaurusd/hinge-landscape.d/$script
+  done
+
+  exit 0
+fi
+
+if [ $STATE = "2" ]; then
+  #echo "portrait"
+
+  for script in `ls -1 /etc/zaurusd/hinge-portrait.d`
+  do
+  	. /etc/zaurusd/hinge-portrait.d/$script
+  done
+
+  exit 0
+fi

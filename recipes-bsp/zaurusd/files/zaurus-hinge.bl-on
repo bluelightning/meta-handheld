@@ -1,0 +1,63 @@
+#! /bin/sh
+#
+# Copyright Matthias Hentges <devel@hentges.net> (c) 2006
+# License: GPL (see http://www.gnu.org/licenses/gpl.txt for a copy of the license)
+#
+# Filename: zaurus-hinge.bl-on
+# Date: 04-Jun-06
+
+test -z "${ZD_BINDIR}" && ZD_BINDIR="/usr/bin"
+test -x ${ZD_BINDIR}/bl && ${ZD_BINDIR}/bl on
+
+
+BL="fakeBl"
+
+fakeBl() {
+
+	
+	case "$1" in
+	on)	test -n "$2" && echo "$2" > "$BL_DRIVER" ;;
+	"")	echo "on `cat "$BL_DRIVER"`";;	
+	*)	echo "$1" > "$BL_DRIVER" ;;
+	esac
+	
+}
+
+for dir in `ls -1 /sys/class/backlight/`
+do
+	if test -e /sys/class/backlight/$dir/brightness
+	then
+		echo "Using [$dir] backlight driver"
+		BL_DRIVER="/sys/class/backlight/$dir/brightness"
+		break
+	fi
+done
+
+
+echo "### `$BL` ###"
+( if test "`$BL | awk '{print $2}'`" = "0"
+then
+
+	$BL 20
+
+	if mkdir /var/run/display_brightness.lock
+	then
+		if test -e /var/run/display_brightness.tmp
+		then
+			OLD_VALUE="`cat /var/run/display_brightness.tmp`"
+			echo "OLD BRIGHTNESS SETTING FOUND: $OLD_VALUE"
+
+			if test "$OLD_VALUE" -gt 1
+			then
+				echo "SETTING $OLD_VALUE!"
+				$BL "$OLD_VALUE"
+				rm /var/run/display_brightness.tmp
+				echo "FINISH!"
+			fi
+		fi
+		rm -rf /var/run/display_brightness.lock
+	else
+		echo "BRIGHTNESS IS LOCKED"
+	fi
+fi ) &
+
