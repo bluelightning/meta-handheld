@@ -202,7 +202,7 @@ do_configure_prepend() {
         # Enable this by setting a proper CMDLINE_NFSROOT_USB.
         #
         if [ ! -z "${CMDLINE_NFSROOT_USB}" ]; then
-                oenote "Configuring the kernel for root-over-nfs-over-usb-eth with CMDLINE ${CMDLINE_NFSROOT_USB}"
+                bbnote "Configuring the kernel for root-over-nfs-over-usb-eth with CMDLINE ${CMDLINE_NFSROOT_USB}"
                 sed -e '/CONFIG_INET/d' \
                     -e '/CONFIG_IP_PNP=/d' \
                     -e '/CONFIG_USB_GADGET=/d' \
