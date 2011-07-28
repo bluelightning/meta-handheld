@@ -4,7 +4,7 @@ LICENSE = "GPLv2"
 
 COMPATIBLE_MACHINE = "jornada6xx"
 
-SRC_URI = "${KERNELORG_MIRROR}/pub/linux/kernel/v2.6/linux-2.6.17.tar.bz2 \
+SRC_URI = "${KERNELORG_MIRROR}/linux/kernel/v2.6/linux-2.6.17.tar.bz2 \
            file://defconfig_jlime \
 	   file://LinuxSH-2.6.17.patch \
 	   file://alsa_hp6xx_2.6.17.patch \

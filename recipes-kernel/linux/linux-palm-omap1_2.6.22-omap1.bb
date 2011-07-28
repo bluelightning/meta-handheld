@@ -8,7 +8,7 @@ inherit kernel
 
 DEPENDS = ""
 
-SRC_URI = "${KERNELORG_MIRROR}/pub/linux/kernel/v2.6/linux-2.6.22.tar.bz2;name=kernel \
+SRC_URI = "${KERNELORG_MIRROR}/linux/kernel/v2.6/linux-2.6.22.tar.bz2;name=kernel \
            http://www.muru.com/linux/omap/patches/patch-2.6.22-omap1.bz2;apply=yes;name=patch \
 	   file://defconfig"
 
