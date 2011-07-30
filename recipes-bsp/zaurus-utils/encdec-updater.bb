@@ -1,6 +1,7 @@
 DESCRIPTION = "A tool to encode and decode the Sharp Zaurus updater.sh script"
 SECTION = "console/utils"
 LICENSE = "GPL"
+LIC_FILES_CHKSUM = "file://${WORKDIR}/encdec-updater.c;endline=7;md5=1e19aa80ee761cf47c25ae5123de1be9"
 
 SRC_URI = "file://encdec-updater.c"
 

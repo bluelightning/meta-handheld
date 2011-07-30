@@ -1,5 +1,6 @@
 DESCRIPTION = "Legacy GNU-tar to unpack hd images on install for Zaurus spitz"
 LICENSE = "GPL"
+LIC_FILES_CHKSUM = "file://${WORKDIR}/gnu-tar;md5=34b647d6444a9a38e269c2793c7d0bf2"
 PR = "r0"
 
 SRC_URI = "file://gnu-tar.gz;subdir=${BPN}-${PV}"
