@@ -16,8 +16,9 @@ addtask deploy before do_populate_sysroot after do_compile
 
 COMPATIBLE_MACHINE = "spitz"
 
+inherit deploy
+
 do_deploy() {
         install -d ${DEPLOY_DIR_IMAGE}
-        install -m 0755 gnu-tar ${DEPLOY_DIR_IMAGE}/gnu-tar
-        package_stagefile_shell ${DEPLOY_DIR_IMAGE}/gnu-tar
+        install -m 0755 ${WORKDIR}/gnu-tar ${DEPLOY_DIR_IMAGE}/gnu-tar
 }
