@@ -4,7 +4,7 @@ require linux.inc
 DEFAULT_PREFERENCE = "-1"
 DEFAULT_PREFERENCE_hx4700 = "1"
 
-SRC_URI = "${KERNELORG_MIRROR}/pub/linux/kernel/v3.0/linux-${PV}.tar.bz2;name=kernel \
+SRC_URI = "${KERNELORG_MIRROR}/linux/kernel/v3.0/linux-${PV}.tar.bz2;name=kernel \
            file://defconfig "
 
 SRC_URI[kernel.md5sum] = "398e95866794def22b12dfbc15ce89c0"
