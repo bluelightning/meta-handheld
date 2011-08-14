@@ -4,9 +4,9 @@ LICENSE = "Unknown"
 PR = "r3"
 RRECOMMENDS_${PN} = "kernel-module-firmware-class"
 
-SRC_URI = "http://sdgsystems.com/pub/ipaq/hx4700/src/RADIO0d.BIN;name=radio0d \
-           http://sdgsystems.com/pub/ipaq/hx4700/src/RADIO11.BIN;name=radio11 \
-           http://sdgsystems.com/pub/ipaq/hx4700/src/WLANGEN.BIN;name=wlangen "
+SRC_URI = "http://sdgsystems.net/pub/ipaq/hx4700/src/RADIO0d.BIN;name=radio0d \
+           http://sdgsystems.net/pub/ipaq/hx4700/src/RADIO11.BIN;name=radio11 \
+           http://sdgsystems.net/pub/ipaq/hx4700/src/WLANGEN.BIN;name=wlangen "
 
 S = "${WORKDIR}"
 FILES_${PN} = "/lib"

@@ -3,7 +3,7 @@ SECTION = "base"
 LICENSE = "Unknown"
 PR = "r0"
 
-SRC_URI = "http://sdgsystems.com/pub/ipaq/hx4700/src/TIInit_${PV}.bts"
+SRC_URI = "http://sdgsystems.net/pub/ipaq/hx4700/src/TIInit_${PV}.bts"
 
 S = "${WORKDIR}"
 
