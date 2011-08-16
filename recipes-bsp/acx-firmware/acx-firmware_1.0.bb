@@ -1,6 +1,6 @@
 DESCRIPTION = "ACX (iPAQ HX4700/HTC Universal) wireless firmware."
 SECTION = "base"
-LICENSE = "Unknown"
+LICENSE = "CLOSED"
 PR = "r3"
 RRECOMMENDS_${PN} = "kernel-module-firmware-class"
 
