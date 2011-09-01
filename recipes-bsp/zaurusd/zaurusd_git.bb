@@ -1,13 +1,15 @@
 DESCRIPTION = "Daemon to handle device specific features."
 SECTION = "base"
-LICENSE = "GPL"
+LICENSE = "GPLv2"
+LIC_FILES_CHKSUM = "file://COPYING;md5=94d55d512a9ba36caa9b7df079bae19f"
 DEPENDS = "tslib"
 RDEPENDS_${PN} = "procps"
-SRCDATE = "20090501"
-PV = "0.0+svn${SRCDATE}"
+PE = "1"
+PV = "0.0+gitr${SRCPV}"
 PR = "r24"
 
-SRC_URI = "svn://svn.o-hand.com/repos/misc/trunk;module=zaurusd;proto=http \
+SRCREV = "82b30c7865f007fff81372c3cdc71b2ff6843ccc"
+SRC_URI = "git://git.yoctoproject.org/zaurusd;protocol=git \
            file://zaurus-hinge.in \
 	   file://add-poodle.patch \
 	   file://alsa-cxx00-default.state.patch \
@@ -24,7 +26,7 @@ SRC_URI = "svn://svn.o-hand.com/repos/misc/trunk;module=zaurusd;proto=http \
        file://use-ts-symlink-instead-of-hardcoding.diff "
 
 
-S = "${WORKDIR}/${PN}"
+S = "${WORKDIR}/git"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
