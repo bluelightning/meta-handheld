@@ -7,6 +7,11 @@ LICENSE = "GPLv2"
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 
+# FILESEXTRAPATHS cannot be used, because it puts extra paths before FILESPATH and we need it at the end
+# only as fallback for patches available only in linux-PV dir and ie defconfigs needs to go from linux-kexecboot-PV
+FILESPATH_append = ":${FILE_DIRNAME}/linux-${PV}"
+
+
 DEPENDS += "xz-native"
 
 # Kernel bootlogo is distro-specific (default is OE logo).
