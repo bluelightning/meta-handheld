@@ -8,21 +8,10 @@ DEFAULT_PREFERENCE_collie = "1"
 DEFAULT_PREFERENCE_poodle = "1"
 DEFAULT_PREFERENCE_spitz = "1"
 DEFAULT_PREFERENCE_tosa = "1"
-#DEFAULT_PREFERENCE_om-gta01 = "1"
-#DEFAULT_PREFERENCE_om-gta02 = "1"
 DEFAULT_PREFERENCE_h1940 = "1"
 
 SRC_URI = "${KERNELORG_MIRROR}/linux/kernel/v2.6/linux-${PV}.tar.bz2;name=kernel \
            file://defconfig "
-
-SRC_URI_append_om-gta01 = " \
-           file://openmoko.patch \
-           file://shr.patch \
-           "
-SRC_URI_append_om-gta02 = " \
-           file://openmoko.patch \
-           file://shr.patch \
-           "
 
 SRC_URI_append_akita = " file://${LOGO_SIZE}/logo_linux_clut224.ppm.bz2 "
 SRC_URI_append_c7x0 = " file://${LOGO_SIZE}/logo_linux_clut224.ppm.bz2 "
