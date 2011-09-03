@@ -1,0 +1,50 @@
+From 85b94bed1feab70bc529a59fb80c26da825b9abe Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Fri, 5 Aug 2011 16:00:10 +0400
+Subject: [PATCH] zaurusd: add support for collie
+Upstream-Status: Pending
+
+Note: alsa mixer support is disabled, as collie doesn't support sound (yet).
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ config/mach-config/mach-collie-functions |    4 ++++
+ config/mach-config/mach-collie-vars.in   |    3 +++
+ configure.ac                             |    1 +
+ 3 files changed, 8 insertions(+), 0 deletions(-)
+ create mode 100644 config/mach-config/mach-collie-functions
+ create mode 100644 config/mach-config/mach-collie-vars.in
+
+diff --git a/config/mach-config/mach-collie-functions b/config/mach-config/mach-collie-functions
+new file mode 100644
+index 0000000..4d77c53
+--- /dev/null
++++ b/config/mach-config/mach-collie-functions
+@@ -0,0 +1,4 @@
++HAVE_INPUT_SWITCHES=0
++HAVE_TSKEYS=0
++HAVE_ALSA_MIXER=0
++
+diff --git a/config/mach-config/mach-collie-vars.in b/config/mach-config/mach-collie-vars.in
+new file mode 100644
+index 0000000..ec1bfb8
+--- /dev/null
++++ b/config/mach-config/mach-collie-vars.in
+@@ -0,0 +1,3 @@
++MACHINE=collie
++
++ALSA_MIXER_INIT=@appconfdir@/alsa/5500-default.state
+diff --git a/configure.ac b/configure.ac
+index 78ea2ae..5160fab 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -65,6 +65,7 @@ AC_CONFIG_FILES([
+   config/config
+   config/mach-config/mach-akita-vars
+   config/mach-config/mach-borzoi-vars
++  config/mach-config/mach-collie-vars
+   config/mach-config/mach-corgi-vars
+   config/mach-config/mach-husky-vars
+   config/mach-config/mach-poodle-vars
+--
+1.7.2.5

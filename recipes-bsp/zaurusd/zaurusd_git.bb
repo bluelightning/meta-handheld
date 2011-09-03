@@ -22,7 +22,8 @@ SRC_URI = "git://git.yoctoproject.org/${BPN} \
            file://zaurus-hinge.bl-off \
            file://01-check-toggle-landscape \
            file://01-check-toggle-portait \
-           file://use-ts-symlink-instead-of-hardcoding.diff "
+           file://use-ts-symlink-instead-of-hardcoding.diff \
+           file://0001-zaurusd-add-support-for-collie.patch"
 
 
 S = "${WORKDIR}/git"
