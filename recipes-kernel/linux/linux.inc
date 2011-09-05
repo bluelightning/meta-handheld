@@ -28,6 +28,9 @@ CMDLINE_DEBUG ?= '${@base_conditional("DISTRO_TYPE", "release", "quiet", "debug"
 # Kernel bootlogo is distro-specific (default is OE logo).
 # Logo resolution (qvga, vga, ...) is machine-specific.
 LOGO_SIZE ?= "."
+# To use this, add file://${LOGO_SIZE}/logo_linux_clut224.ppm.bz2 or similar
+# to your kernel recipe, and then structure your logos for each resolution
+# accordingly.
 
 # Support for binary device tree generation
 
@@ -91,8 +94,8 @@ do_configure_prepend() {
         #
         # logo support, if you supply logo_linux_clut224.ppm in SRC_URI, then it's going to be used
         #
-        if [ -e ${WORKDIR}/${LOGO_SIZE}/logo_linux_clut224.ppm ]; then
-                install -m 0644 ${WORKDIR}/${LOGO_SIZE}/logo_linux_clut224.ppm drivers/video/logo/logo_linux_clut224.ppm
+        if [ -e ${WORKDIR}/logo_linux_clut224.ppm ]; then
+                install -m 0644 ${WORKDIR}/logo_linux_clut224.ppm drivers/video/logo/logo_linux_clut224.ppm
                 echo "CONFIG_LOGO=y"                    >> ${S}/.config
                 echo "CONFIG_LOGO_LINUX_CLUT224=y"      >> ${S}/.config
         fi
