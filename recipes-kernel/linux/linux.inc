@@ -38,17 +38,12 @@ do_configure_prepend() {
         #
         # oabi / eabi support
         #
-        if [ "${TARGET_OS}" = "linux-gnueabi" -o  "${TARGET_OS}" = "linux-uclibceabi" ]; then
-                echo "CONFIG_AEABI=y"                   >> ${S}/.config
-                if [ "${ARM_KEEP_OABI}" = "1" ] ; then
-                        echo "CONFIG_OABI_COMPAT=y"             >> ${S}/.config
-                else
-                        echo "# CONFIG_OABI_COMPAT is not set"  >> ${S}/.config
-                fi
-        else
-                echo "# CONFIG_AEABI is not set"        >> ${S}/.config
-                echo "# CONFIG_OABI_COMPAT is not set"  >> ${S}/.config
-        fi
+	echo "CONFIG_AEABI=y"                   >> ${S}/.config
+	if [ "${ARM_KEEP_OABI}" = "1" ] ; then
+		echo "CONFIG_OABI_COMPAT=y"             >> ${S}/.config
+	else
+		echo "# CONFIG_OABI_COMPAT is not set"  >> ${S}/.config
+	fi
 
         # When enabling thumb for userspace we also need thumb support in the kernel
         if [ "${ARM_INSTRUCTION_SET}" = "thumb" ] ; then
