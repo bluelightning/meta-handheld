@@ -23,26 +23,8 @@ LOGO_SIZE ?= "."
 # to your kernel recipe, and then structure your logos for each resolution
 # accordingly.
 
-# Support for binary device tree generation
-
-FILES_kernel-devicetree = "/boot/devicetree*"
-
-KERNEL_DEVICETREE_FLAGS = "-R 8 -S 0x3000"
-
 CORTEXA8FIXUP ?= "yes"
 LOCALVERSION ?= ""
-
-python __anonymous () {
-
-    import bb
-    
-    devicetree = bb.data.getVar('KERNEL_DEVICETREE', d, 1) or ''
-    if devicetree:
-    	depends = bb.data.getVar("DEPENDS", d, 1)
-    	bb.data.setVar("DEPENDS", "%s dtc-native" % depends, d)
-    	packages = bb.data.getVar("PACKAGES", d, 1)
-    	bb.data.setVar("PACKAGES", "%s kernel-devicetree" % packages, d)
-}
 
 do_configure_prepend() {
         echo "" > ${S}/.config
@@ -198,34 +180,9 @@ do_install_append() {
 PACKAGES =+ "kernel-headers"
 FILES_kernel-headers = "${exec_prefix}/src/linux*"
 
-do_devicetree_image() {
-    if test -n "${KERNEL_DEVICETREE}" ; then
-        dtc -I dts -O dtb ${KERNEL_DEVICETREE_FLAGS} -o devicetree ${KERNEL_DEVICETREE}
-        install -d ${D}/boot
-        install -m 0644 devicetree ${D}/boot/devicetree-${KERNEL_VERSION}
-        install -d ${DEPLOY_DIR_IMAGE}
-        install -m 0644 devicetree ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_BASE_NAME}.dtb
-        package_stagefile_shell ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_BASE_NAME}.dtb
-        cd ${DEPLOY_DIR_IMAGE}
-        rm -f ${KERNEL_IMAGE_SYMLINK_NAME}.dtb
-        ln -sf ${KERNEL_IMAGE_BASE_NAME}.dtb ${KERNEL_IMAGE_SYMLINK_NAME}.dtb
-        package_stagefile_shell ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_SYMLINK_NAME}.dtb
-    fi
-}
-
-addtask devicetree_image after do_install before do_package do_deploy
-
 do_savedefconfig() {
        oe_runmake savedefconfig
 }
 
 addtask savedefconfig after do_configure
-
-pkg_postinst_kernel-devicetree () {
-	cd /${KERNEL_IMAGEDEST}; update-alternatives --install /${KERNEL_IMAGEDEST}/devicetree devicetree devicetree-${KERNEL_VERSION} ${KERNEL_PRIORITY} || true
-}
-
-pkg_postrm_kernel-devicetree () {
-	cd /${KERNEL_IMAGEDEST}; update-alternatives --remove devicetree devicetree-${KERNEL_VERSION} || true
-}
 
