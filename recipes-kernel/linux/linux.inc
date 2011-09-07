@@ -20,7 +20,6 @@ LOGO_SIZE ?= "."
 # to your kernel recipe, and then structure your logos for each resolution
 # accordingly.
 
-CORTEXA8FIXUP ?= "yes"
 LOCALVERSION ?= ""
 
 do_configure_prepend() {
@@ -49,12 +48,6 @@ do_configure_prepend() {
         if [ "${ARM_INSTRUCTION_SET}" = "thumb" ] ; then
             sed -i -e /CONFIG_ARM_THUMB/d ${WORKDIR}/defconfig 
             echo "CONFIG_ARM_THUMB=y" >> ${S}/.config
-        fi
-
-        # Enable thumb2 fixup for specific issue in angstrom toolchains when used on A8 r1p[012] silicon
-        if [ "${DISTRO_NAME}" = "Angstrom" -a "${CORTEXA8FIXUP}" = "yes" ] ; then
-            sed -i -e /CONFIG_ARM_ERRATA_430973/d ${WORKDIR}/defconfig
-            echo "CONFIG_ARM_ERRATA_430973=y" >> ${S}/.config
         fi
 
 	#
