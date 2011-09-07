@@ -50,13 +50,6 @@ do_configure_prepend() {
             echo "CONFIG_ARM_THUMB=y" >> ${S}/.config
         fi
 
-	#
-	# endian support
-	#
-        if [ "${SITEINFO_ENDIANNESS}" = "be" ]; then
-                echo "CONFIG_CPU_BIG_ENDIAN=y"          >> ${S}/.config
-        fi
-
         echo "CONFIG_CMDLINE=\"${CMDLINE} ${CMDLINE_DEBUG}\"" >> ${S}/.config
 
         sed -e '/CONFIG_AEABI/d' \
