@@ -179,10 +179,3 @@ do_install_append() {
 
 PACKAGES =+ "kernel-headers"
 FILES_kernel-headers = "${exec_prefix}/src/linux*"
-
-do_savedefconfig() {
-       oe_runmake savedefconfig
-}
-
-addtask savedefconfig after do_configure
-
