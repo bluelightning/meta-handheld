@@ -1,6 +1,6 @@
 PRINC = "1"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append_c7x0         = " file://keymap-2.6.map"
 SRC_URI_append_tosa         = " file://keymap-2.6.map"

@@ -1,4 +1,4 @@
 PRINC = "1"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
