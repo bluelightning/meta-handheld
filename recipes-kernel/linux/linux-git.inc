@@ -1,11 +1,10 @@
-KERNEL_RELEASE = "3.1.0-rc6"
+KERNEL_RELEASE = "3.1.0-rc9"
 OLD_KERNEL_RELEASE = "3.0.99"
 PV = "${OLD_KERNEL_RELEASE}+${KERNEL_RELEASE}+gitr${SRCPV}"
 
-SRCREV = "b6fd41e29dea9c6753b1843a77e50433e6123bcb"
+SRCREV = "65112dccf8a113737684366349d7f9ec373ddc47"
 
-#git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
-SRC_URI = "git://github.com/torvalds/linux.git;protocol=git;branch=master \
+SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git;protocol=git;branch=master \
            file://defconfig"
 S = "${WORKDIR}/git"
 
