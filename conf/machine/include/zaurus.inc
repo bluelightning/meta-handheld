@@ -33,9 +33,10 @@ IMAGE_DEVICE_TABLES = "files/device_table-minimal.txt \
 # xserver
 #########
 
-PREFERRED_PROVIDER_virtual/xserver = "xserver-xorg"
-XSERVER = "xserver-xorg xf86-video-fbdev xf86-input-keyboard xf86-input-mouse xf86-input-evdev"
-PREFERRED_PROVIDER_virtual/libgl = "mesa-dri"
+PREFERRED_PROVIDER_virtual/xserver = "xserver-xorg-lite"
+PREFERRED_PROVIDER_virtual/xserver-xf86 = "xserver-xorg-lite"
+XSERVER = "xserver-xorg-lite xf86-video-fbdev xf86-input-keyboard xf86-input-mouse xf86-input-evdev"
+PREFERRED_PROVIDER_virtual/libgl = "mesa-xlib"
 
 ########
 # kernel
