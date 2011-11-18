@@ -1,23 +1,24 @@
-# We set INC_PR here, since a change in the kexecboot recipe will need to get picked up by *all* the kernels:
-INC_PR = "r44"
+DESCRIPTION = "Linux Kernel"
+SECTION = "kernel"
+LICENSE = "GPLv2"
+LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
+
+INC_PR = "r0"
 
 inherit kernel siteinfo
-
-LICENSE = "GPLv2"
-
-LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 
 # FILESEXTRAPATHS cannot be used, because it puts extra paths before FILESPATH and we need it at the end
 # only as fallback for patches available only in linux-PV dir and ie defconfigs needs to go from linux-kexecboot-PV
 FILESPATH_append = ":${FILE_DIRNAME}/linux-${PV}"
-
 
 DEPENDS += "xz-native"
 
 # Kernel bootlogo is distro-specific (default is OE logo).
 # Logo resolution (qvga, vga, ...) is machine-specific.
 LOGO_SIZE ?= "."
-SRC_URI = "file://${LOGO_SIZE}/logo_linux_clut224.ppm.bz2"
+# To use this, add file://${LOGO_SIZE}/logo_linux_clut224.ppm.bz2 or similar
+# to your kernel recipe, and then structure your logos for each resolution
+# accordingly.
 
 # Note how we set loglevel=3 and master console on serial to protect bootlogo.
 CMDLINE_c7x0 = "console=tty1 console=ttyS0,115200n8 loglevel=3"
