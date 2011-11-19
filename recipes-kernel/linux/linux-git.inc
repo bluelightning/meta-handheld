@@ -4,6 +4,8 @@ PV = "${OLD_KERNEL_RELEASE}+${KERNEL_RELEASE}+gitr${SRCPV}"
 
 SRCREV = "65112dccf8a113737684366349d7f9ec373ddc47"
 
+CMDLINE_DEBUG = "debug"
+
 SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git;protocol=git;branch=master \
            file://defconfig"
 S = "${WORKDIR}/git"

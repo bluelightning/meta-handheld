@@ -1,4 +1,3 @@
-CMDLINE_DEBUG = "debug"
 require linux.inc
 require linux-git.inc
 
