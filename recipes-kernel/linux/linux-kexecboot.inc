@@ -20,13 +20,17 @@ LOGO_SIZE ?= "."
 # to your kernel recipe, and then structure your logos for each resolution
 # accordingly.
 
+# Set the verbosity of kernel messages during runtime
+# You can define CMDLINE_DEBUG in your local.conf or distro.conf to override this behaviour
+CMDLINE_DEBUG ?= '${@base_contains("IMAGE_FEATURES", "debug-tweaks", "debug", "loglevel=3", d)}'
+
 # Note how we set loglevel=3 and master console on serial to protect bootlogo.
-CMDLINE_c7x0 = "console=tty1 console=ttyS0,115200n8 loglevel=3"
-CMDLINE_tosa = "console=tty1 console=ttyS0,115200n8 loglevel=3"
-CMDLINE_poodle = "console=tty1 console=ttyS0,115200n8 fbcon=rotate:1 loglevel=3"
-CMDLINE_akita = "console=tty1 console=ttyS0,115200n8 fbcon=rotate:1 loglevel=3"
-CMDLINE_collie = "console=tty1 console=ttySA0,115200n8 fbcon=rotate:1 mem=64M loglevel=3"
-CMDLINE_spitz = "console=tty1 console=ttyS0,115200n8 fbcon=rotate:1 loglevel=3"
+CMDLINE_c7x0 = "console=tty1 console=ttyS0,115200n8"
+CMDLINE_tosa = "console=tty1 console=ttyS0,115200n8"
+CMDLINE_poodle = "console=tty1 console=ttyS0,115200n8 fbcon=rotate:1"
+CMDLINE_akita = "console=tty1 console=ttyS0,115200n8 fbcon=rotate:1"
+CMDLINE_collie = "console=tty1 console=ttySA0,115200n8 fbcon=rotate:1 mem=64M"
+CMDLINE_spitz = "console=tty1 console=ttyS0,115200n8 fbcon=rotate:1"
 
 PACKAGES = ""
 PROVIDES = ""
@@ -47,28 +51,39 @@ LOCALVERSION ?= ""
 # we want the smallest size
 INITRAMFS_IMAGE = "initramfs-kexecboot-klibc-image"
 
+kernel_conf_variable() {
+        CONF_SED_SCRIPT="$CONF_SED_SCRIPT /CONFIG_$1[ =]/d;"
+        if test "$2" = "n"
+        then
+                echo "# CONFIG_$1 is not set" >> ${S}/.config
+        else
+                echo "CONFIG_$1=$2" >> ${S}/.config
+        fi
+}
+
 do_configure_prepend() {
 
         echo "" > ${S}/.config
+        CONF_SED_SCRIPT=""
 
         #
         # CONFIG_CMDLINE mangling
         #
-        echo "CONFIG_CMDLINE_BOOL=y" >> ${S}/.config
-        echo "CONFIG_CMDLINE=\"${CMDLINE}\"" >> ${S}/.config
+        kernel_conf_variable CMDLINE_BOOL y
+        kernel_conf_variable CMDLINE "\"${CMDLINE} ${CMDLINE_DEBUG}\""
 
         # mips and x86
-        echo "CONFIG_CMDLINE_OVERRIDE=y" >> ${S}/.config
+        kernel_conf_variable CMDLINE_OVERRIDE y
 
         # sh only
-        echo "CONFIG_CMDLINE_OVERWRITE=y" >> ${S}/.config
-        echo "# CONFIG_CMDLINE_EXTEND is not set" >> ${S}/.config
+        kernel_conf_variable CMDLINE_OVERWRITE y
+        kernel_conf_variable CMDLINE_EXTEND n
 
         #
         # endian support
         #
         if [ "${SITEINFO_ENDIANNESS}" = "be" ]; then
-                echo "CONFIG_CPU_BIG_ENDIAN=y"          >> ${S}/.config
+                kernel_conf_variable CPU_BIG_ENDIAN y
         fi
 
         #
@@ -76,59 +91,41 @@ do_configure_prepend() {
         #
         if [ -e ${WORKDIR}/logo_linux_clut224.ppm ]; then
                 install -m 0644 ${WORKDIR}/logo_linux_clut224.ppm drivers/video/logo/logo_linux_clut224.ppm
-                echo "CONFIG_LOGO=y"                    >> ${S}/.config
-                echo "CONFIG_LOGO_LINUX_CLUT224=y"      >> ${S}/.config
+                kernel_conf_variable LOGO y
+                kernel_conf_variable LOGO_LINUX_CLUT224 y
         fi
 
         # When enabling thumb for userspace we also need thumb support in the kernel
         if [ "${ARM_INSTRUCTION_SET}" = "thumb" ] ; then
-            sed -i -e /CONFIG_ARM_THUMB/d ${WORKDIR}/defconfig 
-            echo "CONFIG_ARM_THUMB=y" >> ${S}/.config
+                kernel_conf_variable ARM_THUMB y
         fi
 
-        sed -e '/CONFIG_CMDLINE=/d' \
-            -e '/CONFIG_CMDLINE_BOOL/d' \
-            -e '/CONFIG_CMDLINE_OVERRIDE/d' \
-            -e '/CONFIG_CMDLINE_OVERWRITE/d' \
-            -e '/CONFIG_CMDLINE_EXTEND/d' \
-            -e '/CONFIG_CPU_BIG_ENDIAN/d' \
-            -e '/CONFIG_LOGO=/d' \
-            -e '/CONFIG_LOGO_LINUX_CLUT224=/d' \
-            -e '/CONFIG_LOCALVERSION/d' \
-            -e '/CONFIG_LOCALVERSION_AUTO/d' \
-            < '${WORKDIR}/defconfig' >>'${S}/.config'
-
-        echo 'CONFIG_LOCALVERSION="${LOCALVERSION}"' >>${S}/.config
-        echo '# CONFIG_LOCALVERSION_AUTO is not set' >>${S}/.config
+        kernel_conf_variable LOCALVERSION "\"${LOCALVERSION}\""
+        kernel_conf_variable LOCALVERSION_AUTO n
 
         # Force sane defaults for kexec-enabled kernels and keep size small
-        sed -i -e /CONFIG_BLK_DEV_INITRD/d \
-               -e /CONFIG_KEXEC/d \
-               -e /=m/d \
-               -e /CONFIG_MODULES/d \
-               -e /CONFIG_DEBUG_ERRORS/d \
-               -e /CONFIG_DEBUG_BUGVERBOSE/d \
-               -e /CONFIG_DEBUG_KERNEL/d \
-               ${S}/.config
-
-               echo 'CONFIG_BLK_DEV_INITRD=y' >>${S}/.config
-               echo 'CONFIG_KEXEC=y' >>${S}/.config
-               echo '# CONFIG_MODULES is not set' >> ${S}/.config
+        kernel_conf_variable BLK_DEV_INITRD y
+        kernel_conf_variable KEXEC y
+        CONF_SED_SCRIPT="$CONF_SED_SCRIPT /=m/d;"
+        kernel_conf_variable MODULES n
+        kernel_conf_variable DEBUG_ERRORS n
+        kernel_conf_variable DEBUG_BUGVERBOSE n
+        kernel_conf_variable DEBUG_KERNEL n
 
         # Force lzma for arm kernels only
         if [ "${ARCH}" = "arm" ] ; then
-
-            sed -i -e /CONFIG_KERNEL/d \
-               -e /CONFIG_INITRAMFS_COMPRESSION/d \
-               -e /CONFIG_INITRAMFS_SOURCE/d \
-               -e /CONFIG_RD/d \
-               ${S}/.config
-
-               echo 'CONFIG_KERNEL_LZMA=y' >>${S}/.config
-               echo 'CONFIG_INITRAMFS_COMPRESSION_LZMA=y' >>${S}/.config
-               echo 'CONFIG_INITRAMFS_SOURCE="initramfs.cpio.lzma"' >>${S}/.config
-               echo 'CONFIG_RD_LZMA=y' >>${S}/.config
+                CONF_SED_SCRIPT="$CONF_SED_SCRIPT /CONFIG_KERNEL/d;"
+                CONF_SED_SCRIPT="$CONF_SED_SCRIPT /CONFIG_RD/d;"
+                CONF_SED_SCRIPT="$CONF_SED_SCRIPT /CONFIG_INITRAMFS_COMPRESSION/d;"
+                CONF_SED_SCRIPT="$CONF_SED_SCRIPT /CONFIG_INITRAMFS_SOURCE/d;"
+                kernel_conf_variable KERNEL_LZMA y
+                kernel_conf_variable RD_LZMA y
+                kernel_conf_variable INITRAMFS_COMPRESSION_LZMA y
+                kernel_conf_variable INITRAMFS_SOURCE "\"initramfs.cpio.lzma\""
         fi
+
+        sed -e "${CONF_SED_SCRIPT}" \
+                        < '${WORKDIR}/defconfig' >>'${S}/.config'
 
         yes '' | oe_runmake oldconfig
 }
