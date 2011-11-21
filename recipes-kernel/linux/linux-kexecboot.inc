@@ -108,9 +108,19 @@ do_configure_prepend() {
         kernel_conf_variable KEXEC y
         CONF_SED_SCRIPT="$CONF_SED_SCRIPT /=m/d;"
         kernel_conf_variable MODULES n
-        kernel_conf_variable DEBUG_ERRORS n
-        kernel_conf_variable DEBUG_BUGVERBOSE n
-        kernel_conf_variable DEBUG_KERNEL n
+        if ${@base_contains("CMDLINE_DEBUG", "debug", "true", "false", d)}; then
+                kernel_conf_variable DEBUG_LL y
+                kernel_conf_variable PRINTK y
+                kernel_conf_variable EARLY_PRINTK y
+                kernel_conf_variable BUG y
+                kernel_conf_variable DEBUG_ERRORS y
+                kernel_conf_variable DEBUG_BUGVERBOSE y
+                kernel_conf_variable DEBUG_KERNEL y
+        else
+                kernel_conf_variable DEBUG_ERRORS n
+                kernel_conf_variable DEBUG_BUGVERBOSE n
+                kernel_conf_variable DEBUG_KERNEL n
+        fi
 
         # Force lzma for arm kernels only
         if [ "${ARCH}" = "arm" ] ; then
