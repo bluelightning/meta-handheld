@@ -22,7 +22,7 @@ LOGO_SIZE ?= "."
 
 # Set the verbosity of kernel messages during runtime
 # You can define CMDLINE_DEBUG in your local.conf or distro.conf to override this behaviour
-CMDLINE_DEBUG ?= '${@base_contains("IMAGE_FEATURES", "debug-tweaks", "debug", "loglevel=3", d)}'
+CMDLINE_DEBUG ?= "loglevel=3"
 
 # Note how we set loglevel=3 and master console on serial to protect bootlogo.
 CMDLINE_c7x0 = "console=tty1 console=ttyS0,115200n8"
