@@ -9,18 +9,11 @@ ERASEBLOCKSIZE_akita = "0x20000"
 # C3100 and C3200 have same 128MiB NAND device as akita
 ERASEBLOCKSIZE_spitz = "0x20000"
 
-IMAGE_FSTYPES += "jffs2 tar.gz"
+IMAGE_FSTYPES += "tar.gz jffs2 sum.jffs2"
 
 # kernel now supports favourlzo
-IMAGE_CMD_jffs2 = "mkfs.jffs2 --root=${IMAGE_ROOTFS} --faketime -m favourlzo \
-                   --output=${T}/${IMAGE_NAME}.rootfs.jffs2 --pad --little-endian --eraseblock=${ERASEBLOCKSIZE} -n \
-                   && sumtool -i ${T}/${IMAGE_NAME}.rootfs.jffs2 \
-                   -o ${T}/${IMAGE_NAME}.rootfs.jffs2.summary \
-                   --eraseblock=${ERASEBLOCKSIZE} -l -p; \
-                   cat ${T}/${IMAGE_NAME}.rootfs.jffs2 > ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.jffs2; \
-                   rm ${T}/${IMAGE_NAME}.rootfs.jffs2; \
-                   cat ${T}/${IMAGE_NAME}.rootfs.jffs2.summary > ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.summary.jffs2; \
-                   rm ${T}/${IMAGE_NAME}.rootfs.jffs2.summary;"
+EXTRA_IMAGECMD_jffs2 = "-p -l --eraseblock=${ERASEBLOCKSIZE}"
+EXTRA_IMAGECMD_sum.jffs2 = "${EXTRA_IMAGECMD_jffs2}"
 
 EXTRA_IMAGEDEPENDS += "zaurus-installer"
 
