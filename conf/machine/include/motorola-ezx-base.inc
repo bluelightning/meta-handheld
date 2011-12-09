@@ -4,7 +4,6 @@ MACHINE_CLASS = "motorola-ezx"
 #
 # Hardware-based properties
 #
-TARGET_ARCH = "arm"
 
 # Use tune-xscale per default. Machine independent feeds should be built with tune-strongarm.
 require conf/machine/include/tune-xscale.inc
