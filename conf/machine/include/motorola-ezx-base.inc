@@ -7,6 +7,7 @@ MACHINE_CLASS = "motorola-ezx"
 
 # Use tune-xscale per default. Machine independent feeds should be built with tune-strongarm.
 require conf/machine/include/tune-xscale.inc
+PACKAGE_EXTRA_ARCHS_tune-xscale += "iwmmxt"
 
 # Uncomment this to use iwmmxt optimizations. Remove the above xscale stuff first
 #require conf/machine/include/tune-iwmmxt.inc
@@ -26,9 +27,6 @@ MACHINE_DISPLAY_ORIENTATION = "0"
 MACHINE_DISPLAY_PPI = "180"
 MACHINE_FEATURES = "alsa apm bluetooth kernel26 keyboard phone screen touchscreen usbgadget usbhost vfat"
 MACHINE_FEATURES += " iwmmxt"
-
-# Comment this out if you change to tune-iwmmxt.inc above
-PACKAGE_EXTRA_ARCHS += "iwmmxt"
 
 #
 # Software/packages selection
