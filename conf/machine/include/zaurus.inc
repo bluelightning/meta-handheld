@@ -9,7 +9,7 @@ ERASEBLOCKSIZE_akita = "0x20000"
 # C3100 and C3200 have same 128MiB NAND device as akita
 ERASEBLOCKSIZE_spitz = "0x20000"
 
-IMAGE_FSTYPES += "tar.gz jffs2 sum.jffs2"
+IMAGE_FSTYPES ?= "tar.gz jffs2 sum.jffs2"
 
 # kernel now supports favourlzo
 EXTRA_IMAGECMD_jffs2 = "-p -l --eraseblock=${ERASEBLOCKSIZE}"
