@@ -1,0 +1,59 @@
+From f6be67ff7bf7c33aef1a43342fcf79da88867a7e Mon Sep 17 00:00:00 2001
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Sun, 18 Dec 2011 11:31:32 +0300
+Subject: [PATCH 10/12] rfkill_gpio: add support for inverted GPIOs
+
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ include/linux/rfkill-gpio.h |    2 ++
+ net/rfkill/rfkill-gpio.c    |   12 ++++++++----
+ 2 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/rfkill-gpio.h b/include/linux/rfkill-gpio.h
+index a175d05..682e347 100644
+--- a/include/linux/rfkill-gpio.h
++++ b/include/linux/rfkill-gpio.h
+@@ -35,7 +35,9 @@
+ struct rfkill_gpio_platform_data {
+ 	char			*name;
+ 	int			reset_gpio;
++	int			reset_gpio_inverted;
+ 	int			shutdown_gpio;
++	int			shutdown_gpio_inverted;
+ 	const char		*power_clk_name;
+ 	enum rfkill_type	type;
+ };
+diff --git a/net/rfkill/rfkill-gpio.c b/net/rfkill/rfkill-gpio.c
+index 256c5dd..e9940ad 100644
+--- a/net/rfkill/rfkill-gpio.c
++++ b/net/rfkill/rfkill-gpio.c
+@@ -53,18 +53,22 @@ static int rfkill_gpio_set_power(void *data, bool blocked)
+ 
+ 	if (blocked) {
+ 		if (gpio_is_valid(rfkill->pdata->shutdown_gpio))
+-			gpio_direction_output(rfkill->pdata->shutdown_gpio, 0);
++			gpio_direction_output(rfkill->pdata->shutdown_gpio,
++				rfkill->pdata->shutdown_gpio_inverted);
+ 		if (gpio_is_valid(rfkill->pdata->reset_gpio))
+-			gpio_direction_output(rfkill->pdata->reset_gpio, 0);
++			gpio_direction_output(rfkill->pdata->reset_gpio,
++				rfkill->pdata->reset_gpio_inverted);
+ 		if (rfkill->pwr_clk && PWR_CLK_ENABLED(rfkill))
+ 			clk_disable(rfkill->pwr_clk);
+ 	} else {
+ 		if (rfkill->pwr_clk && PWR_CLK_DISABLED(rfkill))
+ 			clk_enable(rfkill->pwr_clk);
+ 		if (gpio_is_valid(rfkill->pdata->reset_gpio))
+-			gpio_direction_output(rfkill->pdata->reset_gpio, 1);
++			gpio_direction_output(rfkill->pdata->reset_gpio,
++				!rfkill->pdata->reset_gpio_inverted);
+ 		if (gpio_is_valid(rfkill->pdata->shutdown_gpio))
+-			gpio_direction_output(rfkill->pdata->shutdown_gpio, 1);
++			gpio_direction_output(rfkill->pdata->shutdown_gpio,
++				!rfkill->pdata->shutdown_gpio_inverted);
+ 	}
+ 
+ 	if (rfkill->pwr_clk)
+-- 
+1.7.8
+
