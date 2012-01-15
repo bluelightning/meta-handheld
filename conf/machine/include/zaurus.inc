@@ -10,6 +10,7 @@ ERASEBLOCKSIZE_akita = "0x20000"
 ERASEBLOCKSIZE_spitz = "0x20000"
 
 IMAGE_FSTYPES ?= "tar.gz jffs2 sum.jffs2"
+INITRAMFS_FSTYPES ?= "cpio.gz cpio.lzma"
 
 # kernel now supports favourlzo
 EXTRA_IMAGECMD_jffs2 = "-p -l --eraseblock=${ERASEBLOCKSIZE}"
