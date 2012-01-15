@@ -17,11 +17,6 @@ EXTRA_IMAGECMD_sum.jffs2 = "${EXTRA_IMAGECMD_jffs2}"
 
 EXTRA_IMAGEDEPENDS += "zaurus-installer"
 
-IMAGE_DEVICE_TABLES = "files/device_table-minimal.txt \
-                       files/device_table_add-scsi.txt \
-                       files/device_table_add-loop.txt \
-                       "
-
 #########
 # xserver
 #########
