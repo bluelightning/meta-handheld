@@ -11,6 +11,11 @@ EXTRA_IMAGEDEPENDS = ""
 
 IMAGE_INSTALL = "kexecboot"
 
+# Do not pollute the initrd image with rootfs features
+IMAGE_FEATURES = ""
+
+export IMAGE_BASENAME = "initramfs-kexecboot-image"
+
 IMAGE_LINGUAS = ""
 IMAGE_LOGIN_MANAGER = ""
 IMAGE_INIT_MANAGER = ""
