@@ -4,7 +4,7 @@
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
 
-IMAGE_FSTYPES = "cpio.gz cpio.lzma"
+IMAGE_FSTYPES = "${INITRAMFS_FSTYPES}"
 
 # avoid circular dependencies
 EXTRA_IMAGEDEPENDS = ""
