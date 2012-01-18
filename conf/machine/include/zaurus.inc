@@ -16,8 +16,6 @@ INITRAMFS_FSTYPES ?= "cpio.gz cpio.lzma"
 EXTRA_IMAGECMD_jffs2 = "-p -l --eraseblock=${ERASEBLOCKSIZE}"
 EXTRA_IMAGECMD_sum.jffs2 = "${EXTRA_IMAGECMD_jffs2}"
 
-EXTRA_IMAGEDEPENDS += "zaurus-installer"
-
 IMAGE_DEVICE_TABLES = ""
 
 #########
@@ -74,11 +72,17 @@ MACHINE_EXTRA_RDEPENDS_collie = "zaurusd"
 # MACHINE_EXTRA_RRECOMMENDS_tosa = "apm-tosa-suspendfix"
 
 ##################################
-# build kexecboot kernel while
-# making sure rootfs is compatible
+# Zaurus rootfs are booted by
+# linux-kexecboot
 ##################################
 
-require conf/machine/include/initramfs-kexecboot.inc
+# If set here, each image will also build linux-kexecboot and the updater
+# EXTRA_IMAGEDEPENDS += "zaurus-installer"
+
+# Install /boot/boot.cfg in target images
+MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS_append = " kexecboot-cfg "
+
+
 
 # FIXME
 # blindly import from linux-rp.inc (2.6.2x)
