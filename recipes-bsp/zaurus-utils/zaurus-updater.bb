@@ -2,7 +2,9 @@ DESCRIPTION = "Encrypted shellscript for the Zaurus ROM update"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://updater.sh;endline=59;md5=667f442c1e555f21adb58957306612cc"
 DEPENDS = "encdec-updater-native"
-PR = "r26"
+PR = "r27"
+
+INHIBIT_DEFAULT_DEPS = "1"
 
 SRC_URI = "file://updater.sh"
 
@@ -19,7 +21,6 @@ do_compile() {
 # we have to force it there to allow multimachine builds
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 PACKAGES = ""
-
 
 COMPATIBLE_MACHINE = "(poodle|c7x0|spitz|akita|tosa)"
 
