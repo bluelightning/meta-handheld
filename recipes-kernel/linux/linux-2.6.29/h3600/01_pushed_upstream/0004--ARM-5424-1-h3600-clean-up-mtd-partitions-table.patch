@@ -1,0 +1,67 @@
+From 33e1b63b2d51d18db09a296fff181259cc485459 Mon Sep 17 00:00:00 2001
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Date: Sun, 15 Mar 2009 19:09:50 +0100
+Subject: [PATCH 04/28] [ARM] 5424/1: h3600: clean up mtd partitions table
+
+Right now iPaq h3600's default MTD partitions table is a mess. It has
+two #ifdefs with #else, giving total 3 variants, depending on your
+kernel config. Replace all this with simple two-partitions scheme
+(bootloader + rootfs), that used by both shipped WindowsCE and
+most of the linux distributions (Familiar, Angstrom)
+
+Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ arch/arm/mach-sa1100/h3600.c |   34 +---------------------------------
+ 1 files changed, 1 insertions(+), 33 deletions(-)
+
+diff --git a/arch/arm/mach-sa1100/h3600.c b/arch/arm/mach-sa1100/h3600.c
+index b9aaa45..4920b89 100644
+--- a/arch/arm/mach-sa1100/h3600.c
++++ b/arch/arm/mach-sa1100/h3600.c
+@@ -56,41 +56,9 @@ static struct mtd_partition h3xxx_partitions[] = {
+ 		.offset		= 0,
+ 		.mask_flags	= MTD_WRITEABLE,  /* force read-only */
+ 	}, {
+-#ifdef CONFIG_MTD_2PARTS_IPAQ
+-		.name		= "H3XXX root jffs2",
++		.name		= "H3XXX rootfs",
+ 		.size		= MTDPART_SIZ_FULL,
+ 		.offset		= 0x00040000,
+-#else
+-		.name		= "H3XXX kernel",
+-		.size		= 0x00080000,
+-		.offset		= 0x00040000,
+-	}, {
+-		.name		= "H3XXX params",
+-		.size		= 0x00040000,
+-		.offset		= 0x000C0000,
+-	}, {
+-#ifdef CONFIG_JFFS2_FS
+-		.name		= "H3XXX root jffs2",
+-		.size		= MTDPART_SIZ_FULL,
+-		.offset		= 0x00100000,
+-#else
+-		.name		= "H3XXX initrd",
+-		.size		= 0x00100000,
+-		.offset		= 0x00100000,
+-	}, {
+-		.name		= "H3XXX root cramfs",
+-		.size		= 0x00300000,
+-		.offset		= 0x00200000,
+-	}, {
+-		.name		= "H3XXX usr cramfs",
+-		.size		= 0x00800000,
+-		.offset		= 0x00500000,
+-	}, {
+-		.name		= "H3XXX usr local",
+-		.size		= MTDPART_SIZ_FULL,
+-		.offset		= 0x00d00000,
+-#endif
+-#endif
+ 	}
+ };
+ 
+-- 
+1.6.1.3
+

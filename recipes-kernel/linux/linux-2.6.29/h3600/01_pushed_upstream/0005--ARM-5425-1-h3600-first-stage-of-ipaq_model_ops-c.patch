@@ -1,0 +1,167 @@
+From b40ae178cbaa13b28660fab0b91ea120f78cb664 Mon Sep 17 00:00:00 2001
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Date: Sun, 15 Mar 2009 19:11:21 +0100
+Subject: [PATCH 05/28] [ARM] 5425/1: h3600: first stage of ipaq_model_ops cleanup
+
+Remove unused fields and associated funtions-accesors.
+
+Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ arch/arm/mach-sa1100/h3600.c              |   38 ------------------------
+ arch/arm/mach-sa1100/include/mach/h3600.h |   46 -----------------------------
+ 2 files changed, 0 insertions(+), 84 deletions(-)
+
+diff --git a/arch/arm/mach-sa1100/h3600.c b/arch/arm/mach-sa1100/h3600.c
+index 4920b89..9f13f5b 100644
+--- a/arch/arm/mach-sa1100/h3600.c
++++ b/arch/arm/mach-sa1100/h3600.c
+@@ -227,12 +227,6 @@ static void __init h3xxx_map_io(void)
+ 	sa1100fb_lcd_power = h3xxx_lcd_power;
+ }
+ 
+-static __inline__ void do_blank(int setp)
+-{
+-	if (ipaq_model_ops.blank_callback)
+-		ipaq_model_ops.blank_callback(1-setp);
+-}
+-
+ /************************* H3100 *************************/
+ 
+ #ifdef CONFIG_SA1100_H3100
+@@ -250,7 +244,6 @@ static void h3100_control_egpio(enum ipaq_egpio_type x, int setp)
+ 	case IPAQ_EGPIO_LCD_POWER:
+ 		egpio |= EGPIO_H3600_LCD_ON;
+ 		gpio  |= GPIO_H3100_LCD_3V_ON;
+-		do_blank(setp);
+ 		break;
+ 	case IPAQ_EGPIO_LCD_ENABLE:
+ 		break;
+@@ -304,23 +297,8 @@ static void h3100_control_egpio(enum ipaq_egpio_type x, int setp)
+ 	}
+ }
+ 
+-static unsigned long h3100_read_egpio(void)
+-{
+-	return h3100_egpio;
+-}
+-
+-static int h3100_pm_callback(int req)
+-{
+-	if (ipaq_model_ops.pm_callback_aux)
+-		return ipaq_model_ops.pm_callback_aux(req);
+-	return 0;
+-}
+-
+ static struct ipaq_model_ops h3100_model_ops __initdata = {
+-	.generic_name	= "3100",
+ 	.control	= h3100_control_egpio,
+-	.read		= h3100_read_egpio,
+-	.pm_callback	= h3100_pm_callback
+ };
+ 
+ #define H3100_DIRECT_EGPIO (GPIO_H3100_BT_ON	  \
+@@ -381,7 +359,6 @@ static void h3600_control_egpio(enum ipaq_egpio_type x, int setp)
+ 			 EGPIO_H3600_LCD_PCI |
+ 			 EGPIO_H3600_LCD_5V_ON |
+ 			 EGPIO_H3600_LVDD_ON;
+-		do_blank(setp);
+ 		break;
+ 	case IPAQ_EGPIO_LCD_ENABLE:
+ 		break;
+@@ -432,23 +409,8 @@ static void h3600_control_egpio(enum ipaq_egpio_type x, int setp)
+ 	}
+ }
+ 
+-static unsigned long h3600_read_egpio(void)
+-{
+-	return h3600_egpio;
+-}
+-
+-static int h3600_pm_callback(int req)
+-{
+-	if (ipaq_model_ops.pm_callback_aux)
+-		return ipaq_model_ops.pm_callback_aux(req);
+-	return 0;
+-}
+-
+ static struct ipaq_model_ops h3600_model_ops __initdata = {
+-	.generic_name	= "3600",
+ 	.control	= h3600_control_egpio,
+-	.read		= h3600_read_egpio,
+-	.pm_callback	= h3600_pm_callback
+ };
+ 
+ static void __init h3600_map_io(void)
+diff --git a/arch/arm/mach-sa1100/include/mach/h3600.h b/arch/arm/mach-sa1100/include/mach/h3600.h
+index e692ab3..8e8ccfc 100644
+--- a/arch/arm/mach-sa1100/include/mach/h3600.h
++++ b/arch/arm/mach-sa1100/include/mach/h3600.h
+@@ -94,21 +94,11 @@ enum ipaq_egpio_type {
+ };
+ 
+ struct ipaq_model_ops {
+-	const char     *generic_name;
+ 	void	      (*control)(enum ipaq_egpio_type, int);
+-	unsigned long (*read)(void);
+-	void	      (*blank_callback)(int blank);
+-	int	      (*pm_callback)(int req);	    /* Primary model callback */
+-	int	      (*pm_callback_aux)(int req);  /* Secondary callback (used by HAL modules) */
+ };
+ 
+ extern struct ipaq_model_ops ipaq_model_ops;
+ 
+-static __inline__ const char * h3600_generic_name(void)
+-{
+-	return ipaq_model_ops.generic_name;
+-}
+-
+ static __inline__ void assign_h3600_egpio(enum ipaq_egpio_type x, int level)
+ {
+ 	if (ipaq_model_ops.control)
+@@ -127,42 +117,6 @@ static __inline__ void set_h3600_egpio(enum ipaq_egpio_type x)
+ 		ipaq_model_ops.control(x,1);
+ }
+ 
+-static __inline__ unsigned long read_h3600_egpio(void)
+-{
+-	if (ipaq_model_ops.read)
+-		return ipaq_model_ops.read();
+-	return 0;
+-}
+-
+-static __inline__ int  h3600_register_blank_callback(void (*f)(int))
+-{
+-	ipaq_model_ops.blank_callback = f;
+-	return 0;
+-}
+-
+-static __inline__ void h3600_unregister_blank_callback(void (*f)(int))
+-{
+-	ipaq_model_ops.blank_callback = NULL;
+-}
+-
+-
+-static __inline__ int  h3600_register_pm_callback(int (*f)(int))
+-{
+-	ipaq_model_ops.pm_callback_aux = f;
+-	return 0;
+-}
+-
+-static __inline__ void h3600_unregister_pm_callback(int (*f)(int))
+-{
+-	ipaq_model_ops.pm_callback_aux = NULL;
+-}
+-
+-static __inline__ int h3600_power_management(int req)
+-{
+-	if (ipaq_model_ops.pm_callback)
+-		return ipaq_model_ops.pm_callback(req);
+-	return 0;
+-}
+ 
+ #endif /* ASSEMBLY */
+ 
+-- 
+1.6.1.3
+

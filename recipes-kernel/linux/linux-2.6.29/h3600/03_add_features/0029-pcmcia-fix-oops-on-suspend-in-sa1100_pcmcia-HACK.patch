@@ -1,0 +1,57 @@
+From 83ee6fe1ea085a6443d9f1f31a3d3b6eda4f24f8 Mon Sep 17 00:00:00 2001
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Date: Sat, 21 Mar 2009 20:27:15 +0300
+Subject: [PATCH 29/29] pcmcia: fix oops on suspend in sa1100_pcmcia (HACK)
+
+From: Thomas Kunze <thommycheck@gmx.de>
+---
+ drivers/pcmcia/sa1100_generic.c |   19 ++++++++++---------
+ 1 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/pcmcia/sa1100_generic.c b/drivers/pcmcia/sa1100_generic.c
+index c5b2a44..1bcb02e 100644
+--- a/drivers/pcmcia/sa1100_generic.c
++++ b/drivers/pcmcia/sa1100_generic.c
+@@ -81,13 +81,14 @@ static int sa11x0_drv_pcmcia_probe(struct device *dev)
+ 	return ret;
+ }
+ 
+-static struct device_driver sa11x0_pcmcia_driver = {
+-	.probe		= sa11x0_drv_pcmcia_probe,
+-	.remove		= soc_common_drv_pcmcia_remove,
+-	.name		= "sa11x0-pcmcia",
+-	.bus		= &platform_bus_type,
+-	.suspend 	= pcmcia_socket_dev_suspend,
+-	.resume 	= pcmcia_socket_dev_resume,
++static struct platform_driver sa11x0_pcmcia_driver = {
++	.driver		= {
++		.name		= "sa11x0-pcmcia",
++		.probe		= sa11x0_drv_pcmcia_probe,
++		.remove		= soc_common_drv_pcmcia_remove,
++		.suspend	= pcmcia_socket_dev_suspend,
++		.resume		= pcmcia_socket_dev_resume,
++	},
+ };
+ 
+ /* sa11x0_pcmcia_init()
+@@ -100,7 +101,7 @@ static struct device_driver sa11x0_pcmcia_driver = {
+  */
+ static int __init sa11x0_pcmcia_init(void)
+ {
+-	return driver_register(&sa11x0_pcmcia_driver);
++	return platform_driver_register(&sa11x0_pcmcia_driver);
+ }
+ 
+ /* sa11x0_pcmcia_exit()
+@@ -110,7 +111,7 @@ static int __init sa11x0_pcmcia_init(void)
+  */
+ static void __exit sa11x0_pcmcia_exit(void)
+ {
+-	driver_unregister(&sa11x0_pcmcia_driver);
++	platform_driver_unregister(&sa11x0_pcmcia_driver);
+ }
+ 
+ MODULE_AUTHOR("John Dorsey <john+@cs.cmu.edu>");
+-- 
+1.6.1.3
+

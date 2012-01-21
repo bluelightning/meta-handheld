@@ -1,0 +1,96 @@
+From 8932243b3dd1f4f57e5d48d3a5c7634d3ebc2b17 Mon Sep 17 00:00:00 2001
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Date: Sun, 15 Mar 2009 19:14:27 +0100
+Subject: [PATCH 07/28] [ARM] 5427/1: h3600: ipaq_model_ops final cleanup
+
+Since now ipaq_model_ops used only for accessing h3600 EGPIOs,
+drop it completely and use assign_h3600_egpio() directly.
+
+Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ arch/arm/mach-sa1100/h3600.c              |   16 ++++------------
+ arch/arm/mach-sa1100/include/mach/h3600.h |   12 +-----------
+ 2 files changed, 5 insertions(+), 23 deletions(-)
+
+diff --git a/arch/arm/mach-sa1100/h3600.c b/arch/arm/mach-sa1100/h3600.c
+index 1fa0f58..0eb2f15 100644
+--- a/arch/arm/mach-sa1100/h3600.c
++++ b/arch/arm/mach-sa1100/h3600.c
+@@ -46,8 +46,8 @@
+ 
+ #include "generic.h"
+ 
+-struct ipaq_model_ops ipaq_model_ops;
+-EXPORT_SYMBOL(ipaq_model_ops);
++void (*assign_h3600_egpio)(enum ipaq_egpio_type x, int level);
++EXPORT_SYMBOL(assign_h3600_egpio);
+ 
+ static struct mtd_partition h3xxx_partitions[] = {
+ 	{
+@@ -293,10 +293,6 @@ static void h3100_control_egpio(enum ipaq_egpio_type x, int setp)
+ 	}
+ }
+ 
+-static struct ipaq_model_ops h3100_model_ops __initdata = {
+-	.control	= h3100_control_egpio,
+-};
+-
+ #define H3100_DIRECT_EGPIO (GPIO_H3100_BT_ON	  \
+ 			  | GPIO_H3100_GPIO3	  \
+ 			  | GPIO_H3100_QMUTE	  \
+@@ -322,7 +318,7 @@ static void __init h3100_map_io(void)
+ 	GAFR &= ~H3100_DIRECT_EGPIO;
+ 
+ 	H3100_EGPIO = h3100_egpio;
+-	ipaq_model_ops = h3100_model_ops;
++	assign_h3600_egpio = h3100_control_egpio;
+ }
+ 
+ MACHINE_START(H3100, "Compaq iPAQ H3100")
+@@ -405,10 +401,6 @@ static void h3600_control_egpio(enum ipaq_egpio_type x, int setp)
+ 	}
+ }
+ 
+-static struct ipaq_model_ops h3600_model_ops __initdata = {
+-	.control	= h3600_control_egpio,
+-};
+-
+ static void __init h3600_map_io(void)
+ {
+ 	h3xxx_map_io();
+@@ -423,7 +415,7 @@ static void __init h3600_map_io(void)
+ 	       GPIO_LDD11 | GPIO_LDD10 | GPIO_LDD9  | GPIO_LDD8;
+ 
+ 	H3600_EGPIO = h3600_egpio;	   /* Maintains across sleep? */
+-	ipaq_model_ops = h3600_model_ops;
++	assign_h3600_egpio = h3600_control_egpio;
+ }
+ 
+ MACHINE_START(H3600, "Compaq iPAQ H3600")
+diff --git a/arch/arm/mach-sa1100/include/mach/h3600.h b/arch/arm/mach-sa1100/include/mach/h3600.h
+index 33fc4bc..2827faa 100644
+--- a/arch/arm/mach-sa1100/include/mach/h3600.h
++++ b/arch/arm/mach-sa1100/include/mach/h3600.h
+@@ -93,17 +93,7 @@ enum ipaq_egpio_type {
+ 	IPAQ_EGPIO_LCD_ENABLE,	  /* Enable/disable LCD controller */
+ };
+ 
+-struct ipaq_model_ops {
+-	void	      (*control)(enum ipaq_egpio_type, int);
+-};
+-
+-extern struct ipaq_model_ops ipaq_model_ops;
+-
+-static __inline__ void assign_h3600_egpio(enum ipaq_egpio_type x, int level)
+-{
+-	if (ipaq_model_ops.control)
+-		ipaq_model_ops.control(x,level);
+-}
++extern void (*assign_h3600_egpio)(enum ipaq_egpio_type x, int level);
+ 
+ #endif /* ASSEMBLY */
+ 
+-- 
+1.6.1.3
+

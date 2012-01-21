@@ -1,0 +1,553 @@
+From c6132951729a8d37704f8c6b701be3358f538c0f Mon Sep 17 00:00:00 2001
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Date: Sat, 21 Mar 2009 16:06:56 +0300
+Subject: [PATCH 22/28] MFD: driver for Atmel Microcontroller on iPaq h3600/h3100
+
+This is a port of a driver from handhelds.org 2.6.21 kernel,
+written by Alessandro GARDICH. It has been heavily cleaned and
+converted to mfd-core.
+
+Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
+---
+ drivers/mfd/Kconfig       |    5 +
+ drivers/mfd/Makefile      |    4 +-
+ drivers/mfd/micro.c       |  454 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/micro.h |   29 +++
+ 4 files changed, 491 insertions(+), 1 deletions(-)
+ create mode 100644 drivers/mfd/micro.c
+ create mode 100644 include/linux/mfd/micro.h
+
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 06a2b0f..dbac30e 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -34,6 +34,11 @@ config MFD_ASIC3
+ 	  This driver supports the ASIC3 multifunction chip found on many
+ 	  PDAs (mainly iPAQ and HTC based ones)
+ 
++config IPAQ_MICRO
++        tristate "Atmel Micro ASIC (iPAQ h3100/h3600/h3700) Support"
++        depends on SA1100_H3600 || SA1100_H3100
++	select MFD_CORE
++
+ config MFD_DM355EVM_MSP
+ 	bool "DaVinci DM355 EVM microcontroller"
+ 	depends on I2C && MACH_DAVINCI_DM355_EVM
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 3afb519..3fb4b39 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -5,6 +5,8 @@
+ obj-$(CONFIG_MFD_SM501)		+= sm501.o
+ obj-$(CONFIG_MFD_ASIC3)		+= asic3.o
+ 
++obj-$(CONFIG_IPAQ_MICRO)        += micro.o
++
+ obj-$(CONFIG_HTC_EGPIO)		+= htc-egpio.o
+ obj-$(CONFIG_HTC_PASIC3)	+= htc-pasic3.o
+ 
+@@ -40,4 +42,4 @@ obj-$(CONFIG_PMIC_DA903X)	+= da903x.o
+ 
+ obj-$(CONFIG_MFD_PCF50633)	+= pcf50633-core.o
+ obj-$(CONFIG_PCF50633_ADC)	+= pcf50633-adc.o
+-obj-$(CONFIG_PCF50633_GPIO)	+= pcf50633-gpio.o
+\ No newline at end of file
++obj-$(CONFIG_PCF50633_GPIO)	+= pcf50633-gpio.o
+diff --git a/drivers/mfd/micro.c b/drivers/mfd/micro.c
+new file mode 100644
+index 0000000..7a15df2
+--- /dev/null
++++ b/drivers/mfd/micro.c
+@@ -0,0 +1,454 @@
++/*
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * h3600 atmel micro companion support
++ * based on previous kernel 2.4 version
++ * Author : Alessandro Gardich <gremlin@gremlin.it>
++ *
++ */
++
++
++#include <linux/module.h>
++#include <linux/version.h>
++
++#include <linux/init.h>
++#include <linux/fs.h>
++#include <linux/interrupt.h>
++#include <linux/sched.h>
++#include <linux/pm.h>
++#include <linux/sysctl.h>
++#include <linux/proc_fs.h>
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/input.h>
++#include <linux/platform_device.h>
++#include <linux/backlight.h>
++#include <linux/fb.h>
++#include <linux/mfd/core.h>
++
++#include <asm/irq.h>
++#include <asm/atomic.h>
++#include <mach/hardware.h>
++
++#include <mach/h3600.h>
++#include <mach/SA-1100.h>
++
++/* FIXME #include "../../arch/arm/mach-sa1100/generic.h" */
++
++#include <linux/mfd/micro.h>
++
++#define TX_BUF_SIZE	32
++#define RX_BUF_SIZE	16
++#define CHAR_SOF	0x02
++
++/* state of receiver parser */
++enum rx_state {
++	STATE_SOF = 0,     /* Next byte should be start of frame */
++	STATE_ID,          /* Next byte is ID & message length   */
++	STATE_DATA,        /* Next byte is a data byte           */
++	STATE_CHKSUM       /* Next byte should be checksum       */
++};
++
++struct h3600_txdev {
++	unsigned char buf[TX_BUF_SIZE];
++	atomic_t head;
++	atomic_t tail;
++};
++static struct h3600_txdev tx;	/* transmit ISR state */
++
++struct h3600_rxdev {
++	enum rx_state state;            /* context of rx state machine */
++	unsigned char chksum;           /* calculated checksum */
++	int           id;               /* message ID from packet */
++	unsigned int  len;              /* rx buffer length */
++	unsigned int  index;            /* rx buffer index */
++	unsigned char buf[RX_BUF_SIZE]; /* rx buffer size  */
++};
++
++static struct h3600_rxdev rx;	/* receive ISR state */
++
++/*--- backlight ---*/
++#define MAX_BRIGHTNESS 255
++
++static void micro_set_bl_intensity(int intensity)
++{
++	unsigned char data[3];
++
++	data[0] = 0x01;
++	data[1] = intensity > 0 ? 1 : 0;
++	data[2] = intensity;
++	h3600_micro_tx_msg(0x0D, 3, data);
++}
++
++static struct generic_bl_info micro_bl_info = {
++	.default_intensity = MAX_BRIGHTNESS / 4,
++	.limit_mask = 0xffff,
++	.max_intensity = MAX_BRIGHTNESS,
++	.set_bl_intensity = micro_set_bl_intensity,
++};
++
++/*--- manage messages from Atmel Micro  ---*/
++
++static struct micro_private_t micro;
++
++static void h3600_micro_rx_msg(int id, int len, unsigned char *data)
++{
++	int i;
++
++	/*printk(KERN_ERR "h3600_micro : got a message from micro\n");*/
++	spin_lock(micro.lock);
++	switch (id) {
++	case 0x0D: /* backlight */
++		/* empty ack, just ignore */
++		break;
++	case 0x02: /* keyboard */
++		if (micro.h_key != NULL)
++			micro.h_key(len, data);
++		else
++			printk(KERN_ERR "h3600_micro : key message ignored, "
++					"no handle \n");
++		break;
++	case 0x03: /* touchscreen */
++		if (micro.h_ts != NULL)
++			micro.h_ts(len, data);
++		else
++			printk(KERN_ERR "h3600_micro : touchscreen message"
++					" ignored, no handle \n");
++		break;
++	case 0x06: /* temperature */
++		if (micro.h_temp != NULL)
++			micro.h_temp(len, data);
++		else
++			printk(KERN_ERR "h3600_micro : temperature message"
++					" ignored, no handle \n");
++		break;
++	case 0x09: /* battery */
++		if (micro.h_batt != NULL)
++			micro.h_batt(len, data);
++		else
++			printk(KERN_ERR "h3600_micro : battery message"
++					" ignored, no handle \n");
++		break;
++	default:
++		printk(KERN_ERR "h3600_micro : unknown msg %d [%d] ", id, len);
++		for (i = 0; i < len; ++i)
++			printk("0x%02x ", data[i]);
++		printk("\n");
++	}
++	spin_unlock(micro.lock);
++}
++
++/*--- low lever serial interface ---*/
++
++static void h3600_micro_process_char(unsigned char ch)
++{
++	switch (rx.state) {
++	case STATE_SOF:	/* Looking for SOF */
++		if (ch == CHAR_SOF)
++			rx.state = STATE_ID; /* Next byte is the id and len */
++		/* else
++			g_statistics.missing_sof++;  // FIXME */
++		break;
++	case STATE_ID: /* Looking for id and len byte */
++		rx.id = (ch & 0xf0) >> 4 ;
++		rx.len = (ch & 0x0f);
++		rx.index = 0;
++		rx.chksum = ch;
++		rx.state = (rx.len > 0) ? STATE_DATA : STATE_CHKSUM;
++		break;
++	case STATE_DATA: /* Looking for 'len' data bytes */
++		rx.chksum += ch;
++		rx.buf[rx.index] = ch;
++		if (++rx.index == rx.len)
++			rx.state = STATE_CHKSUM;
++		break;
++	case STATE_CHKSUM: /* Looking for the checksum */
++		if (ch == rx.chksum)
++			h3600_micro_rx_msg(rx.id, rx.len, rx.buf);
++		/* else
++			g_statistics.bad_checksum++; //FIXME */
++		rx.state = STATE_SOF;
++		break;
++	}
++}
++
++static void h3600_micro_rx_chars(void)
++{
++	unsigned int status, ch;
++
++	while ((status = Ser1UTSR1) & UTSR1_RNE) {
++		ch = Ser1UTDR;
++		/* statistics.rx++; // FIXME */
++		if (status & UTSR1_PRE) /* Parity error */
++			printk(KERN_ERR "h3600_micro_rx : parity error\n");
++			/* statistics.parity++; // FIXME */
++		else if (status & UTSR1_FRE) /* Framing error */
++			printk(KERN_ERR "h3600_micro_rx : framing error\n");
++			/* statistics.frame++; // FIXME */
++		else if (status & UTSR1_ROR)   /* Overrun error */
++			printk(KERN_ERR "h3600_micro_rx : overrun error\n");
++			/*statistics.overrun++;*/
++		h3600_micro_process_char(ch);
++	}
++}
++
++int h3600_micro_tx_msg(unsigned char id, unsigned char len, unsigned char *data)
++{
++	int free_space;
++	int i;
++	unsigned char checksum;
++	int head, tail;
++
++	tail = atomic_read(&tx.tail);
++	head = atomic_read(&tx.head);
++
++	free_space = (head >= tail) ? (TX_BUF_SIZE - head + tail - 1) \
++					: (tail - head - 1);
++
++	if (free_space < len + 2) {
++		printk(KERN_ERR "%s : no avaiable space on tx buffer.",
++								__func__);
++		return -EIO;
++	}
++
++	if (0)
++		printk(KERN_ERR "%s : avaiable space %d %d %d\n",
++			__func__, free_space, head, tail);
++
++	tx.buf[head] = (unsigned char) CHAR_SOF;
++	head = ((head+1) % TX_BUF_SIZE);
++
++	checksum = ((id & 0x0f) << 4) | (len & 0x0f);
++	tx.buf[head] = checksum;
++	head = ((head+1) % TX_BUF_SIZE);
++
++	for (i = 0; i < len; ++i) {
++		tx.buf[head] = data[i];
++		head = ((head + 1) % TX_BUF_SIZE);
++		checksum += data[i];
++	}
++
++	tx.buf[head] = checksum;
++	head = ((head + 1) % TX_BUF_SIZE);
++
++	atomic_set(&tx.head, head);
++
++	Ser1UTCR3 |= UTCR3_TIE; /* enable interrupt */
++
++	return 0;
++}
++EXPORT_SYMBOL(h3600_micro_tx_msg);
++
++
++static void h3600_micro_tx_chars(void)
++{
++	int head, tail;
++
++	head = atomic_read(&tx.head);
++	tail = atomic_read(&tx.tail);
++
++	while ((head != tail) && (Ser1UTSR1 & UTSR1_TNF)) {
++		Ser1UTDR = tx.buf[tail];
++		tail = ((tail+1) % TX_BUF_SIZE);
++	}
++	atomic_set(&tx.tail, tail);
++
++	if (tail == head) /* Stop interrupts */
++		Ser1UTCR3 &= ~UTCR3_TIE;
++}
++
++static void h3600_micro_reset_comm(void)
++{
++	printk(KERN_ERR "%s: initializing serial port\n", __func__);
++
++	/* Initialize Serial channel protocol frame */
++	rx.state = STATE_SOF;  /* Reset the state machine */
++
++	atomic_set(&tx.head, 0);
++	atomic_set(&tx.tail, 0);
++
++	/* Set up interrupts */
++	Ser1SDCR0 = 0x1;				/* Select UART mode */
++
++	Ser1UTCR3 = 0;					/* Clean up CR3 */
++	Ser1UTCR0 = UTCR0_8BitData | UTCR0_1StpBit;	/* Format: 8N1 */
++	Ser1UTCR1 = 0;					/* Baud rate: 115200 */
++	Ser1UTCR2 = 0x1;
++
++	Ser1UTSR0 = 0xff;				/* Clear SR0 */
++	Ser1UTCR3 = UTCR3_TXE | UTCR3_RXE | UTCR3_RIE;	/* Enable RX int */
++	Ser1UTCR3 &= ~UTCR3_TIE;			/* Disable TX int */
++}
++
++/*--- core interrupt ---*/
++enum MessageHandleType {
++	HANDLE_NORMAL,
++	HANDLE_ACK,
++	HANDLE_ERROR
++};
++
++#define MICRO_MSG_WAITING 0
++#define MICRO_MSG_SUCCESS 1
++#define MICRO_MSG_ERROR  -1
++
++static irqreturn_t h3600_micro_serial_isr(int irq, void *dev_id)
++{
++	unsigned int status; /* UTSR0 */
++	int head, tail;
++	/* unsigned int pass_counter = 0; // FIXME */
++
++	if (0)
++		printk(KERN_ERR "%s\n", __func__); /* FIXME */
++
++	/* statistics.isr++; // FIXME */
++	status = Ser1UTSR0;
++	do {
++		if (status & (UTSR0_RID | UTSR0_RFS)) {
++			if (status & UTSR0_RID)
++				/* Clear the Receiver IDLE bit */
++				Ser1UTSR0 = UTSR0_RID;
++			h3600_micro_rx_chars();
++		}
++
++		/* Clear break bits */
++		if (status & (UTSR0_RBB | UTSR0_REB))
++			Ser1UTSR0 = status & (UTSR0_RBB | UTSR0_REB);
++
++		if (status & UTSR0_TFS)
++			h3600_micro_tx_chars();
++
++		status = Ser1UTSR0;
++
++		head = atomic_read(&tx.head);
++		tail = atomic_read(&tx.tail);
++	} while (((head != tail) && (status & UTSR0_TFS)) ||
++		  status & (UTSR0_RFS | UTSR0_RID));
++		  /* && pass_counter++ < H3600_TS_PASS_LIMIT ); */
++/*
++	if ( pass_counter >= H3600_TS_PASS_LIMIT ) // FIXME
++		statistics.pass_limit++;
++*/
++
++	return IRQ_HANDLED;
++}
++
++/*--- sub devices declaration ---*/
++enum {
++	MICRO_CELL_BACKLIGHT,
++	MICRO_CELL_BATTERY,
++	MICRO_CELL_KEYS,
++	MICRO_CELL_TS,
++};
++
++static struct mfd_cell micro_cells[] = {
++	[MICRO_CELL_BACKLIGHT] = {
++		.name = "generic-bl",
++		.platform_data = &micro_bl_info,
++		.data_size = sizeof(micro_bl_info),
++	},
++	[MICRO_CELL_BATTERY] = {
++		.name = "h3600-micro-battery",
++		.driver_data = &micro,
++	},
++	[MICRO_CELL_KEYS] = {
++		.name = "h3600-micro-keys",
++		.driver_data = &micro,
++	},
++	[MICRO_CELL_TS] = {
++		.name = "h3600-micro-ts",
++		.driver_data = &micro,
++	},
++};
++
++/*--- micro ---*/
++static int micro_suspend(struct platform_device *dev, pm_message_t state)
++{
++	printk(KERN_ERR "micro : suspend \n");
++	/* __micro_backlight_set_power(FB_BLANK_POWERDOWN); // FIXME */
++	return 0;
++}
++
++static int micro_resume(struct platform_device *dev)
++{
++	printk(KERN_ERR "micro : resume\n");
++	h3600_micro_reset_comm();
++	mdelay(10);
++
++	return 0;
++}
++
++static int micro_probe(struct platform_device *dev)
++{
++	int result = 0;
++	/* struct platform_device *plat; */
++
++	printk(KERN_ERR "micro probe : begin \n");
++
++	h3600_micro_reset_comm();
++
++	result = request_irq(IRQ_Ser1UART, h3600_micro_serial_isr,
++			     IRQF_SHARED | IRQF_DISABLED | IRQF_SAMPLE_RANDOM,
++			     "h3600_micro", h3600_micro_serial_isr);
++	if (result) {
++		printk(KERN_CRIT "%s: unable to grab serial port IRQ\n",
++								__func__);
++		return result;
++	} else
++		printk(KERN_ERR "h3600_micro : grab serial port IRQ\n");
++
++	result = mfd_add_devices(&dev->dev, dev->id, micro_cells,
++				ARRAY_SIZE(micro_cells), NULL, 0);
++	if (result != 0) {
++		printk(KERN_ERR "micro probe : platform_add_devices"
++				" fail [%d].\n", result);
++	}
++
++	spin_lock_init(&micro.lock);
++
++	printk(KERN_ERR "micro probe : end [%d]\n", result);
++
++	return result;
++}
++
++static int micro_remove(struct platform_device *dev)
++{
++	int i;
++
++	mfd_remove_devices(&dev->dev);
++
++	Ser1UTCR3 &= ~(UTCR3_RXE | UTCR3_RIE); /* disable receive interrupt */
++	Ser1UTCR3 &= ~(UTCR3_TXE | UTCR3_TIE); /* disable transmit interrupt */
++	free_irq(IRQ_Ser1UART, h3600_micro_serial_isr);
++	return 0;
++}
++
++static struct platform_driver micro_device_driver = {
++	.driver   = {
++		.name     = "h3600-micro",
++	},
++	.probe    = micro_probe,
++	.remove   = micro_remove,
++	.suspend  = micro_suspend,
++	.resume   = micro_resume,
++	/* .shutdown = micro_suspend, // FIXME */
++};
++
++static int micro_init(void)
++{
++	return platform_driver_register(&micro_device_driver);
++}
++
++static void micro_cleanup(void)
++{
++	platform_driver_unregister(&micro_device_driver);
++}
++
++module_init(micro_init);
++module_exit(micro_cleanup);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("gremlin.it");
++MODULE_DESCRIPTION("driver for iPAQ Atmel micro core and backlight");
++
+diff --git a/include/linux/mfd/micro.h b/include/linux/mfd/micro.h
+new file mode 100644
+index 0000000..7d185ec
+--- /dev/null
++++ b/include/linux/mfd/micro.h
+@@ -0,0 +1,29 @@
++/*
++ * some definition of intercomunication structures for micro
++ * and it's sub devices
++ */
++
++#ifndef _MICRO_H_
++#define _MICRO_H_
++
++#include <linux/spinlock.h>
++
++
++#define TX_BUF_SIZE	32
++#define RX_BUF_SIZE	16
++#define CHAR_SOF	0x02
++
++extern struct platform_device h3600micro_device;
++
++struct micro_private_t {
++	spinlock_t lock;
++	void (*h_key) (int len, unsigned char *data);
++	void (*h_batt) (int len, unsigned char *data);
++	void (*h_temp) (int len, unsigned char *data);
++	void (*h_ts) (int len, unsigned char *data);
++};
++
++int h3600_micro_tx_msg(unsigned char id, unsigned char len,
++			unsigned char *data);
++
++#endif /* _MICRO_H_ */
+-- 
+1.6.1.3
+

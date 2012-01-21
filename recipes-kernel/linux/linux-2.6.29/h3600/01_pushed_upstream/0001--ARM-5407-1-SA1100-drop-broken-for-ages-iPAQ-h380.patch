@@ -1,0 +1,1043 @@
+From ffda306c0fc3ad64206b4e2e0905bf858c29302e Mon Sep 17 00:00:00 2001
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Date: Fri, 20 Feb 2009 10:16:01 +0100
+Subject: [PATCH 01/28] [ARM] 5407/1: SA1100: drop broken for ages iPAQ h3800 support
+
+Code has never been in buildable state since initial
+merge.
+
+Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ arch/arm/Kconfig                               |    2 +-
+ arch/arm/mach-sa1100/Kconfig                   |   12 +-
+ arch/arm/mach-sa1100/h3600.c                   |  392 --------------------
+ arch/arm/mach-sa1100/include/mach/h3600.h      |    2 +-
+ arch/arm/mach-sa1100/include/mach/h3600_gpio.h |  463 ------------------------
+ arch/arm/mach-sa1100/include/mach/irqs.h       |   22 --
+ drivers/video/sa1100fb.c                       |   21 -
+ 7 files changed, 3 insertions(+), 911 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index dbfdf87..7d3d025 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1092,7 +1092,7 @@ source "drivers/cpufreq/Kconfig"
+ 
+ config CPU_FREQ_SA1100
+ 	bool
+-	depends on CPU_FREQ && (SA1100_H3100 || SA1100_H3600 || SA1100_H3800 || SA1100_LART || SA1100_PLEB || SA1100_BADGE4 || SA1100_HACKKIT)
++	depends on CPU_FREQ && (SA1100_H3100 || SA1100_H3600 || SA1100_LART || SA1100_PLEB || SA1100_BADGE4 || SA1100_HACKKIT)
+ 	default y
+ 
+ config CPU_FREQ_SA1110
+diff --git a/arch/arm/mach-sa1100/Kconfig b/arch/arm/mach-sa1100/Kconfig
+index f99d901..bfc38e3 100644
+--- a/arch/arm/mach-sa1100/Kconfig
++++ b/arch/arm/mach-sa1100/Kconfig
+@@ -71,19 +71,9 @@ config SA1100_H3600
+ 	  <http://www.handhelds.org/Compaq/index.html#iPAQ_H3600>
+ 	  <http://www.compaq.com/products/handhelds/pocketpc/>
+ 
+-config SA1100_H3800
+-	bool "Compaq iPAQ H3800"
+-	help
+-	  Say Y here if you intend to run this kernel on the Compaq iPAQ H3800
+-	  series handheld computer.  Information about this machine and the
+-	  Linux port to this machine can be found at:
+-
+-	  <http://www.handhelds.org/Compaq/index.html#iPAQ_H3800>
+-	  <http://www.compaq.com/products/handhelds/pocketpc/>
+-
+ config SA1100_H3XXX
+ 	bool
+-	depends on SA1100_H3100 || SA1100_H3600 || SA1100_H3800
++	depends on SA1100_H3100 || SA1100_H3600
+ 	default y
+ 
+ config SA1100_BADGE4
+diff --git a/arch/arm/mach-sa1100/h3600.c b/arch/arm/mach-sa1100/h3600.c
+index af25a78..b9aaa45 100644
+--- a/arch/arm/mach-sa1100/h3600.c
++++ b/arch/arm/mach-sa1100/h3600.c
+@@ -42,14 +42,7 @@
+ #include <asm/mach/serial_sa1100.h>
+ 
+ #include <mach/h3600.h>
+-
+-#if defined (CONFIG_SA1100_H3600) || defined (CONFIG_SA1100_H3100)
+ #include <mach/h3600_gpio.h>
+-#endif
+-
+-#ifdef CONFIG_SA1100_H3800
+-#include <mach/h3600_asic.h>
+-#endif
+ 
+ #include "generic.h"
+ 
+@@ -519,388 +512,3 @@ MACHINE_END
+ 
+ #endif /* CONFIG_SA1100_H3600 */
+ 
+-#ifdef CONFIG_SA1100_H3800
+-
+-#define SET_ASIC1(x) \
+-   do {if (setp) { H3800_ASIC1_GPIO_OUT |= (x); } else { H3800_ASIC1_GPIO_OUT &= ~(x); }} while(0)
+-
+-#define SET_ASIC2(x) \
+-   do {if (setp) { H3800_ASIC2_GPIOPIOD |= (x); } else { H3800_ASIC2_GPIOPIOD &= ~(x); }} while(0)
+-
+-#define CLEAR_ASIC1(x) \
+-   do {if (setp) { H3800_ASIC1_GPIO_OUT &= ~(x); } else { H3800_ASIC1_GPIO_OUT |= (x); }} while(0)
+-
+-#define CLEAR_ASIC2(x) \
+-   do {if (setp) { H3800_ASIC2_GPIOPIOD &= ~(x); } else { H3800_ASIC2_GPIOPIOD |= (x); }} while(0)
+-
+-
+-/*
+-  On screen enable, we get
+-
+-     h3800_video_power_on(1)
+-     LCD controller starts
+-     h3800_video_lcd_enable(1)
+-
+-  On screen disable, we get
+-
+-     h3800_video_lcd_enable(0)
+-     LCD controller stops
+-     h3800_video_power_on(0)
+-*/
+-
+-
+-static void h3800_video_power_on(int setp)
+-{
+-	if (setp) {
+-		H3800_ASIC1_GPIO_OUT |= GPIO1_LCD_ON;
+-		msleep(30);
+-		H3800_ASIC1_GPIO_OUT |= GPIO1_VGL_ON;
+-		msleep(5);
+-		H3800_ASIC1_GPIO_OUT |= GPIO1_VGH_ON;
+-		msleep(50);
+-		H3800_ASIC1_GPIO_OUT |= GPIO1_LCD_5V_ON;
+-		msleep(5);
+-	} else {
+-		msleep(5);
+-		H3800_ASIC1_GPIO_OUT &= ~GPIO1_LCD_5V_ON;
+-		msleep(50);
+-		H3800_ASIC1_GPIO_OUT &= ~GPIO1_VGL_ON;
+-		msleep(5);
+-		H3800_ASIC1_GPIO_OUT &= ~GPIO1_VGH_ON;
+-		msleep(100);
+-		H3800_ASIC1_GPIO_OUT &= ~GPIO1_LCD_ON;
+-	}
+-}
+-
+-static void h3800_video_lcd_enable(int setp)
+-{
+-	if (setp) {
+-		msleep(17);	// Wait one from before turning on
+-		H3800_ASIC1_GPIO_OUT |= GPIO1_LCD_PCI;
+-	} else {
+-		H3800_ASIC1_GPIO_OUT &= ~GPIO1_LCD_PCI;
+-		msleep(30);	// Wait before turning off
+-	}
+-}
+-
+-
+-static void h3800_control_egpio(enum ipaq_egpio_type x, int setp)
+-{
+-	switch (x) {
+-	case IPAQ_EGPIO_LCD_POWER:
+-		h3800_video_power_on(setp);
+-		break;
+-	case IPAQ_EGPIO_LCD_ENABLE:
+-		h3800_video_lcd_enable(setp);
+-		break;
+-	case IPAQ_EGPIO_CODEC_NRESET:
+-	case IPAQ_EGPIO_AUDIO_ON:
+-	case IPAQ_EGPIO_QMUTE:
+-		printk("%s: error - should not be called\n", __func__);
+-		break;
+-	case IPAQ_EGPIO_OPT_NVRAM_ON:
+-		SET_ASIC2(GPIO2_OPT_ON_NVRAM);
+-		break;
+-	case IPAQ_EGPIO_OPT_ON:
+-		SET_ASIC2(GPIO2_OPT_ON);
+-		break;
+-	case IPAQ_EGPIO_CARD_RESET:
+-		SET_ASIC2(GPIO2_OPT_PCM_RESET);
+-		break;
+-	case IPAQ_EGPIO_OPT_RESET:
+-		SET_ASIC2(GPIO2_OPT_RESET);
+-		break;
+-	case IPAQ_EGPIO_IR_ON:
+-		CLEAR_ASIC1(GPIO1_IR_ON_N);
+-		break;
+-	case IPAQ_EGPIO_IR_FSEL:
+-		break;
+-	case IPAQ_EGPIO_RS232_ON:
+-		SET_ASIC1(GPIO1_RS232_ON);
+-		break;
+-	case IPAQ_EGPIO_VPP_ON:
+-		H3800_ASIC2_FlashWP_VPP_ON = setp;
+-		break;
+-	}
+-}
+-
+-static unsigned long h3800_read_egpio(void)
+-{
+-	return H3800_ASIC1_GPIO_OUT | (H3800_ASIC2_GPIOPIOD << 16);
+-}
+-
+-/* We need to fix ASIC2 GPIO over suspend/resume.  At the moment,
+-   it doesn't appear that ASIC1 GPIO has the same problem */
+-
+-static int h3800_pm_callback(int req)
+-{
+-	static u16 asic1_data;
+-	static u16 asic2_data;
+-	int result = 0;
+-
+-	printk("%s %d\n", __func__, req);
+-
+-	switch (req) {
+-	case PM_RESUME:
+-		MSC2 = (MSC2 & 0x0000ffff) | 0xE4510000;  /* Set MSC2 correctly */
+-
+-		H3800_ASIC2_GPIOPIOD = asic2_data;
+-		H3800_ASIC2_GPIODIR = GPIO2_PEN_IRQ
+-			| GPIO2_SD_DETECT
+-			| GPIO2_EAR_IN_N
+-			| GPIO2_USB_DETECT_N
+-			| GPIO2_SD_CON_SLT;
+-
+-		H3800_ASIC1_GPIO_OUT = asic1_data;
+-
+-		if (ipaq_model_ops.pm_callback_aux)
+-			result = ipaq_model_ops.pm_callback_aux(req);
+-		break;
+-
+-	case PM_SUSPEND:
+-		if (ipaq_model_ops.pm_callback_aux &&
+-		     ((result = ipaq_model_ops.pm_callback_aux(req)) != 0))
+-			return result;
+-
+-		asic1_data = H3800_ASIC1_GPIO_OUT;
+-		asic2_data = H3800_ASIC2_GPIOPIOD;
+-		break;
+-	default:
+-		printk("%s: unrecognized PM callback\n", __func__);
+-		break;
+-	}
+-	return result;
+-}
+-
+-static struct ipaq_model_ops h3800_model_ops __initdata = {
+-	.generic_name	= "3800",
+-	.control	= h3800_control_egpio,
+-	.read		= h3800_read_egpio,
+-	.pm_callback	= h3800_pm_callback
+-};
+-
+-#define MAX_ASIC_ISR_LOOPS    20
+-
+-/* The order of these is important - see #include <mach/irqs.h> */
+-static u32 kpio_irq_mask[] = {
+-	KPIO_KEY_ALL,
+-	KPIO_SPI_INT,
+-	KPIO_OWM_INT,
+-	KPIO_ADC_INT,
+-	KPIO_UART_0_INT,
+-	KPIO_UART_1_INT,
+-	KPIO_TIMER_0_INT,
+-	KPIO_TIMER_1_INT,
+-	KPIO_TIMER_2_INT
+-};
+-
+-static u32 gpio_irq_mask[] = {
+-	GPIO2_PEN_IRQ,
+-	GPIO2_SD_DETECT,
+-	GPIO2_EAR_IN_N,
+-	GPIO2_USB_DETECT_N,
+-	GPIO2_SD_CON_SLT,
+-};
+-
+-static void h3800_IRQ_demux(unsigned int irq, struct irq_desc *desc)
+-{
+-	int i;
+-
+-	if (0) printk("%s: interrupt received\n", __func__);
+-
+-	desc->chip->ack(irq);
+-
+-	for (i = 0; i < MAX_ASIC_ISR_LOOPS && (GPLR & GPIO_H3800_ASIC); i++) {
+-		u32 irq;
+-		int j;
+-
+-		/* KPIO */
+-		irq = H3800_ASIC2_KPIINTFLAG;
+-		if (0) printk("%s KPIO 0x%08X\n", __func__, irq);
+-		for (j = 0; j < H3800_KPIO_IRQ_COUNT; j++)
+-			if (irq & kpio_irq_mask[j])
+-				handle_edge_irq(H3800_KPIO_IRQ_COUNT + j, irq_desc + H3800_KPIO_IRQ_COUNT + j);
+-
+-		/* GPIO2 */
+-		irq = H3800_ASIC2_GPIINTFLAG;
+-		if (0) printk("%s GPIO 0x%08X\n", __func__, irq);
+-		for (j = 0; j < H3800_GPIO_IRQ_COUNT; j++)
+-			if (irq & gpio_irq_mask[j])
+-				handle_edge_irq(H3800_GPIO_IRQ_COUNT + j, irq_desc + H3800_GPIO_IRQ_COUNT + j);
+-	}
+-
+-	if (i >= MAX_ASIC_ISR_LOOPS)
+-		printk("%s: interrupt processing overrun\n", __func__);
+-
+-	/* For level-based interrupts */
+-	desc->chip->unmask(irq);
+-
+-}
+-
+-static struct irqaction h3800_irq = {
+-	.name		= "h3800_asic",
+-	.handler	= h3800_IRQ_demux,
+-	.flags		= IRQF_DISABLED | IRQF_TIMER | IRQF_IRQPOLL,
+-};
+-
+-u32 kpio_int_shadow = 0;
+-
+-
+-/* mask_ack <- IRQ is first serviced.
+-       mask <- IRQ is disabled.
+-     unmask <- IRQ is enabled
+-
+-     The INTCLR registers are poorly documented.  I believe that writing
+-     a "1" to the register clears the specific interrupt, but the documentation
+-     indicates writing a "0" clears the interrupt.  In any case, they shouldn't
+-     be read (that's the INTFLAG register)
+- */
+-
+-static void h3800_mask_ack_kpio_irq(unsigned int irq)
+-{
+-	u32 mask = kpio_irq_mask[irq - H3800_KPIO_IRQ_START];
+-	kpio_int_shadow &= ~mask;
+-	H3800_ASIC2_KPIINTSTAT = kpio_int_shadow;
+-	H3800_ASIC2_KPIINTCLR  = mask;
+-}
+-
+-static void h3800_mask_kpio_irq(unsigned int irq)
+-{
+-	u32 mask = kpio_irq_mask[irq - H3800_KPIO_IRQ_START];
+-	kpio_int_shadow &= ~mask;
+-	H3800_ASIC2_KPIINTSTAT = kpio_int_shadow;
+-}
+-
+-static void h3800_unmask_kpio_irq(unsigned int irq)
+-{
+-	u32 mask = kpio_irq_mask[irq - H3800_KPIO_IRQ_START];
+-	kpio_int_shadow |= mask;
+-	H3800_ASIC2_KPIINTSTAT = kpio_int_shadow;
+-}
+-
+-static void h3800_mask_ack_gpio_irq(unsigned int irq)
+-{
+-	u32 mask = gpio_irq_mask[irq - H3800_GPIO_IRQ_START];
+-	H3800_ASIC2_GPIINTSTAT &= ~mask;
+-	H3800_ASIC2_GPIINTCLR	= mask;
+-}
+-
+-static void h3800_mask_gpio_irq(unsigned int irq)
+-{
+-	u32 mask = gpio_irq_mask[irq - H3800_GPIO_IRQ_START];
+-	H3800_ASIC2_GPIINTSTAT &= ~mask;
+-	}
+-
+-static void h3800_unmask_gpio_irq(unsigned int irq)
+-{
+-	u32 mask = gpio_irq_mask[irq - H3800_GPIO_IRQ_START];
+-	H3800_ASIC2_GPIINTSTAT |= mask;
+-}
+-
+-static void __init h3800_init_irq(void)
+-{
+-	int i;
+-
+-	/* Initialize standard IRQs */
+-	sa1100_init_irq();
+-
+-	/* Disable all IRQs and set up clock */
+-	H3800_ASIC2_KPIINTSTAT	   =  0;     /* Disable all interrupts */
+-	H3800_ASIC2_GPIINTSTAT	   =  0;
+-
+-	H3800_ASIC2_KPIINTCLR	   =  0;     /* Clear all KPIO interrupts */
+-	H3800_ASIC2_GPIINTCLR	   =  0;     /* Clear all GPIO interrupts */
+-
+-//	H3800_ASIC2_KPIINTCLR	   =  0xffff;	  /* Clear all KPIO interrupts */
+-//	H3800_ASIC2_GPIINTCLR	   =  0xffff;	  /* Clear all GPIO interrupts */
+-
+-	H3800_ASIC2_CLOCK_Enable       |= ASIC2_CLOCK_EX0;   /* 32 kHZ crystal on */
+-	H3800_ASIC2_INTR_ClockPrescale |= ASIC2_INTCPS_SET;
+-	H3800_ASIC2_INTR_ClockPrescale	= ASIC2_INTCPS_CPS(0x0e) | ASIC2_INTCPS_SET;
+-	H3800_ASIC2_INTR_TimerSet	= 1;
+-
+-#if 0
+-	for (i = 0; i < H3800_KPIO_IRQ_COUNT; i++) {
+-		int irq = i + H3800_KPIO_IRQ_START;
+-		irq_desc[irq].valid    = 1;
+-		irq_desc[irq].probe_ok = 1;
+-		set_irq_chip(irq, &h3800_kpio_irqchip);
+-	}
+-
+-	for (i = 0; i < H3800_GPIO_IRQ_COUNT; i++) {
+-		int irq = i + H3800_GPIO_IRQ_START;
+-		irq_desc[irq].valid    = 1;
+-		irq_desc[irq].probe_ok = 1;
+-		set_irq_chip(irq, &h3800_gpio_irqchip);
+-	}
+-#endif
+-	set_irq_type(IRQ_GPIO_H3800_ASIC, IRQ_TYPE_EDGE_RISING);
+-	set_irq_chained_handler(IRQ_GPIO_H3800_ASIC, h3800_IRQ_demux);
+-}
+-
+-
+-#define ASIC1_OUTPUTS	 0x7fff   /* First 15 bits are used */
+-
+-static void __init h3800_map_io(void)
+-{
+-	h3xxx_map_io();
+-
+-	/* Add wakeup on AC plug/unplug */
+-	PWER  |= PWER_GPIO12;
+-
+-	/* Initialize h3800-specific values here */
+-	GPCR = 0x0fffffff;	 /* All outputs are set low by default */
+-	GAFR =	GPIO_H3800_CLK_OUT |
+-		GPIO_LDD15 | GPIO_LDD14 | GPIO_LDD13 | GPIO_LDD12 |
+-		GPIO_LDD11 | GPIO_LDD10 | GPIO_LDD9  | GPIO_LDD8;
+-	GPDR =	GPIO_H3800_CLK_OUT |
+-		GPIO_H3600_COM_RTS  | GPIO_H3600_L3_CLOCK |
+-		GPIO_H3600_L3_MODE  | GPIO_H3600_L3_DATA  |
+-		GPIO_LDD15 | GPIO_LDD14 | GPIO_LDD13 | GPIO_LDD12 |
+-		GPIO_LDD11 | GPIO_LDD10 | GPIO_LDD9  | GPIO_LDD8;
+-	TUCR =	TUCR_3_6864MHz;   /* Seems to be used only for the Bluetooth UART */
+-
+-	/* Fix the memory bus */
+-	MSC2 = (MSC2 & 0x0000ffff) | 0xE4510000;
+-
+-	/* Set up ASIC #1 */
+-	H3800_ASIC1_GPIO_DIR		= ASIC1_OUTPUTS;	    /* All outputs */
+-	H3800_ASIC1_GPIO_MASK		= ASIC1_OUTPUTS;	    /* No interrupts */
+-	H3800_ASIC1_GPIO_SLEEP_MASK	= ASIC1_OUTPUTS;
+-	H3800_ASIC1_GPIO_SLEEP_DIR	= ASIC1_OUTPUTS;
+-	H3800_ASIC1_GPIO_SLEEP_OUT	= GPIO1_EAR_ON_N;
+-	H3800_ASIC1_GPIO_BATT_FAULT_DIR = ASIC1_OUTPUTS;
+-	H3800_ASIC1_GPIO_BATT_FAULT_OUT = GPIO1_EAR_ON_N;
+-
+-	H3800_ASIC1_GPIO_OUT = GPIO1_IR_ON_N
+-				      | GPIO1_RS232_ON
+-				      | GPIO1_EAR_ON_N;
+-
+-	/* Set up ASIC #2 */
+-	H3800_ASIC2_GPIOPIOD	= GPIO2_IN_Y1_N | GPIO2_IN_X1_N;
+-	H3800_ASIC2_GPOBFSTAT	= GPIO2_IN_Y1_N | GPIO2_IN_X1_N;
+-
+-	H3800_ASIC2_GPIODIR	= GPIO2_PEN_IRQ
+-				      | GPIO2_SD_DETECT
+-				      | GPIO2_EAR_IN_N
+-				      | GPIO2_USB_DETECT_N
+-				      | GPIO2_SD_CON_SLT;
+-
+-	/* TODO : Set sleep states & battery fault states */
+-
+-	/* Clear VPP Enable */
+-	H3800_ASIC2_FlashWP_VPP_ON = 0;
+-	ipaq_model_ops = h3800_model_ops;
+-}
+-
+-MACHINE_START(H3800, "Compaq iPAQ H3800")
+-	.phys_io	= 0x80000000,
+-	.io_pg_offst	= ((0xf8000000) >> 18) & 0xfffc,
+-	.boot_params	= 0xc0000100,
+-	.map_io		= h3800_map_io,
+-	.init_irq	= h3800_init_irq,
+-	.timer		= &sa1100_timer,
+-	.init_machine	= h3xxx_mach_init,
+-MACHINE_END
+-
+-#endif /* CONFIG_SA1100_H3800 */
+diff --git a/arch/arm/mach-sa1100/include/mach/h3600.h b/arch/arm/mach-sa1100/include/mach/h3600.h
+index 9cc47fd..e692ab3 100644
+--- a/arch/arm/mach-sa1100/include/mach/h3600.h
++++ b/arch/arm/mach-sa1100/include/mach/h3600.h
+@@ -29,7 +29,7 @@ typedef int __bitwise pm_request_t;
+ #define PM_RESUME	((__force pm_request_t) 2)	/* enter D0 */
+ 
+ /* generalized support for H3xxx series Compaq Pocket PC's */
+-#define machine_is_h3xxx() (machine_is_h3100() || machine_is_h3600() || machine_is_h3800())
++#define machine_is_h3xxx() (machine_is_h3100() || machine_is_h3600())
+ 
+ /* Physical memory regions corresponding to chip selects */
+ #define H3600_EGPIO_PHYS	(SA1100_CS5_PHYS + 0x01000000)
+diff --git a/arch/arm/mach-sa1100/include/mach/h3600_gpio.h b/arch/arm/mach-sa1100/include/mach/h3600_gpio.h
+index 62b0b78..a36ca76 100644
+--- a/arch/arm/mach-sa1100/include/mach/h3600_gpio.h
++++ b/arch/arm/mach-sa1100/include/mach/h3600_gpio.h
+@@ -48,22 +48,11 @@
+ #define GPIO_H3600_OPT_LOCK		GPIO_GPIO (22)
+ #define GPIO_H3600_OPT_DET		GPIO_GPIO (27)
+ 
+-/* H3800 specific pins */
+-#define GPIO_H3800_AC_IN                GPIO_GPIO (12)
+-#define GPIO_H3800_COM_DSR              GPIO_GPIO (13)
+-#define GPIO_H3800_MMC_INT              GPIO_GPIO (18)
+-#define GPIO_H3800_NOPT_IND             GPIO_GPIO (20)   /* Almost exactly the same as GPIO_H3600_OPT_DET */
+-#define GPIO_H3800_OPT_BAT_FAULT        GPIO_GPIO (22)
+-#define GPIO_H3800_CLK_OUT              GPIO_GPIO (27)
+-
+ /****************************************************/
+ 
+ #define IRQ_GPIO_H3600_ACTION_BUTTON    IRQ_GPIO18
+ #define IRQ_GPIO_H3600_OPT_DET		IRQ_GPIO27
+ 
+-#define IRQ_GPIO_H3800_MMC_INT          IRQ_GPIO18
+-#define IRQ_GPIO_H3800_NOPT_IND         IRQ_GPIO20 /* almost same as OPT_DET */
+-
+ /* H3100 / 3600 EGPIO pins */
+ #define EGPIO_H3600_VPP_ON		(1 << 0)
+ #define EGPIO_H3600_CARD_RESET		(1 << 1)   /* reset the attached pcmcia/compactflash card.  active high. */
+@@ -84,457 +73,5 @@
+ #define EGPIO_H3600_LCD_5V_ON		(1 << 14)  /* enable 5V to LCD. active high. */
+ #define EGPIO_H3600_LVDD_ON		(1 << 15)  /* enable 9V and -6.5V to LCD. */
+ 
+-/********************* H3800, ASIC #2 ********************/
+-
+-#define _H3800_ASIC2_Base            (H3600_EGPIO_VIRT)
+-#define H3800_ASIC2_OFFSET(s,x,y)    \
+-    (*((volatile s *) (_H3800_ASIC2_Base + _H3800_ASIC2_ ## x ## _Base + _H3800_ASIC2_ ## x ## _ ## y)))
+-#define H3800_ASIC2_NOFFSET(s,x,n,y) \
+-    (*((volatile s *) (_H3800_ASIC2_Base + _H3800_ASIC2_ ## x ## _ ## n ## _Base + _H3800_ASIC2_ ## x ## _ ## y)))
+-
+-#define _H3800_ASIC2_GPIO_Base                 0x0000
+-#define _H3800_ASIC2_GPIO_Direction            0x0000    /* R/W, 16 bits 1:input, 0:output */
+-#define _H3800_ASIC2_GPIO_InterruptType        0x0004    /* R/W, 12 bits 1:edge, 0:level          */
+-#define _H3800_ASIC2_GPIO_InterruptEdgeType    0x0008    /* R/W, 12 bits 1:rising, 0:falling */
+-#define _H3800_ASIC2_GPIO_InterruptLevelType   0x000C    /* R/W, 12 bits 1:high, 0:low  */
+-#define _H3800_ASIC2_GPIO_InterruptClear       0x0010    /* W,   12 bits */
+-#define _H3800_ASIC2_GPIO_InterruptFlag        0x0010    /* R,   12 bits - reads int status */
+-#define _H3800_ASIC2_GPIO_Data                 0x0014    /* R/W, 16 bits */
+-#define _H3800_ASIC2_GPIO_BattFaultOut         0x0018    /* R/W, 16 bit - sets level on batt fault */
+-#define _H3800_ASIC2_GPIO_InterruptEnable      0x001c    /* R/W, 12 bits 1:enable interrupt */
+-#define _H3800_ASIC2_GPIO_Alternate            0x003c    /* R/W, 12+1 bits - set alternate functions */
+-
+-#define H3800_ASIC2_GPIO_Direction          H3800_ASIC2_OFFSET( u16, GPIO, Direction )
+-#define H3800_ASIC2_GPIO_InterruptType      H3800_ASIC2_OFFSET( u16, GPIO, InterruptType )
+-#define H3800_ASIC2_GPIO_InterruptEdgeType  H3800_ASIC2_OFFSET( u16, GPIO, InterruptEdgeType )
+-#define H3800_ASIC2_GPIO_InterruptLevelType H3800_ASIC2_OFFSET( u16, GPIO, InterruptLevelType )
+-#define H3800_ASIC2_GPIO_InterruptClear     H3800_ASIC2_OFFSET( u16, GPIO, InterruptClear )
+-#define H3800_ASIC2_GPIO_InterruptFlag      H3800_ASIC2_OFFSET( u16, GPIO, InterruptFlag )
+-#define H3800_ASIC2_GPIO_Data               H3800_ASIC2_OFFSET( u16, GPIO, Data )
+-#define H3800_ASIC2_GPIO_BattFaultOut       H3800_ASIC2_OFFSET( u16, GPIO, BattFaultOut )
+-#define H3800_ASIC2_GPIO_InterruptEnable    H3800_ASIC2_OFFSET( u16, GPIO, InterruptEnable )
+-#define H3800_ASIC2_GPIO_Alternate          H3800_ASIC2_OFFSET( u16, GPIO, Alternate )
+-
+-#define GPIO_H3800_ASIC2_IN_Y1_N          (1 << 0)   /* Output: Touchscreen Y1 */
+-#define GPIO_H3800_ASIC2_IN_X0            (1 << 1)   /* Output: Touchscreen X0 */
+-#define GPIO_H3800_ASIC2_IN_Y0            (1 << 2)   /* Output: Touchscreen Y0 */
+-#define GPIO_H3800_ASIC2_IN_X1_N          (1 << 3)   /* Output: Touchscreen X1 */
+-#define GPIO_H3800_ASIC2_BT_RST           (1 << 4)   /* Output: Bluetooth reset */
+-#define GPIO_H3800_ASIC2_PEN_IRQ          (1 << 5)   /* Input : Pen down        */
+-#define GPIO_H3800_ASIC2_SD_DETECT        (1 << 6)   /* Input : SD detect */
+-#define GPIO_H3800_ASIC2_EAR_IN_N         (1 << 7)   /* Input : Audio jack plug inserted */
+-#define GPIO_H3800_ASIC2_OPT_PCM_RESET    (1 << 8)   /* Output: */
+-#define GPIO_H3800_ASIC2_OPT_RESET        (1 << 9)   /* Output: */
+-#define GPIO_H3800_ASIC2_USB_DETECT_N     (1 << 10)  /* Input : */
+-#define GPIO_H3800_ASIC2_SD_CON_SLT       (1 << 11)  /* Input : */
+-
+-#define _H3800_ASIC2_KPIO_Base                 0x0200
+-#define _H3800_ASIC2_KPIO_Direction            0x0000    /* R/W, 12 bits 1:input, 0:output */
+-#define _H3800_ASIC2_KPIO_InterruptType        0x0004    /* R/W, 12 bits 1:edge, 0:level          */
+-#define _H3800_ASIC2_KPIO_InterruptEdgeType    0x0008    /* R/W, 12 bits 1:rising, 0:falling */
+-#define _H3800_ASIC2_KPIO_InterruptLevelType   0x000C    /* R/W, 12 bits 1:high, 0:low  */
+-#define _H3800_ASIC2_KPIO_InterruptClear       0x0010    /* W,   20 bits - 8 special */
+-#define _H3800_ASIC2_KPIO_InterruptFlag        0x0010    /* R,   20 bits - 8 special - reads int status */
+-#define _H3800_ASIC2_KPIO_Data                 0x0014    /* R/W, 16 bits */
+-#define _H3800_ASIC2_KPIO_BattFaultOut         0x0018    /* R/W, 16 bit - sets level on batt fault */
+-#define _H3800_ASIC2_KPIO_InterruptEnable      0x001c    /* R/W, 20 bits - 8 special */
+-#define _H3800_ASIC2_KPIO_Alternate            0x003c    /* R/W, 6 bits */
+-
+-#define H3800_ASIC2_KPIO_Direction          H3800_ASIC2_OFFSET( u16, KPIO, Direction )
+-#define H3800_ASIC2_KPIO_InterruptType      H3800_ASIC2_OFFSET( u16, KPIO, InterruptType )
+-#define H3800_ASIC2_KPIO_InterruptEdgeType  H3800_ASIC2_OFFSET( u16, KPIO, InterruptEdgeType )
+-#define H3800_ASIC2_KPIO_InterruptLevelType H3800_ASIC2_OFFSET( u16, KPIO, InterruptLevelType )
+-#define H3800_ASIC2_KPIO_InterruptClear     H3800_ASIC2_OFFSET( u32, KPIO, InterruptClear )
+-#define H3800_ASIC2_KPIO_InterruptFlag      H3800_ASIC2_OFFSET( u32, KPIO, InterruptFlag )
+-#define H3800_ASIC2_KPIO_Data               H3800_ASIC2_OFFSET( u16, KPIO, Data )
+-#define H3800_ASIC2_KPIO_BattFaultOut       H3800_ASIC2_OFFSET( u16, KPIO, BattFaultOut )
+-#define H3800_ASIC2_KPIO_InterruptEnable    H3800_ASIC2_OFFSET( u32, KPIO, InterruptEnable )
+-#define H3800_ASIC2_KPIO_Alternate          H3800_ASIC2_OFFSET( u16, KPIO, Alternate )
+-
+-#define H3800_ASIC2_KPIO_SPI_INT        ( 1 << 16 )
+-#define H3800_ASIC2_KPIO_OWM_INT        ( 1 << 17 )
+-#define H3800_ASIC2_KPIO_ADC_INT        ( 1 << 18 )
+-#define H3800_ASIC2_KPIO_UART_0_INT     ( 1 << 19 )
+-#define H3800_ASIC2_KPIO_UART_1_INT     ( 1 << 20 )
+-#define H3800_ASIC2_KPIO_TIMER_0_INT    ( 1 << 21 )
+-#define H3800_ASIC2_KPIO_TIMER_1_INT    ( 1 << 22 )
+-#define H3800_ASIC2_KPIO_TIMER_2_INT    ( 1 << 23 )
+-
+-#define KPIO_H3800_ASIC2_RECORD_BTN_N     (1 << 0)   /* Record button */
+-#define KPIO_H3800_ASIC2_KEY_5W1_N        (1 << 1)   /* Keypad */
+-#define KPIO_H3800_ASIC2_KEY_5W2_N        (1 << 2)   /* */
+-#define KPIO_H3800_ASIC2_KEY_5W3_N        (1 << 3)   /* */
+-#define KPIO_H3800_ASIC2_KEY_5W4_N        (1 << 4)   /* */
+-#define KPIO_H3800_ASIC2_KEY_5W5_N        (1 << 5)   /* */
+-#define KPIO_H3800_ASIC2_KEY_LEFT_N       (1 << 6)   /* */
+-#define KPIO_H3800_ASIC2_KEY_RIGHT_N      (1 << 7)   /* */
+-#define KPIO_H3800_ASIC2_KEY_AP1_N        (1 << 8)   /* Old "Calendar" */
+-#define KPIO_H3800_ASIC2_KEY_AP2_N        (1 << 9)   /* Old "Schedule" */
+-#define KPIO_H3800_ASIC2_KEY_AP3_N        (1 << 10)  /* Old "Q"        */
+-#define KPIO_H3800_ASIC2_KEY_AP4_N        (1 << 11)  /* Old "Undo"     */
+-
+-/* Alternate KPIO functions (set by default) */
+-#define KPIO_ALT_H3800_ASIC2_KEY_5W1_N        (1 << 1)   /* Action key */
+-#define KPIO_ALT_H3800_ASIC2_KEY_5W2_N        (1 << 2)   /* J1 of keypad input */
+-#define KPIO_ALT_H3800_ASIC2_KEY_5W3_N        (1 << 3)   /* J2 of keypad input */
+-#define KPIO_ALT_H3800_ASIC2_KEY_5W4_N        (1 << 4)   /* J3 of keypad input */
+-#define KPIO_ALT_H3800_ASIC2_KEY_5W5_N        (1 << 5)   /* J4 of keypad input */
+-
+-#define _H3800_ASIC2_SPI_Base                  0x0400
+-#define _H3800_ASIC2_SPI_Control               0x0000    /* R/W 8 bits */
+-#define _H3800_ASIC2_SPI_Data                  0x0004    /* R/W 8 bits */
+-#define _H3800_ASIC2_SPI_ChipSelectDisabled    0x0008    /* W   8 bits */
+-
+-#define H3800_ASIC2_SPI_Control             H3800_ASIC2_OFFSET( u8, SPI, Control )
+-#define H3800_ASIC2_SPI_Data                H3800_ASIC2_OFFSET( u8, SPI, Data )
+-#define H3800_ASIC2_SPI_ChipSelectDisabled  H3800_ASIC2_OFFSET( u8, SPI, ChipSelectDisabled )
+-
+-#define _H3800_ASIC2_PWM_0_Base                0x0600
+-#define _H3800_ASIC2_PWM_1_Base                0x0700
+-#define _H3800_ASIC2_PWM_TimeBase              0x0000    /* R/W 6 bits */
+-#define _H3800_ASIC2_PWM_PeriodTime            0x0004    /* R/W 12 bits */
+-#define _H3800_ASIC2_PWM_DutyTime              0x0008    /* R/W 12 bits */
+-
+-#define H3800_ASIC2_PWM_0_TimeBase          H3800_ASIC2_NOFFSET(  u8, PWM, 0, TimeBase )
+-#define H3800_ASIC2_PWM_0_PeriodTime        H3800_ASIC2_NOFFSET( u16, PWM, 0, PeriodTime )
+-#define H3800_ASIC2_PWM_0_DutyTime          H3800_ASIC2_NOFFSET( u16, PWM, 0, DutyTime )
+-
+-#define H3800_ASIC2_PWM_1_TimeBase          H3800_ASIC2_NOFFSET(  u8, PWM, 1, TimeBase )
+-#define H3800_ASIC2_PWM_1_PeriodTime        H3800_ASIC2_NOFFSET( u16, PWM, 1, PeriodTime )
+-#define H3800_ASIC2_PWM_1_DutyTime          H3800_ASIC2_NOFFSET( u16, PWM, 1, DutyTime )
+-
+-#define H3800_ASIC2_PWM_TIMEBASE_MASK             0xf    /* Low 4 bits sets time base, max = 8 */
+-#define H3800_ASIC2_PWM_TIMEBASE_ENABLE    ( 1 << 4 )    /* Enable clock */
+-#define H3800_ASIC2_PWM_TIMEBASE_CLEAR     ( 1 << 5 )    /* Clear the PWM */
+-
+-#define _H3800_ASIC2_LED_0_Base                0x0800
+-#define _H3800_ASIC2_LED_1_Base                0x0880
+-#define _H3800_ASIC2_LED_2_Base                0x0900
+-#define _H3800_ASIC2_LED_TimeBase              0x0000    /* R/W  7 bits */
+-#define _H3800_ASIC2_LED_PeriodTime            0x0004    /* R/W 12 bits */
+-#define _H3800_ASIC2_LED_DutyTime              0x0008    /* R/W 12 bits */
+-#define _H3800_ASIC2_LED_AutoStopCount         0x000c    /* R/W 16 bits */
+-
+-#define H3800_ASIC2_LED_0_TimeBase          H3800_ASIC2_NOFFSET(  u8, LED, 0, TimeBase )
+-#define H3800_ASIC2_LED_0_PeriodTime        H3800_ASIC2_NOFFSET( u16, LED, 0, PeriodTime )
+-#define H3800_ASIC2_LED_0_DutyTime          H3800_ASIC2_NOFFSET( u16, LED, 0, DutyTime )
+-#define H3800_ASIC2_LED_0_AutoStopClock     H3800_ASIC2_NOFFSET( u16, LED, 0, AutoStopClock )
+-
+-#define H3800_ASIC2_LED_1_TimeBase          H3800_ASIC2_NOFFSET(  u8, LED, 1, TimeBase )
+-#define H3800_ASIC2_LED_1_PeriodTime        H3800_ASIC2_NOFFSET( u16, LED, 1, PeriodTime )
+-#define H3800_ASIC2_LED_1_DutyTime          H3800_ASIC2_NOFFSET( u16, LED, 1, DutyTime )
+-#define H3800_ASIC2_LED_1_AutoStopClock     H3800_ASIC2_NOFFSET( u16, LED, 1, AutoStopClock )
+-
+-#define H3800_ASIC2_LED_2_TimeBase          H3800_ASIC2_NOFFSET(  u8, LED, 2, TimeBase )
+-#define H3800_ASIC2_LED_2_PeriodTime        H3800_ASIC2_NOFFSET( u16, LED, 2, PeriodTime )
+-#define H3800_ASIC2_LED_2_DutyTime          H3800_ASIC2_NOFFSET( u16, LED, 2, DutyTime )
+-#define H3800_ASIC2_LED_2_AutoStopClock     H3800_ASIC2_NOFFSET( u16, LED, 2, AutoStopClock )
+-
+-#define H3800_ASIC2_LED_TIMEBASE_MASK            0x0f    /* Low 4 bits sets time base, max = 13 */
+-#define H3800_ASIC2_LED_TIMEBASE_BLINK     ( 1 << 4 )    /* Enable blinking */
+-#define H3800_ASIC2_LED_TIMEBASE_AUTOSTOP  ( 1 << 5 )
+-#define H3800_ASIC2_LED_TIMEBASE_ALWAYS    ( 1 << 6 )    /* Enable blink always */
+-
+-#define _H3800_ASIC2_UART_0_Base               0x0A00
+-#define _H3800_ASIC2_UART_1_Base               0x0C00
+-#define _H3800_ASIC2_UART_Receive              0x0000    /* R    8 bits */
+-#define _H3800_ASIC2_UART_Transmit             0x0000    /*   W  8 bits */
+-#define _H3800_ASIC2_UART_IntEnable            0x0004    /* R/W  8 bits */
+-#define _H3800_ASIC2_UART_IntVerify            0x0008    /* R/W  8 bits */
+-#define _H3800_ASIC2_UART_FIFOControl          0x000c    /* R/W  8 bits */
+-#define _H3800_ASIC2_UART_LineControl          0x0010    /* R/W  8 bits */
+-#define _H3800_ASIC2_UART_ModemStatus          0x0014    /* R/W  8 bits */
+-#define _H3800_ASIC2_UART_LineStatus           0x0018    /* R/W  8 bits */
+-#define _H3800_ASIC2_UART_ScratchPad           0x001c    /* R/W  8 bits */
+-#define _H3800_ASIC2_UART_DivisorLatchL        0x0020    /* R/W  8 bits */
+-#define _H3800_ASIC2_UART_DivisorLatchH        0x0024    /* R/W  8 bits */
+-
+-#define H3800_ASIC2_UART_0_Receive          H3800_ASIC2_NOFFSET(  u8, UART, 0, Receive )
+-#define H3800_ASIC2_UART_0_Transmit         H3800_ASIC2_NOFFSET(  u8, UART, 0, Transmit )
+-#define H3800_ASIC2_UART_0_IntEnable        H3800_ASIC2_NOFFSET(  u8, UART, 0, IntEnable )
+-#define H3800_ASIC2_UART_0_IntVerify        H3800_ASIC2_NOFFSET(  u8, UART, 0, IntVerify )
+-#define H3800_ASIC2_UART_0_FIFOControl      H3800_ASIC2_NOFFSET(  u8, UART, 0, FIFOControl )
+-#define H3800_ASIC2_UART_0_LineControl      H3800_ASIC2_NOFFSET(  u8, UART, 0, LineControl )
+-#define H3800_ASIC2_UART_0_ModemStatus      H3800_ASIC2_NOFFSET(  u8, UART, 0, ModemStatus )
+-#define H3800_ASIC2_UART_0_LineStatus       H3800_ASIC2_NOFFSET(  u8, UART, 0, LineStatus )
+-#define H3800_ASIC2_UART_0_ScratchPad       H3800_ASIC2_NOFFSET(  u8, UART, 0, ScratchPad )
+-#define H3800_ASIC2_UART_0_DivisorLatchL    H3800_ASIC2_NOFFSET(  u8, UART, 0, DivisorLatchL )
+-#define H3800_ASIC2_UART_0_DivisorLatchH    H3800_ASIC2_NOFFSET(  u8, UART, 0, DivisorLatchH )
+-
+-#define H3800_ASIC2_UART_1_Receive          H3800_ASIC2_NOFFSET(  u8, UART, 1, Receive )
+-#define H3800_ASIC2_UART_1_Transmit         H3800_ASIC2_NOFFSET(  u8, UART, 1, Transmit )
+-#define H3800_ASIC2_UART_1_IntEnable        H3800_ASIC2_NOFFSET(  u8, UART, 1, IntEnable )
+-#define H3800_ASIC2_UART_1_IntVerify        H3800_ASIC2_NOFFSET(  u8, UART, 1, IntVerify )
+-#define H3800_ASIC2_UART_1_FIFOControl      H3800_ASIC2_NOFFSET(  u8, UART, 1, FIFOControl )
+-#define H3800_ASIC2_UART_1_LineControl      H3800_ASIC2_NOFFSET(  u8, UART, 1, LineControl )
+-#define H3800_ASIC2_UART_1_ModemStatus      H3800_ASIC2_NOFFSET(  u8, UART, 1, ModemStatus )
+-#define H3800_ASIC2_UART_1_LineStatus       H3800_ASIC2_NOFFSET(  u8, UART, 1, LineStatus )
+-#define H3800_ASIC2_UART_1_ScratchPad       H3800_ASIC2_NOFFSET(  u8, UART, 1, ScratchPad )
+-#define H3800_ASIC2_UART_1_DivisorLatchL    H3800_ASIC2_NOFFSET(  u8, UART, 1, DivisorLatchL )
+-#define H3800_ASIC2_UART_1_DivisorLatchH    H3800_ASIC2_NOFFSET(  u8, UART, 1, DivisorLatchH )
+-
+-#define _H3800_ASIC2_TIMER_Base                0x0E00
+-#define _H3800_ASIC2_TIMER_Command             0x0000    /* R/W  8 bits */
+-
+-#define H3800_ASIC2_TIMER_Command           H3800_ASIC2_OFFSET( u8, Timer, Command )
+-
+-#define H3800_ASIC2_TIMER_GAT_0            ( 1 << 0 )    /* Gate enable, counter 0 */
+-#define H3800_ASIC2_TIMER_GAT_1            ( 1 << 1 )    /* Gate enable, counter 1 */
+-#define H3800_ASIC2_TIMER_GAT_2            ( 1 << 2 )    /* Gate enable, counter 2 */
+-#define H3800_ASIC2_TIMER_CLK_0            ( 1 << 3 )    /* Clock enable, counter 0 */
+-#define H3800_ASIC2_TIMER_CLK_1            ( 1 << 4 )    /* Clock enable, counter 1 */
+-#define H3800_ASIC2_TIMER_CLK_2            ( 1 << 5 )    /* Clock enable, counter 2 */
+-#define H3800_ASIC2_TIMER_MODE_0           ( 1 << 6 )    /* Mode 0 enable, counter 0 */
+-#define H3800_ASIC2_TIMER_MODE_1           ( 1 << 7 )    /* Mode 0 enable, counter 1 */
+-
+-#define _H3800_ASIC2_CLOCK_Base                0x1000
+-#define _H3800_ASIC2_CLOCK_Enable              0x0000    /* R/W  18 bits */
+-
+-#define H3800_ASIC2_CLOCK_Enable            H3800_ASIC2_OFFSET( u32, CLOCK, Enable )
+-
+-#define H3800_ASIC2_CLOCK_AUDIO_1              0x0001    /* Enable 4.1 MHz clock for 8Khz and 4khz sample rate */
+-#define H3800_ASIC2_CLOCK_AUDIO_2              0x0002    /* Enable 12.3 MHz clock for 48Khz and 32khz sample rate */
+-#define H3800_ASIC2_CLOCK_AUDIO_3              0x0004    /* Enable 5.6 MHz clock for 11 kHZ sample rate */
+-#define H3800_ASIC2_CLOCK_AUDIO_4              0x0008    /* Enable 11.289 MHz clock for 44 and 22 kHz sample rate */
+-#define H3800_ASIC2_CLOCK_ADC              ( 1 << 4 )    /* 1.024 MHz clock to ADC */
+-#define H3800_ASIC2_CLOCK_SPI              ( 1 << 5 )    /* 4.096 MHz clock to SPI */
+-#define H3800_ASIC2_CLOCK_OWM              ( 1 << 6 )    /* 4.096 MHz clock to OWM */
+-#define H3800_ASIC2_CLOCK_PWM              ( 1 << 7 )    /* 2.048 MHz clock to PWM */
+-#define H3800_ASIC2_CLOCK_UART_1           ( 1 << 8 )    /* 24.576 MHz clock to UART1 (turn off bit 16) */
+-#define H3800_ASIC2_CLOCK_UART_0           ( 1 << 9 )    /* 24.576 MHz clock to UART0 (turn off bit 17) */
+-#define H3800_ASIC2_CLOCK_SD_1             ( 1 << 10 )   /* 16.934 MHz to SD */
+-#define H3800_ASIC2_CLOCK_SD_2             ( 2 << 10 )   /* 24.576 MHz to SD */
+-#define H3800_ASIC2_CLOCK_SD_3             ( 3 << 10 )   /* 33.869 MHz to SD */
+-#define H3800_ASIC2_CLOCK_SD_4             ( 4 << 10 )   /* 49.152 MHz to SD */
+-#define H3800_ASIC2_CLOCK_EX0              ( 1 << 13 )   /* Enable 32.768 kHz crystal */
+-#define H3800_ASIC2_CLOCK_EX1              ( 1 << 14 )   /* Enable 24.576 MHz crystal */
+-#define H3800_ASIC2_CLOCK_EX2              ( 1 << 15 )   /* Enable 33.869 MHz crystal */
+-#define H3800_ASIC2_CLOCK_SLOW_UART_1      ( 1 << 16 )   /* Enable 3.686 MHz to UART1 (turn off bit 8) */
+-#define H3800_ASIC2_CLOCK_SLOW_UART_0      ( 1 << 17 )   /* Enable 3.686 MHz to UART0 (turn off bit 9) */
+-
+-#define _H3800_ASIC2_ADC_Base                  0x1200
+-#define _H3800_ASIC2_ADC_Multiplexer           0x0000    /* R/W 4 bits - low 3 bits set channel */
+-#define _H3800_ASIC2_ADC_ControlStatus         0x0004    /* R/W 8 bits */
+-#define _H3800_ASIC2_ADC_Data                  0x0008    /* R   10 bits */
+-
+-#define H3800_ASIC2_ADC_Multiplexer       H3800_ASIC2_OFFSET(  u8, ADC, Multiplexer )
+-#define H3800_ASIC2_ADC_ControlStatus     H3800_ASIC2_OFFSET(  u8, ADC, ControlStatus )
+-#define H3800_ASIC2_ADC_Data              H3800_ASIC2_OFFSET( u16, ADC, Data )
+-
+-#define H3600_ASIC2_ADC_MUX_CHANNEL_MASK         0x07    /* Low 3 bits sets channel.  max = 4 */
+-#define H3600_ASIC2_ADC_MUX_CLKEN          ( 1 << 3 )    /* Enable clock */
+-
+-#define H3600_ASIC2_ADC_CSR_ADPS_MASK            0x0f    /* Low 4 bits sets prescale, max = 8 */
+-#define H3600_ASIC2_ADC_CSR_FREE_RUN       ( 1 << 4 )
+-#define H3600_ASIC2_ADC_CSR_INT_ENABLE     ( 1 << 5 )
+-#define H3600_ASIC2_ADC_CSR_START          ( 1 << 6 )    /* Set to start conversion.  Goes to 0 when done */
+-#define H3600_ASIC2_ADC_CSR_ENABLE         ( 1 << 7 )    /* 1:power up ADC, 0:power down */
+-
+-
+-#define _H3800_ASIC2_INTR_Base                 0x1600
+-#define _H3800_ASIC2_INTR_MaskAndFlag          0x0000    /* R/(W) 8bits */
+-#define _H3800_ASIC2_INTR_ClockPrescale        0x0004    /* R/(W) 5bits */
+-#define _H3800_ASIC2_INTR_TimerSet             0x0008    /* R/(W) 8bits */
+-
+-#define H3800_ASIC2_INTR_MaskAndFlag      H3800_ASIC2_OFFSET( u8, INTR, MaskAndFlag )
+-#define H3800_ASIC2_INTR_ClockPrescale    H3800_ASIC2_OFFSET( u8, INTR, ClockPrescale )
+-#define H3800_ASIC2_INTR_TimerSet         H3800_ASIC2_OFFSET( u8, INTR, TimerSet )
+-
+-#define H3800_ASIC2_INTR_GLOBAL_MASK       ( 1 << 0 )    /* Global interrupt mask */
+-#define H3800_ASIC2_INTR_POWER_ON_RESET    ( 1 << 1 )    /* 01: Power on reset (bits 1 & 2 ) */
+-#define H3800_ASIC2_INTR_EXTERNAL_RESET    ( 2 << 1 )    /* 10: External reset (bits 1 & 2 ) */
+-#define H3800_ASIC2_INTR_MASK_UART_0       ( 1 << 4 )
+-#define H3800_ASIC2_INTR_MASK_UART_1       ( 1 << 5 )
+-#define H3800_ASIC2_INTR_MASK_TIMER        ( 1 << 6 )
+-#define H3800_ASIC2_INTR_MASK_OWM          ( 1 << 7 )
+-
+-#define H3800_ASIC2_INTR_CLOCK_PRESCALE          0x0f    /* 4 bits, max 14 */
+-#define H3800_ASIC2_INTR_SET               ( 1 << 4 )    /* Time base enable */
+-
+-
+-#define _H3800_ASIC2_OWM_Base                  0x1800
+-#define _H3800_ASIC2_OWM_Command               0x0000    /* R/W 4 bits command register */
+-#define _H3800_ASIC2_OWM_Data                  0x0004    /* R/W 8 bits, transmit / receive buffer */
+-#define _H3800_ASIC2_OWM_Interrupt             0x0008    /* R/W Command register */
+-#define _H3800_ASIC2_OWM_InterruptEnable       0x000c    /* R/W Command register */
+-#define _H3800_ASIC2_OWM_ClockDivisor          0x0010    /* R/W 5 bits of divisor and pre-scale */
+-
+-#define H3800_ASIC2_OWM_Command            H3800_ASIC2_OFFSET( u8, OWM, Command )
+-#define H3800_ASIC2_OWM_Data               H3800_ASIC2_OFFSET( u8, OWM, Data )
+-#define H3800_ASIC2_OWM_Interrupt          H3800_ASIC2_OFFSET( u8, OWM, Interrupt )
+-#define H3800_ASIC2_OWM_InterruptEnable    H3800_ASIC2_OFFSET( u8, OWM, InterruptEnable )
+-#define H3800_ASIC2_OWM_ClockDivisor       H3800_ASIC2_OFFSET( u8, OWM, ClockDivisor )
+-
+-#define H3800_ASIC2_OWM_CMD_ONE_WIRE_RESET ( 1 << 0 )    /* Set to force reset on 1-wire bus */
+-#define H3800_ASIC2_OWM_CMD_SRA            ( 1 << 1 )    /* Set to switch to Search ROM accelerator mode */
+-#define H3800_ASIC2_OWM_CMD_DQ_OUTPUT      ( 1 << 2 )    /* Write only - forces bus low */
+-#define H3800_ASIC2_OWM_CMD_DQ_INPUT       ( 1 << 3 )    /* Read only - reflects state of bus */
+-
+-#define H3800_ASIC2_OWM_INT_PD             ( 1 << 0 )    /* Presence detect */
+-#define H3800_ASIC2_OWM_INT_PDR            ( 1 << 1 )    /* Presence detect result */
+-#define H3800_ASIC2_OWM_INT_TBE            ( 1 << 2 )    /* Transmit buffer empty */
+-#define H3800_ASIC2_OWM_INT_TEMT           ( 1 << 3 )    /* Transmit shift register empty */
+-#define H3800_ASIC2_OWM_INT_RBF            ( 1 << 4 )    /* Receive buffer full */
+-
+-#define H3800_ASIC2_OWM_INTEN_EPD          ( 1 << 0 )    /* Enable receive buffer full interrupt */
+-#define H3800_ASIC2_OWM_INTEN_IAS          ( 1 << 1 )    /* Enable transmit shift register empty interrupt */
+-#define H3800_ASIC2_OWM_INTEN_ETBE         ( 1 << 2 )    /* Enable transmit buffer empty interrupt */
+-#define H3800_ASIC2_OWM_INTEN_ETMT         ( 1 << 3 )    /* INTR active state */
+-#define H3800_ASIC2_OWM_INTEN_ERBF         ( 1 << 4 )    /* Enable presence detect interrupt */
+-
+-#define _H3800_ASIC2_FlashCtl_Base             0x1A00
+-
+-/****************************************************/
+-/* H3800, ASIC #1
+- * This ASIC is accesed through ASIC #2, and
+- * mapped into the 1c00 - 1f00 region
+- */
+-
+-#define H3800_ASIC1_OFFSET(s,x,y)   \
+-     (*((volatile s *) (_H3800_ASIC2_Base + _H3800_ASIC1_ ## x ## _Base + (_H3800_ASIC1_ ## x ## _ ## y << 1))))
+-
+-#define _H3800_ASIC1_MMC_Base             0x1c00
+-
+-#define _H3800_ASIC1_MMC_StartStopClock     0x00    /* R/W 8bit                                  */
+-#define _H3800_ASIC1_MMC_Status             0x02    /* R   See below, default 0x0040             */
+-#define _H3800_ASIC1_MMC_ClockRate          0x04    /* R/W 8bit, low 3 bits are clock divisor    */
+-#define _H3800_ASIC1_MMC_SPIRegister        0x08    /* R/W 8bit, see below                       */
+-#define _H3800_ASIC1_MMC_CmdDataCont        0x0a    /* R/W 8bit, write to start MMC adapter      */
+-#define _H3800_ASIC1_MMC_ResponseTimeout    0x0c    /* R/W 8bit, clocks before response timeout  */
+-#define _H3800_ASIC1_MMC_ReadTimeout        0x0e    /* R/W 16bit, clocks before received data timeout */
+-#define _H3800_ASIC1_MMC_BlockLength        0x10    /* R/W 10bit */
+-#define _H3800_ASIC1_MMC_NumOfBlocks        0x12    /* R/W 16bit, in block mode, number of blocks  */
+-#define _H3800_ASIC1_MMC_InterruptMask      0x1a    /* R/W 8bit */
+-#define _H3800_ASIC1_MMC_CommandNumber      0x1c    /* R/W 6 bits */
+-#define _H3800_ASIC1_MMC_ArgumentH          0x1e    /* R/W 16 bits  */
+-#define _H3800_ASIC1_MMC_ArgumentL          0x20    /* R/W 16 bits */
+-#define _H3800_ASIC1_MMC_ResFifo            0x22    /* R   8 x 16 bits - contains response FIFO */
+-#define _H3800_ASIC1_MMC_BufferPartFull     0x28    /* R/W 8 bits */
+-
+-#define H3800_ASIC1_MMC_StartStopClock    H3800_ASIC1_OFFSET(  u8, MMC, StartStopClock )
+-#define H3800_ASIC1_MMC_Status            H3800_ASIC1_OFFSET( u16, MMC, Status )
+-#define H3800_ASIC1_MMC_ClockRate         H3800_ASIC1_OFFSET(  u8, MMC, ClockRate )
+-#define H3800_ASIC1_MMC_SPIRegister       H3800_ASIC1_OFFSET(  u8, MMC, SPIRegister )
+-#define H3800_ASIC1_MMC_CmdDataCont       H3800_ASIC1_OFFSET(  u8, MMC, CmdDataCont )
+-#define H3800_ASIC1_MMC_ResponseTimeout   H3800_ASIC1_OFFSET(  u8, MMC, ResponseTimeout )
+-#define H3800_ASIC1_MMC_ReadTimeout       H3800_ASIC1_OFFSET( u16, MMC, ReadTimeout )
+-#define H3800_ASIC1_MMC_BlockLength       H3800_ASIC1_OFFSET( u16, MMC, BlockLength )
+-#define H3800_ASIC1_MMC_NumOfBlocks       H3800_ASIC1_OFFSET( u16, MMC, NumOfBlocks )
+-#define H3800_ASIC1_MMC_InterruptMask     H3800_ASIC1_OFFSET(  u8, MMC, InterruptMask )
+-#define H3800_ASIC1_MMC_CommandNumber     H3800_ASIC1_OFFSET(  u8, MMC, CommandNumber )
+-#define H3800_ASIC1_MMC_ArgumentH         H3800_ASIC1_OFFSET( u16, MMC, ArgumentH )
+-#define H3800_ASIC1_MMC_ArgumentL         H3800_ASIC1_OFFSET( u16, MMC, ArgumentL )
+-#define H3800_ASIC1_MMC_ResFifo           H3800_ASIC1_OFFSET( u16, MMC, ResFifo )
+-#define H3800_ASIC1_MMC_BufferPartFull    H3800_ASIC1_OFFSET(  u8, MMC, BufferPartFull )
+-
+-#define H3800_ASIC1_MMC_STOP_CLOCK                   (1 << 0)   /* Write to "StartStopClock" register */
+-#define H3800_ASIC1_MMC_START_CLOCK                  (1 << 1)
+-
+-#define H3800_ASIC1_MMC_STATUS_READ_TIMEOUT          (1 << 0)
+-#define H3800_ASIC1_MMC_STATUS_RESPONSE_TIMEOUT      (1 << 1)
+-#define H3800_ASIC1_MMC_STATUS_CRC_WRITE_ERROR       (1 << 2)
+-#define H3800_ASIC1_MMC_STATUS_CRC_READ_ERROR        (1 << 3)
+-#define H3800_ASIC1_MMC_STATUS_SPI_READ_ERROR        (1 << 4)  /* SPI data token error received */
+-#define H3800_ASIC1_MMC_STATUS_CRC_RESPONSE_ERROR    (1 << 5)
+-#define H3800_ASIC1_MMC_STATUS_FIFO_EMPTY            (1 << 6)
+-#define H3800_ASIC1_MMC_STATUS_FIFO_FULL             (1 << 7)
+-#define H3800_ASIC1_MMC_STATUS_CLOCK_ENABLE          (1 << 8)  /* MultiMediaCard clock stopped */
+-#define H3800_ASIC1_MMC_STATUS_DATA_TRANSFER_DONE    (1 << 11) /* Write operation, indicates transfer finished */
+-#define H3800_ASIC1_MMC_STATUS_END_PROGRAM           (1 << 12) /* End write and read operations */
+-#define H3800_ASIC1_MMC_STATUS_END_COMMAND_RESPONSE  (1 << 13) /* End command response */
+-
+-#define H3800_ASIC1_MMC_SPI_REG_SPI_ENABLE           (1 << 0)  /* Enables SPI mode */
+-#define H3800_ASIC1_MMC_SPI_REG_CRC_ON               (1 << 1)  /* 1:turn on CRC    */
+-#define H3800_ASIC1_MMC_SPI_REG_SPI_CS_ENABLE        (1 << 2)  /* 1:turn on SPI CS */
+-#define H3800_ASIC1_MMC_SPI_REG_CS_ADDRESS_MASK      0x38      /* Bits 3,4,5 are the SPI CS relative address */
+-
+-#define H3800_ASIC1_MMC_CMD_DATA_CONT_FORMAT_NO_RESPONSE  0x00
+-#define H3800_ASIC1_MMC_CMD_DATA_CONT_FORMAT_R1           0x01
+-#define H3800_ASIC1_MMC_CMD_DATA_CONT_FORMAT_R2           0x02
+-#define H3800_ASIC1_MMC_CMD_DATA_CONT_FORMAT_R3           0x03
+-#define H3800_ASIC1_MMC_CMD_DATA_CONT_DATA_ENABLE         (1 << 2)  /* This command contains a data transfer */
+-#define H3800_ASIC1_MMC_CMD_DATA_CONT_WRITE               (1 << 3)  /* This data transfer is a write */
+-#define H3800_ASIC1_MMC_CMD_DATA_CONT_STREAM_MODE         (1 << 4)  /* This data transfer is in stream mode */
+-#define H3800_ASIC1_MMC_CMD_DATA_CONT_BUSY_BIT            (1 << 5)  /* Busy signal expected after current cmd */
+-#define H3800_ASIC1_MMC_CMD_DATA_CONT_INITIALIZE          (1 << 6)  /* Enables the 80 bits for initializing card */
+-
+-#define H3800_ASIC1_MMC_INT_MASK_DATA_TRANSFER_DONE       (1 << 0)
+-#define H3800_ASIC1_MMC_INT_MASK_PROGRAM_DONE             (1 << 1)
+-#define H3800_ASIC1_MMC_INT_MASK_END_COMMAND_RESPONSE     (1 << 2)
+-#define H3800_ASIC1_MMC_INT_MASK_BUFFER_READY             (1 << 3)
+-
+-#define H3800_ASIC1_MMC_BUFFER_PART_FULL                  (1 << 0)
+-
+-/********* GPIO **********/
+-
+-#define _H3800_ASIC1_GPIO_Base        0x1e00
+-
+-#define _H3800_ASIC1_GPIO_Mask          0x30    /* R/W 0:don't mask, 1:mask interrupt */
+-#define _H3800_ASIC1_GPIO_Direction     0x32    /* R/W 0:input, 1:output              */
+-#define _H3800_ASIC1_GPIO_Out           0x34    /* R/W 0:output low, 1:output high    */
+-#define _H3800_ASIC1_GPIO_TriggerType   0x36    /* R/W 0:level, 1:edge                */
+-#define _H3800_ASIC1_GPIO_EdgeTrigger   0x38    /* R/W 0:falling, 1:rising            */
+-#define _H3800_ASIC1_GPIO_LevelTrigger  0x3A    /* R/W 0:low, 1:high level detect     */
+-#define _H3800_ASIC1_GPIO_LevelStatus   0x3C    /* R/W 0:none, 1:detect               */
+-#define _H3800_ASIC1_GPIO_EdgeStatus    0x3E    /* R/W 0:none, 1:detect               */
+-#define _H3800_ASIC1_GPIO_State         0x40    /* R   See masks below  (default 0)         */
+-#define _H3800_ASIC1_GPIO_Reset         0x42    /* R/W See masks below  (default 0x04)      */
+-#define _H3800_ASIC1_GPIO_SleepMask     0x44    /* R/W 0:don't mask, 1:mask trigger in sleep mode  */
+-#define _H3800_ASIC1_GPIO_SleepDir      0x46    /* R/W direction 0:input, 1:output in sleep mode    */
+-#define _H3800_ASIC1_GPIO_SleepOut      0x48    /* R/W level 0:low, 1:high in sleep mode           */
+-#define _H3800_ASIC1_GPIO_Status        0x4A    /* R   Pin status                                  */
+-#define _H3800_ASIC1_GPIO_BattFaultDir  0x4C    /* R/W direction 0:input, 1:output in batt_fault   */
+-#define _H3800_ASIC1_GPIO_BattFaultOut  0x4E    /* R/W level 0:low, 1:high in batt_fault           */
+-
+-#define H3800_ASIC1_GPIO_Mask         H3800_ASIC1_OFFSET( u16, GPIO, Mask )
+-#define H3800_ASIC1_GPIO_Direction    H3800_ASIC1_OFFSET( u16, GPIO, Direction )
+-#define H3800_ASIC1_GPIO_Out          H3800_ASIC1_OFFSET( u16, GPIO, Out )
+-#define H3800_ASIC1_GPIO_TriggerType  H3800_ASIC1_OFFSET( u16, GPIO, TriggerType )
+-#define H3800_ASIC1_GPIO_EdgeTrigger  H3800_ASIC1_OFFSET( u16, GPIO, EdgeTrigger )
+-#define H3800_ASIC1_GPIO_LevelTrigger H3800_ASIC1_OFFSET( u16, GPIO, LevelTrigger )
+-#define H3800_ASIC1_GPIO_LevelStatus  H3800_ASIC1_OFFSET( u16, GPIO, LevelStatus )
+-#define H3800_ASIC1_GPIO_EdgeStatus   H3800_ASIC1_OFFSET( u16, GPIO, EdgeStatus )
+-#define H3800_ASIC1_GPIO_State        H3800_ASIC1_OFFSET(  u8, GPIO, State )
+-#define H3800_ASIC1_GPIO_Reset        H3800_ASIC1_OFFSET(  u8, GPIO, Reset )
+-#define H3800_ASIC1_GPIO_SleepMask    H3800_ASIC1_OFFSET( u16, GPIO, SleepMask )
+-#define H3800_ASIC1_GPIO_SleepDir     H3800_ASIC1_OFFSET( u16, GPIO, SleepDir )
+-#define H3800_ASIC1_GPIO_SleepOut     H3800_ASIC1_OFFSET( u16, GPIO, SleepOut )
+-#define H3800_ASIC1_GPIO_Status       H3800_ASIC1_OFFSET( u16, GPIO, Status )
+-#define H3800_ASIC1_GPIO_BattFaultDir H3800_ASIC1_OFFSET( u16, GPIO, BattFaultDir )
+-#define H3800_ASIC1_GPIO_BattFaultOut H3800_ASIC1_OFFSET( u16, GPIO, BattFaultOut )
+-
+-#define H3800_ASIC1_GPIO_STATE_MASK            (1 << 0)
+-#define H3800_ASIC1_GPIO_STATE_DIRECTION       (1 << 1)
+-#define H3800_ASIC1_GPIO_STATE_OUT             (1 << 2)
+-#define H3800_ASIC1_GPIO_STATE_TRIGGER_TYPE    (1 << 3)
+-#define H3800_ASIC1_GPIO_STATE_EDGE_TRIGGER    (1 << 4)
+-#define H3800_ASIC1_GPIO_STATE_LEVEL_TRIGGER   (1 << 5)
+-
+-#define H3800_ASIC1_GPIO_RESET_SOFTWARE        (1 << 0)
+-#define H3800_ASIC1_GPIO_RESET_AUTO_SLEEP      (1 << 1)
+-#define H3800_ASIC1_GPIO_RESET_FIRST_PWR_ON    (1 << 2)
+-
+-/* These are all outputs */
+-#define GPIO_H3800_ASIC1_IR_ON_N          (1 << 0)   /* Apply power to the IR Module */
+-#define GPIO_H3800_ASIC1_SD_PWR_ON        (1 << 1)   /* Secure Digital power on */
+-#define GPIO_H3800_ASIC1_RS232_ON         (1 << 2)   /* Turn on power to the RS232 chip ? */
+-#define GPIO_H3800_ASIC1_PULSE_GEN        (1 << 3)   /* Goes to speaker / earphone */
+-#define GPIO_H3800_ASIC1_CH_TIMER         (1 << 4)   /* */
+-#define GPIO_H3800_ASIC1_LCD_5V_ON        (1 << 5)   /* Enables LCD_5V */
+-#define GPIO_H3800_ASIC1_LCD_ON           (1 << 6)   /* Enables LCD_3V */
+-#define GPIO_H3800_ASIC1_LCD_PCI          (1 << 7)   /* Connects to PDWN on LCD controller */
+-#define GPIO_H3800_ASIC1_VGH_ON           (1 << 8)   /* Drives VGH on the LCD (+9??) */
+-#define GPIO_H3800_ASIC1_VGL_ON           (1 << 9)   /* Drivers VGL on the LCD (-6??) */
+-#define GPIO_H3800_ASIC1_FL_PWR_ON        (1 << 10)  /* Frontlight power on */
+-#define GPIO_H3800_ASIC1_BT_PWR_ON        (1 << 11)  /* Bluetooth power on */
+-#define GPIO_H3800_ASIC1_SPK_ON           (1 << 12)  /* */
+-#define GPIO_H3800_ASIC1_EAR_ON_N         (1 << 13)  /* */
+-#define GPIO_H3800_ASIC1_AUD_PWR_ON       (1 << 14)  /* */
+-
+-/* Write enable for the flash */
+-
+-#define _H3800_ASIC1_FlashWP_Base         0x1F00
+-#define _H3800_ASIC1_FlashWP_VPP_ON         0x00    /* R   1: write, 0: protect */
+-#define H3800_ASIC1_FlashWP_VPP_ON       H3800_ASIC1_OFFSET( u8, FlashWP, VPP_ON )
+ 
+ #endif /* _INCLUDE_H3600_GPIO_H_ */
+diff --git a/arch/arm/mach-sa1100/include/mach/irqs.h b/arch/arm/mach-sa1100/include/mach/irqs.h
+index 0cb3660..ae81f80 100644
+--- a/arch/arm/mach-sa1100/include/mach/irqs.h
++++ b/arch/arm/mach-sa1100/include/mach/irqs.h
+@@ -153,8 +153,6 @@
+  */
+ #ifdef CONFIG_SA1111
+ #define NR_IRQS			(IRQ_S1_BVD1_STSCHG + 1)
+-#elif defined(CONFIG_SA1100_H3800)
+-#define NR_IRQS			(IRQ_BOARD_END)
+ #elif defined(CONFIG_SHARP_LOCOMO)
+ #define NR_IRQS			(IRQ_LOCOMO_SPI_TEND + 1)
+ #else
+@@ -175,23 +173,3 @@
+ #define IRQ_LOCOMO_LT_BASE	(IRQ_BOARD_START + 2)
+ #define IRQ_LOCOMO_SPI_BASE	(IRQ_BOARD_START + 3)
+ 
+-/* H3800-specific IRQs (CONFIG_SA1100_H3800) */
+-#define H3800_KPIO_IRQ_START    (IRQ_BOARD_START)
+-#define IRQ_H3800_KEY           (IRQ_BOARD_START + 0)
+-#define IRQ_H3800_SPI           (IRQ_BOARD_START + 1)
+-#define IRQ_H3800_OWM           (IRQ_BOARD_START + 2)
+-#define IRQ_H3800_ADC           (IRQ_BOARD_START + 3)
+-#define IRQ_H3800_UART_0        (IRQ_BOARD_START + 4)
+-#define IRQ_H3800_UART_1        (IRQ_BOARD_START + 5)
+-#define IRQ_H3800_TIMER_0       (IRQ_BOARD_START + 6)
+-#define IRQ_H3800_TIMER_1       (IRQ_BOARD_START + 7)
+-#define IRQ_H3800_TIMER_2       (IRQ_BOARD_START + 8)
+-#define H3800_KPIO_IRQ_COUNT    9
+-
+-#define H3800_GPIO_IRQ_START    (IRQ_BOARD_START + 9)
+-#define IRQ_H3800_PEN           (IRQ_BOARD_START + 9)
+-#define IRQ_H3800_SD_DETECT     (IRQ_BOARD_START + 10)
+-#define IRQ_H3800_EAR_IN        (IRQ_BOARD_START + 11)
+-#define IRQ_H3800_USB_DETECT    (IRQ_BOARD_START + 12)
+-#define IRQ_H3800_SD_CON_SLT    (IRQ_BOARD_START + 13)
+-#define H3800_GPIO_IRQ_COUNT    5
+diff --git a/drivers/video/sa1100fb.c b/drivers/video/sa1100fb.c
+index 076f946..022d07a 100644
+--- a/drivers/video/sa1100fb.c
++++ b/drivers/video/sa1100fb.c
+@@ -251,22 +251,6 @@ static struct sa1100fb_mach_info pal_info __initdata = {
+ #endif
+ #endif
+ 
+-#ifdef CONFIG_SA1100_H3800
+-static struct sa1100fb_mach_info h3800_info __initdata = {
+-	.pixclock	= 174757, 	.bpp		= 16,
+-	.xres		= 320,		.yres		= 240,
+-
+-	.hsync_len	= 3,		.vsync_len	= 3,
+-	.left_margin	= 12,		.upper_margin	= 10,
+-	.right_margin	= 17,		.lower_margin	= 1,
+-
+-	.cmap_static	= 1,
+-
+-	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
+-	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(2),
+-};
+-#endif
+-
+ #ifdef CONFIG_SA1100_H3600
+ static struct sa1100fb_mach_info h3600_info __initdata = {
+ 	.pixclock	= 174757, 	.bpp		= 16,
+@@ -432,11 +416,6 @@ sa1100fb_get_machine_info(struct sa1100fb_info *fbi)
+ 		fbi->rgb[RGB_16] = &h3600_rgb_16;
+ 	}
+ #endif
+-#ifdef CONFIG_SA1100_H3800
+-	if (machine_is_h3800()) {
+-		inf = &h3800_info;
+-	}
+-#endif
+ #ifdef CONFIG_SA1100_COLLIE
+ 	if (machine_is_collie()) {
+ 		inf = &collie_info;
+-- 
+1.6.1.3
+

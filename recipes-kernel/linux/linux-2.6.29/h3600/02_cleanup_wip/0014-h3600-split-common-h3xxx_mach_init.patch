@@ -1,0 +1,137 @@
+From 2a5d78bb214e660bda695e4d669c0ffaf111d27c Mon Sep 17 00:00:00 2001
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Date: Sun, 1 Mar 2009 20:51:50 +0300
+Subject: [PATCH 14/28] h3600: split common h3xxx_mach_init
+
+and separate IRDA-related code. It's needed for forthcoming
+EGPIO cleanup, because the same "abstracted" EGPIOs, used by IRDA
+helpers, correspond to different real GPIOs on h3100 and h3600.
+
+Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
+---
+ arch/arm/mach-sa1100/h3600.c |   81 +++++++++++++++++++++++++++--------------
+ 1 files changed, 53 insertions(+), 28 deletions(-)
+
+diff --git a/arch/arm/mach-sa1100/h3600.c b/arch/arm/mach-sa1100/h3600.c
+index 0e690a0..2358c61 100644
+--- a/arch/arm/mach-sa1100/h3600.c
++++ b/arch/arm/mach-sa1100/h3600.c
+@@ -74,32 +74,6 @@ static struct resource h3xxx_flash_resource = {
+ };
+ 
+ /*
+- * This turns the IRDA power on or off on the Compaq H3600
+- */
+-static int h3600_irda_set_power(struct device *dev, unsigned int state)
+-{
+-	assign_h3600_egpio( IPAQ_EGPIO_IR_ON, state );
+-
+-	return 0;
+-}
+-
+-static void h3600_irda_set_speed(struct device *dev, unsigned int speed)
+-{
+-	assign_h3600_egpio(IPAQ_EGPIO_IR_FSEL, !(speed < 4000000));
+-}
+-
+-static struct irda_platform_data h3600_irda_data = {
+-	.set_power	= h3600_irda_set_power,
+-	.set_speed	= h3600_irda_set_speed,
+-};
+-
+-static void h3xxx_mach_init(void)
+-{
+-	sa11x0_set_flash_data(&h3xxx_flash_data, &h3xxx_flash_resource, 1);
+-	sa11x0_set_irda_data(&h3600_irda_data);
+-}
+-
+-/*
+  * low-level UART features
+  */
+ 
+@@ -315,6 +289,31 @@ static void __init h3100_map_io(void)
+ 	assign_h3600_egpio = h3100_control_egpio;
+ }
+ 
++/*
++ * This turns the IRDA power on or off on the Compaq H3100
++ */
++static int h3100_irda_set_power(struct device *dev, unsigned int state)
++{
++	assign_h3600_egpio(IPAQ_EGPIO_IR_ON, state);
++	return 0;
++}
++
++static void h3100_irda_set_speed(struct device *dev, unsigned int speed)
++{
++	assign_h3600_egpio(IPAQ_EGPIO_IR_FSEL, !(speed < 4000000));
++}
++
++static struct irda_platform_data h3100_irda_data = {
++	.set_power	= h3100_irda_set_power,
++	.set_speed	= h3100_irda_set_speed,
++};
++
++static void h3100_mach_init(void)
++{
++	sa11x0_set_flash_data(&h3xxx_flash_data, &h3xxx_flash_resource, 1);
++	sa11x0_set_irda_data(&h3100_irda_data);
++}
++
+ MACHINE_START(H3100, "Compaq iPAQ H3100")
+ 	.phys_io	= 0x80000000,
+ 	.io_pg_offst	= ((0xf8000000) >> 18) & 0xfffc,
+@@ -322,7 +321,7 @@ MACHINE_START(H3100, "Compaq iPAQ H3100")
+ 	.map_io		= h3100_map_io,
+ 	.init_irq	= sa1100_init_irq,
+ 	.timer		= &sa1100_timer,
+-	.init_machine	= h3xxx_mach_init,
++	.init_machine	= h3100_mach_init,
+ MACHINE_END
+ 
+ #endif /* CONFIG_SA1100_H3100 */
+@@ -422,6 +421,32 @@ static void __init h3600_map_io(void)
+ 	assign_h3600_egpio = h3600_control_egpio;
+ }
+ 
++/*
++ * This turns the IRDA power on or off on the Compaq H3600
++ */
++static int h3600_irda_set_power(struct device *dev, unsigned int state)
++{
++	assign_h3600_egpio(IPAQ_EGPIO_IR_ON, state);
++	return 0;
++}
++
++static void h3600_irda_set_speed(struct device *dev, unsigned int speed)
++{
++	assign_h3600_egpio(IPAQ_EGPIO_IR_FSEL, !(speed < 4000000));
++}
++
++static struct irda_platform_data h3600_irda_data = {
++	.set_power	= h3600_irda_set_power,
++	.set_speed	= h3600_irda_set_speed,
++};
++
++
++static void h3600_mach_init(void)
++{
++	sa11x0_set_flash_data(&h3xxx_flash_data, &h3xxx_flash_resource, 1);
++	sa11x0_set_irda_data(&h3600_irda_data);
++}
++
+ MACHINE_START(H3600, "Compaq iPAQ H3600")
+ 	.phys_io	= 0x80000000,
+ 	.io_pg_offst	= ((0xf8000000) >> 18) & 0xfffc,
+@@ -429,7 +454,7 @@ MACHINE_START(H3600, "Compaq iPAQ H3600")
+ 	.map_io		= h3600_map_io,
+ 	.init_irq	= sa1100_init_irq,
+ 	.timer		= &sa1100_timer,
+-	.init_machine	= h3xxx_mach_init,
++	.init_machine	= h3600_mach_init,
+ MACHINE_END
+ 
+ #endif /* CONFIG_SA1100_H3600 */
+-- 
+1.6.1.3
+

@@ -1,0 +1,52 @@
+From 218b2315fea262bc083c3d7af423c5f4d2d5250b Mon Sep 17 00:00:00 2001
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Date: Wed, 21 Jan 2009 21:16:58 +0300
+Subject: [PATCH 21/28] input: fix h3600_ts_input kconfig dependency
+
+h3600 touchscreen driver depends on ARCH_BITSY, which doesn't exist
+anywhere in current kernel. Looks like "Bitsy" was codename for iPAQ
+h3600 long-long time ago. Googling shows that ARCH_BITSY was renamed to
+ARCH_H3600 somewhere around 2.4.8
+(see http://www.arm.linux.org.uk/developer/v2.4/2.4.8.php).
+
+So change this dependency and also rename TOUCHSCREEN_BITSY to
+TOUCHSCREEN_H3600 for consistency.
+
+Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
+---
+ drivers/input/touchscreen/Kconfig  |    4 ++--
+ drivers/input/touchscreen/Makefile |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
+index bb6486a..5f862d1 100644
+--- a/drivers/input/touchscreen/Kconfig
++++ b/drivers/input/touchscreen/Kconfig
+@@ -29,9 +29,9 @@ config TOUCHSCREEN_ADS7846
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called ads7846.
+ 
+-config TOUCHSCREEN_BITSY
++config TOUCHSCREEN_H3600
+ 	tristate "Compaq iPAQ H3600 (Bitsy) touchscreen"
+-	depends on SA1100_BITSY
++	depends on SA1100_H3600
+ 	select SERIO
+ 	help
+ 	  Say Y here if you have the h3600 (Bitsy) touchscreen.
+diff --git a/drivers/input/touchscreen/Makefile b/drivers/input/touchscreen/Makefile
+index d3375af..8a4a3d3 100644
+--- a/drivers/input/touchscreen/Makefile
++++ b/drivers/input/touchscreen/Makefile
+@@ -8,7 +8,7 @@ wm97xx-ts-y := wm97xx-core.o
+ 
+ obj-$(CONFIG_TOUCHSCREEN_ADS7846)	+= ads7846.o
+ obj-$(CONFIG_TOUCHSCREEN_ATMEL_TSADCC)	+= atmel_tsadcc.o
+-obj-$(CONFIG_TOUCHSCREEN_BITSY)		+= h3600_ts_input.o
++obj-$(CONFIG_TOUCHSCREEN_H3600)		+= h3600_ts_input.o
+ obj-$(CONFIG_TOUCHSCREEN_CORGI)		+= corgi_ts.o
+ obj-$(CONFIG_TOUCHSCREEN_GUNZE)		+= gunze.o
+ obj-$(CONFIG_TOUCHSCREEN_ELO)		+= elo.o
+-- 
+1.6.1.3
+

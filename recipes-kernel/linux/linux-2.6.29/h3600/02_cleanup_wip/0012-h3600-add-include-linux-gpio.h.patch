@@ -1,0 +1,27 @@
+From 4eb0c7b0f49d29bbe6d55dc3159c604b35ecc017 Mon Sep 17 00:00:00 2001
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Date: Wed, 4 Mar 2009 18:36:38 +0300
+Subject: [PATCH 12/28] h3600: add #include <linux/gpio.h>
+
+PSEUDO-COMMIT - for easier patch shuffling
+
+Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
+---
+ arch/arm/mach-sa1100/h3600.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-sa1100/h3600.c b/arch/arm/mach-sa1100/h3600.c
+index a85f9cd..17e7b04 100644
+--- a/arch/arm/mach-sa1100/h3600.c
++++ b/arch/arm/mach-sa1100/h3600.c
+@@ -20,6 +20,7 @@
+  *
+  */
+ #include <linux/device.h>
++#include <linux/gpio.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/partitions.h>
+ #include <linux/serial_core.h>
+-- 
+1.6.1.3
+

@@ -1,0 +1,169 @@
+From ac95107d53ce586dc561b1c0dd6572d2f62ef73e Mon Sep 17 00:00:00 2001
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Date: Fri, 20 Feb 2009 10:18:08 +0100
+Subject: [PATCH 02/28] [ARM] 5408/1: SA1100: update defconfigs after h3800 removal
+
+Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ arch/arm/configs/assabet_defconfig    |    1 -
+ arch/arm/configs/badge4_defconfig     |    1 -
+ arch/arm/configs/cerfcube_defconfig   |    1 -
+ arch/arm/configs/collie_defconfig     |    1 -
+ arch/arm/configs/h3600_defconfig      |    1 -
+ arch/arm/configs/hackkit_defconfig    |    1 -
+ arch/arm/configs/jornada720_defconfig |    1 -
+ arch/arm/configs/lart_defconfig       |    1 -
+ arch/arm/configs/neponset_defconfig   |    1 -
+ arch/arm/configs/pleb_defconfig       |    1 -
+ arch/arm/configs/shannon_defconfig    |    1 -
+ arch/arm/configs/simpad_defconfig     |    1 -
+ 12 files changed, 0 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/configs/assabet_defconfig b/arch/arm/configs/assabet_defconfig
+index b1cd331..c66dd39 100644
+--- a/arch/arm/configs/assabet_defconfig
++++ b/arch/arm/configs/assabet_defconfig
+@@ -89,7 +89,6 @@ CONFIG_SA1100_ASSABET=y
+ # CONFIG_SA1100_COLLIE is not set
+ # CONFIG_SA1100_H3100 is not set
+ # CONFIG_SA1100_H3600 is not set
+-# CONFIG_SA1100_H3800 is not set
+ # CONFIG_SA1100_BADGE4 is not set
+ # CONFIG_SA1100_JORNADA720 is not set
+ # CONFIG_SA1100_HACKKIT is not set
+diff --git a/arch/arm/configs/badge4_defconfig b/arch/arm/configs/badge4_defconfig
+index 80222fe..f264846 100644
+--- a/arch/arm/configs/badge4_defconfig
++++ b/arch/arm/configs/badge4_defconfig
+@@ -91,7 +91,6 @@ CONFIG_ARCH_SA1100=y
+ # CONFIG_SA1100_COLLIE is not set
+ # CONFIG_SA1100_H3100 is not set
+ # CONFIG_SA1100_H3600 is not set
+-# CONFIG_SA1100_H3800 is not set
+ CONFIG_SA1100_BADGE4=y
+ # CONFIG_SA1100_JORNADA720 is not set
+ # CONFIG_SA1100_HACKKIT is not set
+diff --git a/arch/arm/configs/cerfcube_defconfig b/arch/arm/configs/cerfcube_defconfig
+index ee130b5..2b4c066 100644
+--- a/arch/arm/configs/cerfcube_defconfig
++++ b/arch/arm/configs/cerfcube_defconfig
+@@ -93,7 +93,6 @@ CONFIG_SA1100_CERF_FLASH_16MB=y
+ # CONFIG_SA1100_COLLIE is not set
+ # CONFIG_SA1100_H3100 is not set
+ # CONFIG_SA1100_H3600 is not set
+-# CONFIG_SA1100_H3800 is not set
+ # CONFIG_SA1100_BADGE4 is not set
+ # CONFIG_SA1100_JORNADA720 is not set
+ # CONFIG_SA1100_HACKKIT is not set
+diff --git a/arch/arm/configs/collie_defconfig b/arch/arm/configs/collie_defconfig
+index f7622e6..1aa6224 100644
+--- a/arch/arm/configs/collie_defconfig
++++ b/arch/arm/configs/collie_defconfig
+@@ -113,7 +113,6 @@ CONFIG_ARCH_SA1100=y
+ CONFIG_SA1100_COLLIE=y
+ # CONFIG_SA1100_H3100 is not set
+ # CONFIG_SA1100_H3600 is not set
+-# CONFIG_SA1100_H3800 is not set
+ # CONFIG_SA1100_BADGE4 is not set
+ # CONFIG_SA1100_JORNADA720 is not set
+ # CONFIG_SA1100_HACKKIT is not set
+diff --git a/arch/arm/configs/h3600_defconfig b/arch/arm/configs/h3600_defconfig
+index 8f986e9..f2e16fd 100644
+--- a/arch/arm/configs/h3600_defconfig
++++ b/arch/arm/configs/h3600_defconfig
+@@ -90,7 +90,6 @@ CONFIG_ARCH_SA1100=y
+ # CONFIG_SA1100_COLLIE is not set
+ # CONFIG_SA1100_H3100 is not set
+ CONFIG_SA1100_H3600=y
+-# CONFIG_SA1100_H3800 is not set
+ CONFIG_SA1100_H3XXX=y
+ # CONFIG_SA1100_BADGE4 is not set
+ # CONFIG_SA1100_JORNADA720 is not set
+diff --git a/arch/arm/configs/hackkit_defconfig b/arch/arm/configs/hackkit_defconfig
+index 1c8fb89..db0708d 100644
+--- a/arch/arm/configs/hackkit_defconfig
++++ b/arch/arm/configs/hackkit_defconfig
+@@ -91,7 +91,6 @@ CONFIG_ARCH_SA1100=y
+ # CONFIG_SA1100_COLLIE is not set
+ # CONFIG_SA1100_H3100 is not set
+ # CONFIG_SA1100_H3600 is not set
+-# CONFIG_SA1100_H3800 is not set
+ # CONFIG_SA1100_BADGE4 is not set
+ # CONFIG_SA1100_JORNADA720 is not set
+ CONFIG_SA1100_HACKKIT=y
+diff --git a/arch/arm/configs/jornada720_defconfig b/arch/arm/configs/jornada720_defconfig
+index 81fadaf..f3074e4 100644
+--- a/arch/arm/configs/jornada720_defconfig
++++ b/arch/arm/configs/jornada720_defconfig
+@@ -178,7 +178,6 @@ CONFIG_DMABOUNCE=y
+ # CONFIG_SA1100_COLLIE is not set
+ # CONFIG_SA1100_H3100 is not set
+ # CONFIG_SA1100_H3600 is not set
+-# CONFIG_SA1100_H3800 is not set
+ # CONFIG_SA1100_BADGE4 is not set
+ CONFIG_SA1100_JORNADA720=y
+ CONFIG_SA1100_JORNADA720_SSP=y
+diff --git a/arch/arm/configs/lart_defconfig b/arch/arm/configs/lart_defconfig
+index a1cc34f..56ae568 100644
+--- a/arch/arm/configs/lart_defconfig
++++ b/arch/arm/configs/lart_defconfig
+@@ -87,7 +87,6 @@ CONFIG_ARCH_SA1100=y
+ # CONFIG_SA1100_COLLIE is not set
+ # CONFIG_SA1100_H3100 is not set
+ # CONFIG_SA1100_H3600 is not set
+-# CONFIG_SA1100_H3800 is not set
+ # CONFIG_SA1100_BADGE4 is not set
+ # CONFIG_SA1100_JORNADA720 is not set
+ # CONFIG_SA1100_HACKKIT is not set
+diff --git a/arch/arm/configs/neponset_defconfig b/arch/arm/configs/neponset_defconfig
+index d81ea21..36cd62e 100644
+--- a/arch/arm/configs/neponset_defconfig
++++ b/arch/arm/configs/neponset_defconfig
+@@ -91,7 +91,6 @@ CONFIG_ASSABET_NEPONSET=y
+ # CONFIG_SA1100_COLLIE is not set
+ # CONFIG_SA1100_H3100 is not set
+ # CONFIG_SA1100_H3600 is not set
+-# CONFIG_SA1100_H3800 is not set
+ # CONFIG_SA1100_BADGE4 is not set
+ # CONFIG_SA1100_JORNADA720 is not set
+ # CONFIG_SA1100_HACKKIT is not set
+diff --git a/arch/arm/configs/pleb_defconfig b/arch/arm/configs/pleb_defconfig
+index a6b47ea..f2d2dda 100644
+--- a/arch/arm/configs/pleb_defconfig
++++ b/arch/arm/configs/pleb_defconfig
+@@ -88,7 +88,6 @@ CONFIG_ARCH_SA1100=y
+ # CONFIG_SA1100_COLLIE is not set
+ # CONFIG_SA1100_H3100 is not set
+ # CONFIG_SA1100_H3600 is not set
+-# CONFIG_SA1100_H3800 is not set
+ # CONFIG_SA1100_BADGE4 is not set
+ # CONFIG_SA1100_JORNADA720 is not set
+ # CONFIG_SA1100_HACKKIT is not set
+diff --git a/arch/arm/configs/shannon_defconfig b/arch/arm/configs/shannon_defconfig
+index d052c8f..984f709 100644
+--- a/arch/arm/configs/shannon_defconfig
++++ b/arch/arm/configs/shannon_defconfig
+@@ -87,7 +87,6 @@ CONFIG_ARCH_SA1100=y
+ # CONFIG_SA1100_COLLIE is not set
+ # CONFIG_SA1100_H3100 is not set
+ # CONFIG_SA1100_H3600 is not set
+-# CONFIG_SA1100_H3800 is not set
+ # CONFIG_SA1100_BADGE4 is not set
+ # CONFIG_SA1100_JORNADA720 is not set
+ # CONFIG_SA1100_HACKKIT is not set
+diff --git a/arch/arm/configs/simpad_defconfig b/arch/arm/configs/simpad_defconfig
+index 03f783e..685d2b5 100644
+--- a/arch/arm/configs/simpad_defconfig
++++ b/arch/arm/configs/simpad_defconfig
+@@ -89,7 +89,6 @@ CONFIG_ARCH_SA1100=y
+ # CONFIG_SA1100_COLLIE is not set
+ # CONFIG_SA1100_H3100 is not set
+ # CONFIG_SA1100_H3600 is not set
+-# CONFIG_SA1100_H3800 is not set
+ # CONFIG_SA1100_BADGE4 is not set
+ # CONFIG_SA1100_JORNADA720 is not set
+ # CONFIG_SA1100_HACKKIT is not set
+-- 
+1.6.1.3
+

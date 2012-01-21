@@ -1,0 +1,46 @@
+From c3ec9c6676a8c373e3be3414cd0df09a8fc91071 Mon Sep 17 00:00:00 2001
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Date: Sat, 21 Mar 2009 15:40:19 +0300
+Subject: [PATCH 16/28] h3600: switch serial hooks to use gpiolib functions
+
+Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
+---
+ arch/arm/mach-sa1100/h3600.c |   13 ++++---------
+ 1 files changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/mach-sa1100/h3600.c b/arch/arm/mach-sa1100/h3600.c
+index 603761b..a2670be 100644
+--- a/arch/arm/mach-sa1100/h3600.c
++++ b/arch/arm/mach-sa1100/h3600.c
+@@ -79,12 +79,8 @@ static struct resource h3xxx_flash_resource = {
+ 
+ static void h3600_uart_set_mctrl(struct uart_port *port, u_int mctrl)
+ {
+-	if (port->mapbase == _Ser3UTCR0) {
+-		if (mctrl & TIOCM_RTS)
+-			GPCR = GPIO_H3600_COM_RTS;
+-		else
+-			GPSR = GPIO_H3600_COM_RTS;
+-	}
++	if (port->mapbase == _Ser3UTCR0)
++		gpio_set_value(H3X00_GPIO_COM_RTS, !(mctrl & TIOCM_RTS));
+ }
+ 
+ static u_int h3600_uart_get_mctrl(struct uart_port *port)
+@@ -92,11 +88,10 @@ static u_int h3600_uart_get_mctrl(struct uart_port *port)
+ 	u_int ret = TIOCM_CD | TIOCM_CTS | TIOCM_DSR;
+ 
+ 	if (port->mapbase == _Ser3UTCR0) {
+-		int gplr = GPLR;
+ 		/* DCD and CTS bits are inverted in GPLR by RS232 transceiver */
+-		if (gplr & GPIO_H3600_COM_DCD)
++		if (gpio_get_value(H3X00_GPIO_COM_DCD))
+ 			ret &= ~TIOCM_CD;
+-		if (gplr & GPIO_H3600_COM_CTS)
++		if (gpio_get_value(H3X00_GPIO_COM_CTS))
+ 			ret &= ~TIOCM_CTS;
+ 	}
+ 
+-- 
+1.6.1.3
+

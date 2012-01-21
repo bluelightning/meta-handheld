@@ -1,0 +1,25 @@
+From 5642e58ee8ddc8d555a95ce1a67e3172dc5a0ef4 Mon Sep 17 00:00:00 2001
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Date: Tue, 10 Mar 2009 22:52:07 +0300
+Subject: [PATCH 18/28] serial: remove unused set_wake from sa1100_serial
+
+Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
+---
+ drivers/serial/sa1100.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/serial/sa1100.c b/drivers/serial/sa1100.c
+index b24a25e..665c535 100644
+--- a/drivers/serial/sa1100.c
++++ b/drivers/serial/sa1100.c
+@@ -646,7 +646,6 @@ void __init sa1100_register_uart_fns(struct sa1100_port_fns *fns)
+ 		sa1100_pops.set_mctrl = fns->set_mctrl;
+ 
+ 	sa1100_pops.pm       = fns->pm;
+-	sa1100_pops.set_wake = fns->set_wake;
+ }
+ 
+ void __init sa1100_register_uart(int idx, int port)
+-- 
+1.6.1.3
+
