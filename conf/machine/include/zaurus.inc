@@ -82,27 +82,5 @@ MACHINE_EXTRA_RDEPENDS_collie = "zaurusd"
 # Install /boot/boot.cfg in target images
 MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS_append = " kexecboot-cfg "
 
-# Install kernel and symlink in /boot, add kernel-modules metapackage
+# Install kernel and symlink in /boot
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS_append = " kernel-base kernel-image "
-
-# FIXME
-# blindly import from linux-rp.inc (2.6.2x)
-#
-module_autoload_pxaficp_ir = "pxaficp_ir"
-module_autoload_snd-pcm-oss = "snd-pcm-oss"
-module_autoload_pcmcia_core = "pcmcia_core"
-module_autoload_pxa2xx_cs = "pxa2xx_cs"
-module_autoload_ohci-hcd_tosa = "ohci-hcd"
-module_autoload_snd-soc-corgi_c7x0 = "snd-soc-corgi"
-module_autoload_snd-soc-spitz_akita = "snd-soc-spitz"
-module_autoload_snd-soc-spitz_spitz = "snd-soc-spitz"
-module_autoload_snd-soc-poodle_poodle = "snd-soc-poodle"
-module_autoload_locomo-spi_collie = "locomo-spi"
-module_autoload_mmc_block_collie = "mmc_block"
-module_autoload_mmc_spi = "mmc-spi"
-module_autoload_locomokbd_collie = "locomokbd"
-module_autoload_sa1100-cs_collie = "sa1100_cs"
-module_autoload_collie-ts_collie = "collie-ts"
-module_autoload_leds-locomo_collie = "leds-locomo"
-module_autoload_power_collie = "power"
-# Fixme ? module-snd for tosa
