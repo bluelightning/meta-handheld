@@ -82,7 +82,8 @@ MACHINE_EXTRA_RDEPENDS_collie = "zaurusd"
 # Install /boot/boot.cfg in target images
 MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS_append = " kexecboot-cfg "
 
-
+# Install kernel and symlink in /boot, add kernel-modules metapackage
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS_append = " kernel-base kernel-image "
 
 # FIXME
 # blindly import from linux-rp.inc (2.6.2x)
