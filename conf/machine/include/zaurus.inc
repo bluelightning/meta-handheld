@@ -35,8 +35,7 @@ PREFERRED_PROVIDER_virtual/kernel = "linux"
 
 # Default bootloader expects "zImage", use "uImage" for u-boot
 # Note: kexecboot can boot both kind of images
-ZAURUS_KERNEL_IMAGETYPE ?= "zImage"
-KERNEL_IMAGETYPE = "${ZAURUS_KERNEL_IMAGETYPE}"
+KERNEL_IMAGETYPE ?= "zImage"
 
 # sane defaults for devices with only 32Mb RAM (see man xz)
 XZ_COMPRESSION_LEVEL = "-e -7"
@@ -60,16 +59,13 @@ CMDLINE_poodle = "console=ttyS0,115200n8 console=tty1 fbcon=rotate:1"
 CMDLINE_spitz = "console=ttyS0,115200n8 console=tty1 fbcon=rotate:1"
 CMDLINE_tosa = "console=ttyS0,115200n8 console=tty1"
 
-MACHINE_FEATURES = "kernel26 apm alsa pcmcia irda usbgadget keyboard touchscreen screen vfat ext2"
+MACHINE_FEATURES = "apm alsa pcmcia irda usbgadget keyboard touchscreen screen vfat ext2"
 MACHINE_FEATURES_append_akita = " usbhost"
 MACHINE_FEATURES_append_spitz = " usbhost"
 MACHINE_FEATURES_append_tosa  = " usbhost wifi "
 
 MACHINE_EXTRA_RDEPENDS = "zaurusd mtd-utils nandlogical"
 MACHINE_EXTRA_RDEPENDS_collie = "zaurusd"
-
-# Still actual? OHCI suspend/resume fixup
-# MACHINE_EXTRA_RRECOMMENDS_tosa = "apm-tosa-suspendfix"
 
 ##################################
 # Zaurus rootfs are booted by
