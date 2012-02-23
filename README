@@ -12,7 +12,13 @@ Dependencies
 
 This layer depends on:
 
+layer: OE-Core
 URI: git://git.openembedded.org/openembedded-core
+branch: master
+revision: HEAD
+
+layer: meta-initramfs, meta-oe
+URI: git://git.openembedded.org/meta-openembedded
 branch: master
 revision: HEAD
 
