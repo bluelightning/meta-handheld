@@ -1,4 +1,4 @@
 require linux.inc
 require linux-${PV}.inc
 
-PR = "${INC_PR}.2"
+PR = "${INC_PR}.3"
