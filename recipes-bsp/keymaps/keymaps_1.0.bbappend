@@ -1,4 +1,4 @@
-PRINC = "1"
+PRINC = "2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -19,6 +19,11 @@ SRC_URI_append_jornada6xx   = " file://keymap-uk-620-660.map \
 				file://keymap-sp.map \
 				file://keymap-uk.map \
 				"
+
+# we still use keymap-2.6.map files
+do_configure_append () {
+    sed -i -e 's/KERNEL_MAJMIN=.*$/KERNEL_MAJMIN="2.6"/' ${WORKDIR}/keymap.sh
+}
 
 do_install_append () {
     case ${MACHINE} in
