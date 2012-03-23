@@ -71,6 +71,7 @@ do_deploy_append() {
 	#reflash.ctl is required to reflash using bootldr
 	# format:
 	# name file md5sumfile destination
+	mkdir -p ${DEPLOY_DIR_IMAGE}
 	echo "${MACHINE}-kernel-${DATETIME} ${KERNEL_IMAGE_BASE_NAME} - kernel" >> ${DEPLOY_DIR_IMAGE}/reflash.ctl
 	gen_haret_startup
 
