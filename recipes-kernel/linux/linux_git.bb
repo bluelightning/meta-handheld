@@ -18,15 +18,6 @@ SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git;
 
 S = "${WORKDIR}/git"
 
-do_configure_prepend() {
-#otherwise it gets extra '+' "2.6.37+"
-#because:
-#$ scripts/setlocalversion . => +
-#$ make kernelversion => 2.6.37
-#$ make kernelrelease => 2.6.37+
-  rm -rf ${S}/.git
-}
-
 SRC_URI_append_akita = " file://${LOGO_SIZE}/logo_linux_clut224.ppm.bz2 "
 SRC_URI_append_c7x0 = " file://${LOGO_SIZE}/logo_linux_clut224.ppm.bz2 "
 SRC_URI_append_collie = " file://${LOGO_SIZE}/logo_linux_clut224.ppm.bz2 "
