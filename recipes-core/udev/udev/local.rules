@@ -13,9 +13,22 @@
 # %% the '%' char itself
 #
 
-# Create a symlink to any touchscreen input device
-SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{modalias}=="input:*-e0*,3,*a0,1,*18,*", SYMLINK+="input/touchscreen0"
-SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{modalias}=="ads7846", SYMLINK+="input/touchscreen0"
-# This one is necessary for h1940
-SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{modalias}=="input:*-e0*,3,*a0,1,*", SYMLINK+="input/touchscreen0"
+# Media automounting
+SUBSYSTEM=="block", ACTION=="add"    RUN+="/etc/udev/scripts/mount.sh"
+SUBSYSTEM=="block", ACTION=="remove" RUN+="/etc/udev/scripts/mount.sh"
 
+# Handle network interface setup
+SUBSYSTEM=="net", ACTION=="add" RUN+="/etc/udev/scripts/network.sh"
+SUBSYSTEM=="net", ACTION=="remove" RUN+="/etc/udev/scripts/network.sh"
+
+# The first framebuffer is symlinked to /dev/fb                       
+KERNEL=="fb0", SYMLINK+="fb"
+
+# The first rtc device is symlinked to /dev/rtc
+KERNEL=="rtc0", SYMLINK+="rtc"
+
+# Try and modprobe for drivers for new hardware
+ACTION=="add", DEVPATH=="/devices/*", ENV{MODALIAS}=="?*", RUN+="/sbin/modprobe $env{MODALIAS}"
+
+# Create a symlink to any touchscreen input device
+SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{modalias}=="input:*-e0*,3,*a0,1,*", SYMLINK+="input/touchscreen0"
