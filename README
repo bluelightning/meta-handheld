@@ -17,7 +17,7 @@ URI: git://git.openembedded.org/openembedded-core
 branch: master
 revision: HEAD
 
-layer: meta-initramfs, meta-oe
+layer: meta-initramfs
 URI: git://git.openembedded.org/meta-openembedded
 branch: master
 revision: HEAD
