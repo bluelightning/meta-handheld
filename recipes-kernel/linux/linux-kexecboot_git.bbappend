@@ -1,6 +1,8 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-kexecboot-${PV}:${THISDIR}/files:"
 
 DEFAULT_PREFERENCE = "-2"
+
+PR = "${INC_PR}.1"
 #COMPATIBLE_MACHINE = "(akita|c7x0|collie|poodle|tosa|spitz)"
 COMPATIBLE_MACHINE = "(spitz)"
 

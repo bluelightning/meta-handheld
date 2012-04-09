@@ -1,6 +1,6 @@
 require linux.inc
 
-PR = "${INC_PR}.0"
+PR = "${INC_PR}.1"
 COMPATIBLE_MACHINE = "spitz"
 
 DEFAULT_PREFERENCE = "-2"
