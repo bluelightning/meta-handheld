@@ -1,6 +1,6 @@
 require linux.inc
 
-PR = "${INC_PR}.9"
+PR = "${INC_PR}.10"
 COMPATIBLE_MACHINE = "(akita|c7x0|collie|poodle|tosa|spitz|h1940)"
 
 SRC_URI += "${KERNELORG_MIRROR}/linux/kernel/v3.x/linux-${PV}.tar.bz2;name=kernel \
