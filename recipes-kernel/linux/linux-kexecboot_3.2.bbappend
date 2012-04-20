@@ -7,12 +7,12 @@ PR = "${INC_PR}.1"
 COMPATIBLE_MACHINE = "(akita|c7x0|collie|poodle|tosa|spitz)"
 
 # Note we set loglevel=3 and master console on serial to protect bootlogo.
-CMDLINE_c7x0 = "console=tty0 console=ttyS0,115200n8"
-CMDLINE_tosa = "console=tty0 console=ttyS0,115200n8"
-CMDLINE_poodle = "console=tty0 console=ttyS0,115200n8 fbcon=rotate:1"
-CMDLINE_akita = "console=tty0 console=ttyS0,115200n8 fbcon=rotate:1"
-CMDLINE_collie = "console=tty0 console=ttySA0,115200n8 fbcon=rotate:1 mem=64M"
-CMDLINE_spitz = "console=tty0 console=ttyS0,115200n8 fbcon=rotate:1"
+CMDLINE_c7x0 = "console=tty1 console=ttyS0,115200n8"
+CMDLINE_tosa = "console=tty1 console=ttyS0,115200n8"
+CMDLINE_poodle = "console=tty1 console=ttyS0,115200n8 fbcon=rotate:1"
+CMDLINE_akita = "console=tty1 console=ttyS0,115200n8 fbcon=rotate:1"
+CMDLINE_collie = "console=tty1 console=ttySA0,115200n8 fbcon=rotate:1 mem=64M"
+CMDLINE_spitz = "console=tty1 console=ttyS0,115200n8 fbcon=rotate:1"
 
 # Zaurus machines need kernel size-check.
 KERNEL_IMAGE_MAXSIZE_akita = "1294336"
