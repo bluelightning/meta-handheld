@@ -1,0 +1,7 @@
+define KMACHINE spitz
+define KTYPE tiny
+define KARCH arm
+
+include ktypes/tiny
+
+kconf hardware spitz-kexecboot.cfg

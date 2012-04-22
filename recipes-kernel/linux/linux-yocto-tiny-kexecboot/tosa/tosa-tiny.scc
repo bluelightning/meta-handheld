@@ -1,0 +1,7 @@
+define KMACHINE tosa
+define KTYPE tiny
+define KARCH arm
+
+include ktypes/tiny
+
+kconf hardware tosa-kexecboot.cfg

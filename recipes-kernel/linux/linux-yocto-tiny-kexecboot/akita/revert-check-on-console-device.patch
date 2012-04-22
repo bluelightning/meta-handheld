@@ -1,0 +1,41 @@
+From 2f55386ae2eccfa8628dd2ca26d8f33acc72cd7c Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Fri, 20 Apr 2012 00:28:21 +0200
+Subject: [PATCH 41/41] main.c: revert check on console device
+
+* we can have empty /dev, 
+* in case of initramfs devtmpfs must be mounted by hand
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ init/main.c |    7 -------
+ 1 files changed, 0 insertions(+), 7 deletions(-)
+
+diff --git a/init/main.c b/init/main.c
+index cb9d3dc..217ed23 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -794,7 +794,6 @@ static noinline int init_post(void)
+ 
+ static int __init kernel_init(void * unused)
+ {
+-	struct stat console_stat;
+ 	/*
+ 	 * Wait until kthreadd is all set-up.
+ 	 */
+@@ -820,12 +819,6 @@ static int __init kernel_init(void * unused)
+ 
+ 	do_basic_setup();
+ 
+-	/* Use /dev/console to infer if the rootfs is setup properly */
+-	if (sys_newlstat((char __user *) "/dev/console", (struct stat __user *) &console_stat)
+-			|| !S_ISCHR(console_stat.st_mode)) {
+-		panic("/dev/console is missing or not a character device!\nPlease ensure your rootfs is properly configured\n");
+-	}
+-
+ 	/* Open the /dev/console on the rootfs, this should never fail */
+ 	if (sys_open((const char __user *) "/dev/console", O_RDWR, 0) < 0)
+ 		printk(KERN_WARNING "Warning: unable to open an initial console.\n");
+-- 
+1.7.3.4
+
