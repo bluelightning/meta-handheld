@@ -31,7 +31,7 @@ PREFERRED_PROVIDER_virtual/libgl = "mesa-xlib"
 # kernel
 ########
 
-PREFERRED_PROVIDER_virtual/kernel = "linux"
+PREFERRED_PROVIDER_virtual/kernel = "linux-yocto"
 
 # Default bootloader expects "zImage", use "uImage" for u-boot
 # Note: kexecboot can boot both kind of images
