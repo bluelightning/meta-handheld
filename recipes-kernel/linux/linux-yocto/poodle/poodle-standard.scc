@@ -1,0 +1,13 @@
+define KMACHINE poodle
+define KTYPE standard
+define KARCH arm
+
+include ktypes/standard
+
+kconf hardware poodle.cfg
+
+# non hardware
+#include cfg/devtmpfs.scc
+#include cfg/sound.scc
+#include cfg/usb-mass-storage.scc
+#include cfg/fs.scc
