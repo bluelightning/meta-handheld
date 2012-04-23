@@ -69,10 +69,10 @@ MACHINE_EXTRA_RDEPENDS_collie = "zaurusd"
 
 ##################################
 # Zaurus rootfs are booted by
-# linux-kexecboot
+# linux-yocto-tiny-kexecboot
 ##################################
 
-# If set here, each image will also build linux-kexecboot and the updater
+# If set here, each image will also build linux-yocto-tiny-kexecboot and the updater
 # EXTRA_IMAGEDEPENDS += "zaurus-installer"
 
 # Install /boot/boot.cfg in target images
