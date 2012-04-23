@@ -1,8 +1,5 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-kexecboot-${PV}:${THISDIR}/files:"
 
-# wait until klibc_2.0 is out (march/april 2012)
-DEFAULT_PREFERENCE = "-1"
-
 PR = "${INC_PR}.1"
 COMPATIBLE_MACHINE = "(akita|c7x0|collie|poodle|tosa|spitz)"
 
