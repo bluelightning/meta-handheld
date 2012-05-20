@@ -3,10 +3,10 @@ SECTION = "base"
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=94d55d512a9ba36caa9b7df079bae19f"
 DEPENDS = "tslib"
-RDEPENDS_${PN} = "procps"
+
 PE = "1"
 PV = "0.0+gitr${SRCPV}"
-PR = "r24"
+PR = "r25"
 
 SRCREV = "82b30c7865f007fff81372c3cdc71b2ff6843ccc"
 SRC_URI = "git://git.yoctoproject.org/zaurusd;protocol=git \
@@ -56,3 +56,7 @@ inherit autotools pkgconfig update-rc.d
 
 INITSCRIPT_NAME = "zaurusd"
 INITSCRIPT_PARAMS = "start 99 5 2 . stop 20 0 1 6 ."
+
+RDEPENDS_${PN} = "procps"
+RRECOMMENDS_${PN} += "kernel-module-uinput"
+
