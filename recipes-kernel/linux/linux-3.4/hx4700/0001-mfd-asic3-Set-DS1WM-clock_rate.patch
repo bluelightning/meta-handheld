@@ -1,0 +1,66 @@
+From c810d218704c721c1b5516f1be0133dd734f7012 Mon Sep 17 00:00:00 2001
+From: Paul Parsons <lost.distance@yahoo.com>
+Date: Mon, 9 Apr 2012 12:46:23 +0100
+Subject: [PATCH v2] mfd: asic3: Set DS1WM clock_rate
+
+The mfd/asic3 driver does not set the ds1wm_driver_data clock_rate field
+before passing the structure to the DS1WM w1 busmaster driver.
+This was not noticed before commit 26a6afb, because ds1wm_find_divisor()
+unintentionally returned the correct divisor when a zero clock_rate was
+passed in. However after that commit DS1WM fails a zero clock_rate:
+
+ds1wm ds1wm: no suitable divisor for 0Hz clock
+
+This patch sets the ds1wm_driver_data clock_rate field.
+
+Signed-off-by: Paul Parsons <lost.distance@yahoo.com>
+Cc: Philipp Zabel <philipp.zabel@gmail.com>
+---
+
+V2:
+Separated arch/arm/mach-pxa/hx4700.c changes into a separate patch,
+to avoid crossing maintainer boundaries.
+This patch now submitted to linux-kernel instead of linux-arm-kernel.
+Rebased from linux-3.0.1 to linux-3.4-rc2.
+
+ drivers/mfd/asic3.c       |    9 ++++++---
+ include/linux/mfd/asic3.h |    2 ++
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mfd/asic3.c b/drivers/mfd/asic3.c
+index 0c083e7..4bf02a8 100644
+--- a/drivers/mfd/asic3.c
++++ b/drivers/mfd/asic3.c
+@@ -892,10 +892,13 @@ static int __init asic3_mfd_probe(struct platform_device *pdev,
+ 	asic3_mmc_resources[0].start >>= asic->bus_shift;
+ 	asic3_mmc_resources[0].end   >>= asic->bus_shift;
+ 
+-	ret = mfd_add_devices(&pdev->dev, pdev->id,
++	if (pdata->clock_rate) {
++		ds1wm_pdata.clock_rate = pdata->clock_rate;
++		ret = mfd_add_devices(&pdev->dev, pdev->id,
+ 			&asic3_cell_ds1wm, 1, mem, asic->irq_base);
+-	if (ret < 0)
+-		goto out;
++		if (ret < 0)
++			goto out;
++	}
+ 
+ 	if (mem_sdio && (irq >= 0)) {
+ 		ret = mfd_add_devices(&pdev->dev, pdev->id,
+diff --git a/include/linux/mfd/asic3.h b/include/linux/mfd/asic3.h
+index ef6faa5..e1148d0 100644
+--- a/include/linux/mfd/asic3.h
++++ b/include/linux/mfd/asic3.h
+@@ -31,6 +31,8 @@ struct asic3_platform_data {
+ 
+ 	unsigned int gpio_base;
+ 
++	unsigned int clock_rate;
++
+ 	struct asic3_led *leds;
+ };
+ 
+-- 
+1.7.3.4
+

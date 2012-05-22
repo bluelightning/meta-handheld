@@ -1,0 +1,34 @@
+From 9dd6493188b8c82b4dd85815b6b17cdf97d0191f Mon Sep 17 00:00:00 2001
+From: Paul Parsons <lost.distance@yahoo.com>
+Date: Thu, 5 Apr 2012 01:03:12 +0100
+Subject: [PATCH] pxa/hx4700: Add standard UART to hx4700_pin_config[]
+
+Add the two standard UART signals (GPIO46_STUART_RXD, GPIO47_STUART_TXD) to the
+initial mfp config table hx4700_pin_config[] passed to pxa2xx_mfp_config().
+Although pxa2xx_transceiver_mode() can subsequently set these two signals via
+its own call to pxa2xx_mfp_config(), pxa2xx_transceiver_mode() is only present
+when CONFIG_PXA_FICP=y. Hence this patch provides a default mfp config.
+
+Signed-off-by: Paul Parsons <lost.distance@yahoo.com>
+---
+ arch/arm/mach-pxa/hx4700.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index b83b95a..75ce812 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -102,6 +102,10 @@ static unsigned long hx4700_pin_config[] __initdata = {
+ 	GPIO44_BTUART_CTS,
+ 	GPIO45_BTUART_RTS_LPM_LOW,
+ 
++	/* STUART (IRDA) */
++	GPIO46_STUART_RXD,
++	GPIO47_STUART_TXD,
++
+ 	/* PWM 1 (Backlight) */
+ 	GPIO17_PWM1_OUT,
+ 
+-- 
+1.7.3.4
+

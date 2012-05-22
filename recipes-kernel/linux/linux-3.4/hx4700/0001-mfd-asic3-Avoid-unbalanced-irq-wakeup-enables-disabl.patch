@@ -1,0 +1,71 @@
+From ac8818f392975a305d8817339413d3f934921c2d Mon Sep 17 00:00:00 2001
+From: Paul Parsons <lost.distance@yahoo.com>
+Date: Wed, 11 Apr 2012 00:08:40 +0100
+Subject: [PATCH v2] mfd: asic3: Avoid unbalanced irq wakeup enables/disables
+
+The mfd/asic3 driver does not currently define a irq_set_wake() handler.
+Consequently any attempt to configure the 3 ASIC3 GPIO buttons - RECORD,
+CALENDAR, HOME - as wakeup sources results in Unbalanced IRQ warnings
+when the system is woken from sleep mode:
+
+WARNING: at kernel/irq/manage.c:520 irq_set_irq_wake+0xc4/0xf8()
+Unbalanced IRQ 342 wake disable
+...
+WARNING: at kernel/irq/manage.c:520 irq_set_irq_wake+0xc4/0xf8()
+Unbalanced IRQ 337 wake disable
+...
+WARNING: at kernel/irq/manage.c:520 irq_set_irq_wake+0xc4/0xf8()
+Unbalanced IRQ 339 wake disable
+...
+
+This patch adds a irq_set_wake() handler to the mfd/asic3 driver.
+
+Signed-off-by: Paul Parsons <lost.distance@yahoo.com>
+Cc: Philipp Zabel <philipp.zabel@gmail.com>
+---
+
+V2:
+This patch now adds asic3_gpio_irq_set_wake() to mfd/asic3 instead of
+disabling the 3 ASIC3 GPIO buttons as wakeup sources in pxa/hx4700.
+This patch now submitted to linux-kernel instead of linux-arm-kernel.
+Rebased from linux-2.6.39-rc6 to linux-3.4-rc2.
+
+ drivers/mfd/asic3.c |   16 ++++++++++++++++
+ 1 files changed, 16 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/mfd/asic3.c b/drivers/mfd/asic3.c
+index 4bf02a8..f5a8b3a 100644
+--- a/drivers/mfd/asic3.c
++++ b/drivers/mfd/asic3.c
+@@ -353,12 +353,28 @@ static int asic3_gpio_irq_type(struct irq_data *data, unsigned int type)
+ 	return 0;
+ }
+ 
++static int asic3_gpio_irq_set_wake(struct irq_data *data, unsigned int on)
++{
++	struct asic3 *asic = irq_data_get_irq_chip_data(data);
++	u32 bank, index;
++	u16 bit;
++
++	bank = asic3_irq_to_bank(asic, data->irq);
++	index = asic3_irq_to_index(asic, data->irq);
++	bit = 1<<index;
++
++	asic3_set_register(asic, bank + ASIC3_GPIO_SLEEP_MASK, bit, !on);
++
++	return 0;
++}
++
+ static struct irq_chip asic3_gpio_irq_chip = {
+ 	.name		= "ASIC3-GPIO",
+ 	.irq_ack	= asic3_mask_gpio_irq,
+ 	.irq_mask	= asic3_mask_gpio_irq,
+ 	.irq_unmask	= asic3_unmask_gpio_irq,
+ 	.irq_set_type	= asic3_gpio_irq_type,
++	.irq_set_wake	= asic3_gpio_irq_set_wake,
+ };
+ 
+ static struct irq_chip asic3_irq_chip = {
+-- 
+1.7.3.4
+

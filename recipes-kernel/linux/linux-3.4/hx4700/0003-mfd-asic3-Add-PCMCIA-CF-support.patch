@@ -1,0 +1,43 @@
+From f0175daf808abe0e7857fae7e9222d39a9d9abc2 Mon Sep 17 00:00:00 2001
+From: Paul Parsons <lost.distance@yahoo.com>
+Date: Fri, 6 Apr 2012 12:48:33 +0100
+Subject: [PATCH 3/3] mfd: asic3: Add PCMCIA/CF support
+
+This patch is part of a set which adds PCMCIA/CF support for the hx4700.
+This patch adds asic3_set_register() calls to:
+1. Enable the PCMCIA/CF in asic3_probe().
+2. Disable the PCMCIA/CF in asic3_remove().
+
+Signed-off-by: Paul Parsons <lost.distance@yahoo.com>
+Cc: Philipp Zabel <philipp.zabel@gmail.com>
+---
+ drivers/mfd/asic3.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/mfd/asic3.c b/drivers/mfd/asic3.c
+index 1895cf9..0c083e7 100644
+--- a/drivers/mfd/asic3.c
++++ b/drivers/mfd/asic3.c
+@@ -998,6 +998,9 @@ static int __init asic3_probe(struct platform_device *pdev)
+ 
+ 	asic3_mfd_probe(pdev, pdata, mem);
+ 
++	asic3_set_register(asic, ASIC3_OFFSET(EXTCF, SELECT),
++		(ASIC3_EXTCF_CF0_BUF_EN|ASIC3_EXTCF_CF0_PWAIT_EN), 1);
++
+ 	dev_info(asic->dev, "ASIC3 Core driver\n");
+ 
+ 	return 0;
+@@ -1019,6 +1022,9 @@ static int __devexit asic3_remove(struct platform_device *pdev)
+ 	int ret;
+ 	struct asic3 *asic = platform_get_drvdata(pdev);
+ 
++	asic3_set_register(asic, ASIC3_OFFSET(EXTCF, SELECT),
++		(ASIC3_EXTCF_CF0_BUF_EN|ASIC3_EXTCF_CF0_PWAIT_EN), 0);
++
+ 	asic3_mfd_remove(pdev);
+ 
+ 	ret = asic3_gpio_remove(pdev);
+-- 
+1.7.3.4
+
