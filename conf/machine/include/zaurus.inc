@@ -38,7 +38,7 @@ PREFERRED_PROVIDER_virtual/kernel = "linux-yocto"
 KERNEL_IMAGETYPE ?= "zImage"
 
 # sane defaults for devices with only 32Mb RAM (see man xz)
-XZ_COMPRESSION_LEVEL = "-e -7"
+XZ_COMPRESSION_LEVEL = "-2e"
 
 # kernel bootlogo
 LOGO_SIZE = '${@base_conditional("MACHINE_GUI_CLASS", "bigscreen", "vga", "qvga", d)}'
