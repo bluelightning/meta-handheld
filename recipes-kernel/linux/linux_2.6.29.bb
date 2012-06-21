@@ -6,6 +6,8 @@ PR = "r0"
 DEFAULT_PREFERENCE = "-1"
 DEFAULT_PREFERENCE_h3600 = "1"
 
+COMPATIBLE_MACHINE = "h3600"
+
 SRC_URI = "${KERNELORG_MIRROR}/linux/kernel/v2.6/linux-2.6.29.6.tar.bz2;name=kernel \
            file://defconfig"
 
