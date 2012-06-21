@@ -4,6 +4,8 @@ require linux.inc
 DEFAULT_PREFERENCE = "-1"
 DEFAULT_PREFERENCE_hx4700 = "1"
 
+COMPATIBLE_MACHINE = "hx4700"
+
 SRC_URI = "${KERNELORG_MIRROR}/linux/kernel/v3.0/linux-${PV}.tar.bz2;name=kernel \
            file://defconfig "
 
