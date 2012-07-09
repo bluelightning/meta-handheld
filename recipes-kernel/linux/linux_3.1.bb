@@ -1,22 +1,13 @@
 require linux.inc
 
-PR = "${INC_PR}.10"
-COMPATIBLE_MACHINE = "(akita|c7x0|collie|poodle|tosa|spitz|h1940)"
+PR = "${INC_PR}.11"
+COMPATIBLE_MACHINE = "h1940"
 
 SRC_URI += "${KERNELORG_MIRROR}/linux/kernel/v3.x/linux-${PV}.tar.bz2;name=kernel \
            ${KERNELORG_MIRROR}/linux/kernel/v3.x/patch-${PV}.10.bz2;apply=yes;name=stablepatch \
            file://defconfig \
            file://${LOGO_SIZE}/logo_linux_clut224.ppm.bz2 \
            "
-
-SRC_URI_append_collie = " \
-                         file://0001-pcmcia-pxa2xx_sharpsl-retain-ops-structure-on-collie.patch \
-                         file://locomo_kbd_tweak-r2.patch \
-                         "
-
-SRC_URI_append_poodle = " \
-                         file://locomo_kbd_tweak-r2.patch \
-                         "
 
 SRC_URI_append_h1940 = " \
                         file://0001-s3c24xx-DMA-don-t-use-autoreload-feature.patch \
