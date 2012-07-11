@@ -1,11 +1,10 @@
-PRINC := "${@int(PRINC) + 2}"
+PRINC := "${@int(PRINC) + 3}"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 do_install_prepend () {
 	# provide machine-specific /etc/rotation for psplash
-	sed -n 's/^[ \t]DISPLAY_ORIENTATION[ \t]*//p' ${S}/machconfig | tr -dc '[0-9]' > ${S}/rotation
-	printf "\n" >> ${S}/rotation
+	sed -n 's/^[ \t]*DISPLAY_ORIENTATION[ \t]*//p' ${S}/machconfig | tr -dc '[0-9]' > ${S}/rotation
 }
 
 do_install_append () {
