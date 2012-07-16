@@ -7,7 +7,7 @@ SRCREV = "2513"
 PV = "0.0+svnr${SRCPV}"
 PR = "r4"
 
-SRC_URI = "svn://svn.openezx.org/trunk/src/userspace/;module=ezxd;proto=http \
+SRC_URI = "svn://svn.openezx.org/trunk/src/userspace/;module=ezxd;protocol=http \
            file://ezxd.init \
           "
 

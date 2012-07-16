@@ -7,7 +7,7 @@ SRCREV = "1877"
 PV = "${SRCPV}"
 PR = "r1"
 
-SRC_URI = "svn://svn.openezx.org/trunk/src/userspace;module=gpiotool;proto=http"
+SRC_URI = "svn://svn.openezx.org/trunk/src/userspace;module=gpiotool;protocol=http"
 S = "${WORKDIR}/gpiotool"
 
 do_compile() {
