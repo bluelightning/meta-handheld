@@ -110,8 +110,8 @@ MACHINE_EXTRA_RDEPENDS_collie = "zaurusd"
 # If set here, each image will also build linux-yocto-tiny-kexecboot and the updater
 # EXTRA_IMAGEDEPENDS += "zaurus-installer"
 
-# Install /boot/boot.cfg in target images
-MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS_append = " kexecboot-cfg "
+# Install /boot/boot.cfg in target images and formfactor (psplash checks rotation)
+MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS_append = " kexecboot-cfg formfactor"
 
 # Install kernel and symlink in /boot
-MACHINE_ESSENTIAL_EXTRA_RDEPENDS_append = " kernel-base kernel-image "
+MACHINE_ESSENTIAL_EXTRA_RDEPENDS_append = " kernel-base kernel-image"
