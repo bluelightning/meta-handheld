@@ -19,10 +19,10 @@ ERASEBLOCKSIZE_spitz = "0x20000"
 # UBINIZE_ARGS_spitz = "-m 512 -p 16384 -s 256"
 # ERASEBLOCKSIZE_spitz = "0x4000"
 
-# UBI: max collie (14.125 = 904 PEBs)
-# 14.125 x 1024 : 16 = 904 PEBs
-MKUBIFS_ARGS_collie = "-m 512 -e 15872 -c 904 -x zlib"
-UBINIZE_ARGS_collie = "-m 512 -p 16384 -s 256"
+# UBI: max collie (14.125 = 113 PEBs)
+# 14.125 x 1024 : 128 = 113 PEBs
+MKUBIFS_ARGS_collie = "-m 2048 -e 129024 -c 113 -x zlib"
+UBINIZE_ARGS_collie = "-m 2048 -p 131072 -s 512"
 
 # UBI: max poodle (64-7 MiB = 3648 PEBs)
 # 57 x 1024 : 16 = 3648 PEBs
@@ -52,6 +52,9 @@ UBINIZE_ARGS_spitz = "-m 2048 -p 131072 -s 512"
 # kernel now supports favourlzo
 EXTRA_IMAGECMD_jffs2 = "-p -l --eraseblock=${ERASEBLOCKSIZE}"
 EXTRA_IMAGECMD_sum.jffs2 = "${EXTRA_IMAGECMD_jffs2}"
+
+EXTRA_IMAGECMD_jffs2_collie = "--pad=14680064 --little-endian --eraseblock=0x20000 -n"
+EXTRA_IMAGECMD_sum.jffs2_collie = "--pad -l --eraseblock=0x20000 -n"
 
 #########
 # xserver
