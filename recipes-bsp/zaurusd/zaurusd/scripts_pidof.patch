@@ -1,0 +1,33 @@
+From f271fa43ec63ed5650296a393403318ab0e553d4 Mon Sep 17 00:00:00 2001
+From: Paul Eggleton <paul.eggleton@linux.intel.com>
+Date: Sun, 5 Aug 2012 01:41:16 +0100
+Subject: [PATCH] scripts/zaurusd: use pidof instead of mangling output of ps
+
+busybox provides working pidof if sysvinit doesn't, so use that.
+
+Upstream-Status: Pending
+
+Signed-off-by: Paul Eggleton <paul.eggleton@linux.intel.com>
+---
+ scripts/zaurusd.in |    5 +----
+ 1 files changed, 1 insertions(+), 4 deletions(-)
+
+diff --git a/scripts/zaurusd.in b/scripts/zaurusd.in
+index ad896aa..acb5158 100755
+--- a/scripts/zaurusd.in
++++ b/scripts/zaurusd.in
+@@ -1,10 +1,7 @@
+ #!/bin/sh
+ 
+ killproc() {            # kill the named process(es)
+-        pid=`/bin/ps -e x |
+-             /bin/grep $1 |
+-             /bin/grep -v grep |
+-             /bin/sed -e 's/^  *//' -e 's/ .*//'`
++        pid=`/bin/pidof $1`
+         [ "$pid" != "" ] && kill $pid
+ }
+ 
+-- 
+1.7.1
+

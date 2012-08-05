@@ -6,7 +6,7 @@ DEPENDS = "tslib"
 
 PE = "1"
 PV = "0.0+gitr${SRCPV}"
-PR = "r25"
+PR = "r26"
 
 SRCREV = "82b30c7865f007fff81372c3cdc71b2ff6843ccc"
 SRC_URI = "git://git.yoctoproject.org/zaurusd;protocol=git \
@@ -17,6 +17,7 @@ SRC_URI = "git://git.yoctoproject.org/zaurusd;protocol=git \
 	   file://disable-alsa-handling.patch \
 	   file://avoid-rotated-server.patch \
 	   file://new-make.patch \
+	   file://scripts_pidof.patch \
 	   file://zaurus-hinge.matchbox-portrait \
 	   file://zaurus-hinge.matchbox-landscape \
 	   file://zaurus-hinge.bl-on \
@@ -57,6 +58,5 @@ inherit autotools pkgconfig update-rc.d
 INITSCRIPT_NAME = "zaurusd"
 INITSCRIPT_PARAMS = "start 99 5 2 . stop 20 0 1 6 ."
 
-RDEPENDS_${PN} = "procps"
 RRECOMMENDS_${PN} += "kernel-module-uinput"
 

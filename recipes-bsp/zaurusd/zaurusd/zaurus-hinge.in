@@ -4,10 +4,7 @@
 #
 
 killproc() {            # kill the named process(es)
-        pid=`/bin/ps -e x |
-             /bin/grep $1 |
-             /bin/grep -v grep |
-             /bin/sed -e 's/^  *//' -e 's/ .*//'`
+        pid=`/bin/pidof $1`
         [ "$pid" != "" ] && kill $pid
 }
 
@@ -19,7 +16,11 @@ if [ -z "$1" ]; then
    exit 1
 fi
 
-panel_user="`ps aux|grep matchbox-panel|grep -v grep | awk '{print $1}'`"
+if [ ps aux > /dev/null 2>&1 ] ; then
+	panel_user="`ps aux|grep matchbox-panel|grep -v grep | awk '{print $1}'`"
+else
+	panel_user="`ps|grep matchbox-panel|grep -v grep | awk '{print $2}'`"
+fi
 
 STATE=$1
 
