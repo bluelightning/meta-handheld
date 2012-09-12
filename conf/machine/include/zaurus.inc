@@ -60,10 +60,9 @@ EXTRA_IMAGECMD_sum.jffs2_collie = "--pad -l --eraseblock=0x20000 -n"
 # xserver
 #########
 
-PREFERRED_PROVIDER_virtual/xserver = "xserver-xorg-lite"
-PREFERRED_PROVIDER_virtual/xserver-xf86 = "xserver-xorg-lite"
-XSERVER = "xserver-xorg-lite xf86-video-fbdev xf86-input-keyboard xf86-input-mouse xf86-input-evdev"
-PREFERRED_PROVIDER_virtual/libgl = "mesa-xlib"
+# Zaurus gets preferred providers settings
+# from distro/include/default-providers.inc
+XSERVER = "xserver-xorg xf86-video-fbdev xf86-input-keyboard xf86-input-mouse xf86-input-evdev"
 
 ########
 # kernel
