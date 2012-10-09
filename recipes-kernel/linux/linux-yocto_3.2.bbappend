@@ -1,4 +1,4 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:${THISDIR}/files:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-3.2:${THISDIR}/${PN}:${THISDIR}/files:"
 
 COMPATIBLE_MACHINE .= "|akita|c7x0|collie|poodle|spitz|tosa"
 
