@@ -24,4 +24,3 @@ BBCLASSEXTEND = "native"
 
 COMPATIBLE_MACHINE = "(poodle|c7x0|spitz|akita|tosa)"
 
-NATIVE_INSTALL_WORKS = "1"
