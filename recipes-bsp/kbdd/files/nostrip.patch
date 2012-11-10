@@ -1,0 +1,20 @@
+Disable stripping symbols at link time
+
+We need these so we can extract the debug symbols and not get a QA
+warning.
+
+Signed-off-by: Paul Eggleton <paul.eggleton@linux.intel.com>
+
+diff --git a/Makefile b/Makefile
+index 8093896..ed556fd 100644
+--- a/Makefile
++++ b/Makefile
+@@ -22,7 +22,7 @@ OBJ	=	kbd.o dev_uinput.o
+ all:	kbdd
+ 
+ kbdd:	$(OBJ)
+-	$(CC) -s -o kbdd $(OBJ) $(LDFLAGS)
++	$(CC) -o kbdd $(OBJ) $(LDFLAGS)
+ 
+ kbd.o:	kbd.c keyboards.h
+ 

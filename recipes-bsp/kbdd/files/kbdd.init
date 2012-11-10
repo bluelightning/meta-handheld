@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+
+. /etc/profile
+
+case $1 in
+'start')
+    /usr/sbin/kbdd -c /etc/kbdd.conf > /dev/null 2>&1 &
+    ;;
+
+'stop')
+    killall kbdd
+    ;;
+
+'restart')
+    $0 stop
+    $o start
+    ;;
+
+*)
+    echo "usage: $0 { start | stop | restart }"
+    ;;
+
+esac
+
