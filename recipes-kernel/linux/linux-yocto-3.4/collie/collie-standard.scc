@@ -1,0 +1,7 @@
+define KMACHINE collie
+define KTYPE standard
+define KARCH arm
+
+include ktypes/standard
+
+include collie.scc

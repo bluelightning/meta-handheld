@@ -1,0 +1,10 @@
+kconf hardware tosa.cfg
+
+include ../zaurus-pxa-only.scc
+include ../zaurus-common.scc
+include ../zaurus-usb-host.scc
+
+patch sharpsl_param.patch
+patch pxa25x-gpio-wakeup.patch
+patch pxa25x-sa1100-rtc.patch
+patch spi-pxa2xx-fix-mem.patch
