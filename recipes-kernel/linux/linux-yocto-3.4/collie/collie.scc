@@ -3,4 +3,3 @@ kconf hardware collie.cfg
 include ../zaurus-common.scc
 
 patch locomo_kbd_tweak-r2.patch
-patch 0001-pcmcia-pxa2xx_sharpsl-retain-ops-structure-on-collie.patch
