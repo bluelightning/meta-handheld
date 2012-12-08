@@ -1,3 +1,4 @@
+kconf hardware ../spitz/spitz.cfg
 kconf hardware akita.cfg
 
 include ../zaurus-pxa-only.scc
