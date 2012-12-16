@@ -21,7 +21,6 @@ SRC_URI = "http://sources.openembedded.org/linux.kernel26_anoncvs.handhelds.org_
 
 require linux-handhelds-2.6.inc
 
-#           ${RPSRC}/export_atags-r0a.patch;status=pending;name=rppatch35 \
 SRC_URI[rppatch35.md5sum] = "8ab51e8ff728f4155db64b9bb6ea6d71"
 SRC_URI[rppatch35.sha256sum] = "75d4c6ddbfc5e4fff7690a3308e2574f89a0e2709fb91caccb29067a9dad251a"
 SRC_URI[kernelsrc.md5sum] = "1098aed5ccce21d880d98b4ed71b9bcd"
