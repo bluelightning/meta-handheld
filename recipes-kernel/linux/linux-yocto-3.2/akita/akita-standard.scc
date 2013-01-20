@@ -2,7 +2,7 @@ define KMACHINE akita
 define KTYPE standard
 define KARCH arm
 
-include ktypes/standard
+include ktypes/standard/standard.scc
 
 kconf hardware akita.cfg
 
