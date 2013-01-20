@@ -2,6 +2,6 @@ define KMACHINE c7x0
 define KTYPE tiny
 define KARCH arm
 
-include ktypes/tiny
+include ktypes/tiny/tiny.scc
 
 kconf hardware c7x0-kexecboot.cfg
