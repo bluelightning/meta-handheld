@@ -87,7 +87,6 @@ LOGO_SIZE = '${@base_conditional("MACHINE_GUI_CLASS", "bigscreen", "vga", "qvga"
 SERIAL_CONSOLE = "115200 ttyS0"
 SERIAL_CONSOLE_collie = "115200 ttySA0"
 
-PCMCIA_MANAGER ?= "pcmciautils"
 
 CMDLINE_akita = "console=ttyS0,115200n8 console=tty1 fbcon=rotate:1"
 CMDLINE_c7x0 = "console=ttyS0,115200n8 console=tty1"
