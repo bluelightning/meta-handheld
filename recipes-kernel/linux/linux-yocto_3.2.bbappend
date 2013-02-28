@@ -27,8 +27,12 @@ SRC_URI_append_collie = " \
            file://qvga/logo_linux_clut224.ppm.bz2 \
            file://0001-pcmcia-pxa2xx_sharpsl-retain-ops-structure-on-collie.patch \
            file://collie_remove_irq_to_gpio.patch \
+           file://mcp-device.patch \
+           file://collie-jedec-probe.patch \
+           file://collie-eraseinfo.patch \
            file://locomo_kbd_tweak-r2.patch \
            "
+#           file://collie-mtd-rw.patch
 
 SRC_URI_append_poodle = " \
            file://poodle-standard.scc \

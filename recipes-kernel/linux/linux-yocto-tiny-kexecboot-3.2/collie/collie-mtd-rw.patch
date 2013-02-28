@@ -1,0 +1,12 @@
+diff --git a/drivers/mtd/maps/sa1100-flash.c b/drivers/mtd/maps/sa1100-flash.c
+index fa9c0a9..bf6b04f 100644
+--- a/drivers/mtd/maps/sa1100-flash.c
++++ b/drivers/mtd/maps/sa1100-flash.c
+@@ -206,6 +206,7 @@ static int sa1100_probe_subdev(struct sa_subdev_info *subdev, struct resource *r
+ 		goto err;
+ 	}
+ 	subdev->mtd->owner = THIS_MODULE;
++	subdev->mtd->unlock(subdev->mtd, 0xc0000, subdev->mtd->size - 0xc0000);
+ 
+ 	printk(KERN_INFO "SA1100 flash: CFI device at 0x%08lx, %uMiB, %d-bit\n",
+ 		phys, (unsigned)(subdev->mtd->size >> 20),

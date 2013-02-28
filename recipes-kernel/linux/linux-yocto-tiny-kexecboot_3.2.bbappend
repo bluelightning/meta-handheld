@@ -34,12 +34,16 @@ SRC_URI_append_c7x0 = " \
 SRC_URI_append_collie = " \
            file://collie-tiny.scc \
            file://collie-kexecboot.cfg \
-           file://qvga/logo_linux_clut224.ppm.bz2 \
            file://0001-pcmcia-pxa2xx_sharpsl-retain-ops-structure-on-collie.patch \
            file://locomo_kbd_tweak-r2.patch \
            file://collie_remove_irq_to_gpio.patch \
+           file://mcp-device.patch \
+           file://collie-jedec-probe.patch \
+           file://collie-eraseinfo.patch \
+           file://qvga/logo_linux_clut224.ppm.bz2 \
            file://revert-check-on-console-device.patch \
            "
+#           file://collie-mtd-rw.patch
 
 SRC_URI_append_poodle = " \
            file://poodle-tiny.scc \
