@@ -100,8 +100,8 @@ MACHINE_FEATURES_append_akita = " usbhost"
 MACHINE_FEATURES_append_spitz = " usbhost"
 MACHINE_FEATURES_append_tosa  = " usbhost wifi "
 
-MACHINE_EXTRA_RDEPENDS = "zaurusd mtd-utils nandlogical"
-MACHINE_EXTRA_RDEPENDS_collie = "zaurusd"
+MACHINE_EXTRA_RDEPENDS = "zaurusd mtd-utils mtd-utils-jffs2 mtd-utils-ubifs nandlogical"
+MACHINE_EXTRA_RDEPENDS_collie = "zaurusd mtd-utils mtd-utils-jffs2 mtd-utils-ubifs"
 
 ##################################
 # Zaurus rootfs are booted by
