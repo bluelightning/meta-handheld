@@ -1,6 +1,0 @@
-kconf hardware zaurus-usb-ohci.cfg
-kconf non-hardware zaurus-usb-ohci-non-hw.cfg
-
-include features/usb/ohci-hcd.scc
-include features/usb-net/usb-net.scc
-#include cfg/usb-mass-storage.scc

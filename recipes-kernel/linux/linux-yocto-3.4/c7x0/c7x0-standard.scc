@@ -1,7 +1,0 @@
-define KMACHINE c7x0
-define KTYPE standard
-define KARCH arm
-
-include ktypes/standard/standard.scc
-
-include c7x0.scc
