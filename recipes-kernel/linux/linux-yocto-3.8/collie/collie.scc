@@ -1,0 +1,8 @@
+kconf hardware collie.cfg
+
+include ../zaurus-common.scc
+
+patch locomo_kbd_tweak-r2.patch
+patch mcp-device.patch
+patch collie-jedec-probe.patch
+patch collie-eraseinfo.patch
