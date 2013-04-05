@@ -43,7 +43,6 @@ SRC_URI_append_collie = " \
            file://qvga/logo_linux_clut224.ppm.bz2 \
            file://revert-check-on-console-device.patch \
            "
-#           file://collie-mtd-rw.patch
 
 SRC_URI_append_poodle = " \
            file://poodle-tiny.scc \
