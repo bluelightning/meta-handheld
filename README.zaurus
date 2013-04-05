@@ -1,0 +1,88 @@
+KEXECBOOT KERNEL
+================
+For the Zaurus a special kernel+initramfs has been developed.
+This special-purpose kernel is small enough to be flashed on NAND and features
+a framebuffer graphical menu for the selection of boot media containing the 
+kernel to be kexec'ed in the second phase.
+Multi-partition cards and lots of filesystems are supported.
+The kernels to be launched are searched for in /boot of each available partition.
+There is a also a configuration file (/boot/boot.cfg) which allows selection of
+other kernels, custom kernel command lines, and specifies the label and the icon
+for each instance.
+
+How to install:
+Just unpack zaurus-installer-YOURMACHINE.tar.gz on a free (FAT or EXT2/3
+formatted) partition: the package contains the kexecboot-kernel and the 
+updater.sh utility. Then proceed as usual for flashing (switch off, pull battery
+out, insert battery again, before inserting AC plug press OK+Power On.
+In the Japanese Menu select 4 and finally 3 for SD card or 4 for CF).
+
+For the SL-5500 (collie) and optionally for other Zaurus too, flashing is 
+possible just using the routines of the original firmware: reset the unit,
+Press C and D button during restart. Note the kernel must be renamed 'zImage'
+(not 'zImage.bin') and the CF card must be formatted FAT.
+
+
+ZAURUS FLASHING HOW-TO
+======================
+The typical flashing procedure mentioned above is easy, using updater.sh
+script which expects the following files:
+
+ zImage     for kernel
+ initrd.bin for rootfs in mtd2
+ home.bin   for second rootfs in mtd3 (optional)
+
+Alternatively all the flashing work can be done from command line,
+separately for each partition:
+
+ mtd1 kernel (using nandlogical)
+ mtd2 rootfs (using nandwrite)
+ mtd3 home   (using nandwrite)
+
+
+kernel
+======
+Typically you should rarely update linux-kexecboot on device,
+
+Besides the updater.sh method you could use the nandlogical tool.
+This utility allows flashing of the kernel directly from shell
+on all Zaurus except collie (collie has NOR flash and not NAND) 
+
+Example:
+
+ nandlogical /dev/mtd1 WRITE 0x0E0000 0x140000 zImage.bin
+
+
+JFFS2 images on the other partitions
+====================================
+Once built, the jffs2 and/or ubifs images need to be flashed on device.
+For JFFS2 the typical choice is the usual flashing procedure using updater.sh
+but you could do it from shell as well using nandwrite (from mtd-utils):
+
+Example: one image on mtd2 and another one on mtd3 (optional)
+
+1st rootfs: plain JFFS2 image
+ flash_eraseall -j /dev/mtd2
+ nandwrite /dev/mtd2 /path/to/core-image-base-<machine>-<date>.rootfs.jffs2
+
+2nd rootfs: JFFS2-summary image
+ flash_eraseall -j /dev/mtd3
+ nandwrite /dev/mtd3 /path/to/core-image-base-<machine>-<date>.rootfs.sum.jffs2
+
+Note: flash_eraseall is deprecated because the erase-counters are reset!
+
+
+UBIFS images
+============
+Recent kexecboot versions can boot the first ubi volume found on each device.
+
+Ubi volumes must be created with the proper ubi-tools (from mtd-utils).
+
+Example: one volume with max available size
+
+ ubiformat /dev/mtd2
+ ubiattach -p /dev/mtd2
+ ubimkvol /dev/ubi0 -N volume_name -m
+ ubiupdatevol /dev/ubi0_0 /path/to/core-image-base-<machine>-<date>.rootfs.ubifs
+
+Same operations can be done for mtd3.
