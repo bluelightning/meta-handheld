@@ -1,6 +1,7 @@
 DESCRIPTION = "Linux 2.6.36 kernel for the Ben Nanonote"
 SECTION = "kernel"
 LICENSE = "GPLv2"
+LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 
 DEPENDS += "u-boot-mkimage-native"
 
@@ -15,7 +16,9 @@ SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/kristoffer/linux-hpc.gi
 	   file://logo_linux_clut224.tar.gz \
 	   file://modifier-keys.patch \
 	   file://config-ben-nanonote \
-	   file://jz4740-udc.patch"
+	   file://jz4740-udc.patch \
+	   file://fix-gcc-4.6.0-build-errors.patch \
+	   "
 
 S = "${WORKDIR}/git"
 
