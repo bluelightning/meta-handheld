@@ -6,3 +6,4 @@ include ../zaurus-usb-host.scc
 
 patch sharpsl_param.patch
 patch spi-pxa2xx-fix-mem.patch
+patch pxamci-regulator.patch
