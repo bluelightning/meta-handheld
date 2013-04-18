@@ -1,4 +1,18 @@
+* Unbreak kernel boot (tested with kexecboot)
+* Patch was sent twice upstrream:
+* http://lists.infradead.org/pipermail/linux-arm-kernel/2012-December/137284.html
+*
+* Devices that call sharpsl_save_param() will hang on boot due to
+* a memcpy call that uses a physical address that is no longer
+* accessible. Fix this by converting the physical address into a virtual one.
+
 Signed-off-by: Marko Katic <dromede.gmail.com>
+
+Upstream-Status: Submitted
+https://patchwork.kernel.org/patch/1818681/
+---
+ arch/arm/common/sharpsl_param.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/common/sharpsl_param.c b/arch/arm/common/sharpsl_param.c
 index d56c932..b70b13a 100644

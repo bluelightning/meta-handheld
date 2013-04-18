@@ -55,6 +55,9 @@ support to be more modular, to do more checks and to always fall back
 to platform data.
 
 Signed-off-by: Marko Katic <dromede@gmail.com>
+
+Upstream-Status: Submitted
+https://patchwork.kernel.org/patch/1875561/
 ---
  drivers/mmc/host/pxamci.c |   37 ++++++++++++++++++++++++-------------
  1 file changed, 24 insertions(+), 13 deletions(-)

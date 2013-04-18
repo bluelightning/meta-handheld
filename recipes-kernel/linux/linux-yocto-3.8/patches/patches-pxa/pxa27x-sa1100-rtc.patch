@@ -11,8 +11,9 @@ Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
 Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 Signed-off-by: Haojian Zhuang <haojian.zhuang@gmail.com>
 
-Upstream-Status: Accepted. Committed in v3.9-rc1
-with commit id 495b21dc0e488b784ab1d4007d00db1ca2a95c98
+Upstream-Status: Accepted
+Committed in v3.9-rc1 with commit id
+495b21dc0e488b784ab1d4007d00db1ca2a95c98
 ---
  arch/arm/mach-pxa/pxa27x.c |    1 +
  1 files changed, 1 insertions(+), 0 deletions(-)
@@ -29,6 +30,3 @@ index 8047ee0..5970ebc 100644
  };
  
  #ifdef CONFIG_PM
--- 
-1.7.8.6
-

@@ -1,3 +1,38 @@
+Initial try to fix compilation error
+
+linux/include/linux/mfd/mcp.h:22:16: error: field 'attached_device' has incomplete type
+linux/include/linux/mfd/mcp.h:48:23: error: field 'drv' has incomplete type
+linux/include/linux/mfd/ucb1x00.h:137:17: error: field 'dev' has incomplete type
+linux/drivers/power/collie_battery.c:290:56: error: unknown type name 'pm_message_t'
+linux/drivers/power/collie_battery.c:371:13: error: 'collie_bat_suspend' undeclared here (not in a function)
+| make[4]: *** [drivers/power/collie_battery.o] Error 1
+| make[3]: *** [drivers/power] Error 2
+
+Patch should be refactored following Anton's suggestions.
+"Generally, we don't depend on indirect inclusions. But if it doesn't harm
+anyhow so far, we may not bother with this."
+
+Here the suggestion:
+
+Things are a bit more complex...
+* linux/include/linux/mfd/mcp.h:22:16: error: field 'attached_device' has incomplete type
+
+You have to add #include <linux/device.h> into mfd/mcp.h. This will add
+struct device and...
+
+* linux/include/linux/mfd/mcp.h:48:23: error: field 'drv' has incomplete type
+ struct device_driver.
+
+* linux/include/linux/mfd/ucb1x00.h:137:17: error: field 'dev' has incomplete type
+Same here, the file ucb1x00.h needs #include <linux/device.h>.
+
+* linux/drivers/power/collie_battery.c:290:56: error: unknown type name 'pm_message_t'
+#include <linux/pm.h> into collie_battery.c
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+
+Upstream-Status: Pending
+
 --- a/include/linux/mfd/mcp.h	2013-02-18 00:14:09.000000000 +0100
 +++ b/include/linux/mfd/mcp.h	2013-02-17 23:55:52.000000000 +0100
 @@ -10,6 +10,8 @@

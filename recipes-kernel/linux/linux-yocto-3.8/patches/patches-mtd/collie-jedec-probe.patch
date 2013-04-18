@@ -1,3 +1,14 @@
+* Zaurus 5500 contains 2 LH28F640BFHE-PTTL90 (64M 4Mx16) and
+* the LH28F640BFHE-PTTL90.pdf datasheet available on the net shows
+* the exact erasesize and the OTP support.
+* At the moment only jedec_probe can discover the chip and
+* the NOR is mounted read only probably because of wrong vpp
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+
+Upstream-Status: Submitted
+http://lists.infradead.org/pipermail/linux-mtd/2013-February/045781.html
+
 --- a/arch/arm/mach-sa1100/collie.c
 +++ b/arch/arm/mach-sa1100/collie.c
 @@ -289,7 +289,7 @@

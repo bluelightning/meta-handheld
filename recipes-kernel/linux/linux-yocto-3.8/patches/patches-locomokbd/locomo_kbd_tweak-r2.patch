@@ -8,6 +8,9 @@ Subject: [PATCH 43/43] locomokbd: apply tweaks for Zaurus
 Signed-off-by: Richard Purdie <rpurdie@rpsys.net>
 Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
 
+Upstream-Status: Inappropriate [embedded specific]
+[Patch needed for initramfs w/out keymaps like kexecboot]
+
 diff --git a/drivers/input/keyboard/locomokbd.c b/drivers/input/keyboard/locomokbd.c
 index c94d610..2b978c8 100644
 --- a/drivers/input/keyboard/locomokbd.c

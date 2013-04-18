@@ -1,3 +1,16 @@
+pxa2xx_spi_probe allocates struct driver_data and null_dma_buf
+at same time via spi_alloc_master(), but then calculates
+null_dma_buf pointer incorrectly, and it causes memory corruption
+later if DMA usage is enabled.
+
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+
+Upstream-Status: Submitted
+https://patchwork.kernel.org/patch/1657911/
+---
+ drivers/spi/spi-pxa2xx.c | 9 +++++----
+  1 file changed, 5 insertions(+), 4 deletions(-)
+
 diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
 index dc25bee..b25fe27 100644
 --- a/drivers/spi/spi-pxa2xx.c
