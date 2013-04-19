@@ -3,7 +3,7 @@ kconf hardware poodle.cfg
 include ../zaurus-pxa-only.scc
 include ../zaurus-common.scc
 
-patch locomo_kbd_tweak-r2.patch
-patch sharpsl_param.patch
-patch spi-pxa2xx-fix-mem.patch
-patch pxamci-regulator.patch
+patch ../patches/patches-locomokbd/locomo_kbd_tweak-r2.patch
+patch ../patches/patches-pxa/sharpsl_param.patch
+patch ../patches/patches-pxa/spi-pxa2xx-fix-mem.patch
+patch ../patches/patches-pxa/pxamci-regulator.patch

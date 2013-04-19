@@ -2,7 +2,7 @@ kconf hardware collie.cfg
 
 include ../zaurus-common.scc
 
-patch locomo_kbd_tweak-r2.patch
-patch mcp-device.patch
-patch collie-jedec-probe.patch
-patch collie-eraseinfo.patch
+patch ../patches/patches-locomokbd/locomo_kbd_tweak-r2.patch
+patch ../patches/patches-mfd/mcp-device.patch
+patch ../patches/patches-mtd/collie-jedec-probe.patch
+patch ../patches/patches-mtd/collie-eraseinfo.patch
