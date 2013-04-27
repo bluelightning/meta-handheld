@@ -5,5 +5,4 @@ include ../zaurus-common.scc
 
 patch ../patches/patches-locomokbd/locomo_kbd_tweak-r2.patch
 patch ../patches/patches-pxa/sharpsl_param.patch
-patch ../patches/patches-pxa/spi-pxa2xx-fix-mem.patch
 patch ../patches/patches-pxa/pxamci-regulator.patch

@@ -6,5 +6,4 @@ include ../zaurus-usb-host.scc
 
 patch ../patches/patches-pxa/sharpsl_param.patch
 patch ../patches/patches-pxa/pxa27x-sa1100-rtc.patch
-patch ../patches/patches-pxa/spi-pxa2xx-fix-mem.patch
 patch ../patches/patches-pxa/pxamci-regulator.patch
