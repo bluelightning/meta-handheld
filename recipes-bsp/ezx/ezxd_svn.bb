@@ -1,12 +1,12 @@
 DESCRIPTION = "Open implementation of motorola's tapisrv, replaces opentapi"
-LICENSE = "GPLv2"
+LICENSE = "GPLv2+"
 SECTION = "devel"
 AUTHOR = "Daniel Ribeiro"
 
 SRCREV = "2513"
 PV = "0.0+svnr${SRCPV}"
 PR = "r4"
-
+LIC_FILES_CHKSUM = "file://plugin.c;endline=19;md5=16da36fbb577507b411368f133ce2067"
 SRC_URI = "svn://svn.openezx.org/trunk/src/userspace/;module=ezxd;protocol=http \
            file://ezxd.init \
           "
@@ -18,9 +18,9 @@ INITSCRIPT_PARAMS = "start 00 S ."
 
 S = "${WORKDIR}/${PN}"
 
-CFLAGS_append = " -DDEBUG " 
+CFLAGS_append = " -DDEBUG -fPIC " 
 
-TARGET_CC_ARCH += "${LDFLAGS}"
+TARGET_CC_ARCH += "${LDFLAGS} -fPIC"
 
 do_configure() {
         # Comment out both CC and CROSS definitions
