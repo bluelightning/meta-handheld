@@ -1,7 +1,0 @@
-define KMACHINE akita
-define KTYPE tiny
-define KARCH arm
-
-include ktypes/tiny/tiny.scc
-
-kconf hardware akita-kexecboot.cfg

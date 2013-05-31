@@ -1,7 +1,0 @@
-define KMACHINE collie
-define KTYPE tiny
-define KARCH arm
-
-include ktypes/tiny/tiny.scc
-
-kconf hardware collie-kexecboot.cfg
