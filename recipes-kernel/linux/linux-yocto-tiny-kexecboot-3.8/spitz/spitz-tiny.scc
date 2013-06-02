@@ -1,0 +1,15 @@
+define KMACHINE spitz
+define KTYPE tiny
+define KARCH arm
+
+include ktypes/tiny/tiny.scc
+
+kconf hardware spitz-kexecboot.cfg
+
+# fix mtd size for SL-C3200
+patch 3200-mtd.patch
+
+patch ../patches/patches-pxa/sharpsl_param.patch
+patch ../patches/patches-pxa/pxa27x-sa1100-rtc.patch
+patch ../patches/patches-pxa/pxamci-regulator.patch
+patch ../patches/revert-check-on-console-device.patch

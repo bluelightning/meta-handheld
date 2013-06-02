@@ -1,0 +1,11 @@
+define KMACHINE c7x0
+define KTYPE tiny
+define KARCH arm
+
+include ktypes/tiny/tiny.scc
+
+kconf hardware c7x0-kexecboot.cfg
+
+patch ../patches/patches-pxa/sharpsl_param.patch
+patch ../patches/patches-pxa/pxamci-regulator.patch
+patch ../patches/revert-check-on-console-device.patch

@@ -1,0 +1,11 @@
+define KMACHINE tosa
+define KTYPE tiny
+define KARCH arm
+
+include ktypes/tiny/tiny.scc
+
+kconf hardware tosa-kexecboot.cfg
+
+patch ../patches/patches-pxa/sharpsl_param.patch
+patch ../patches/patches-pxa/pxamci-regulator.patch
+patch ../patches/revert-check-on-console-device.patch
