@@ -8,4 +8,4 @@ KERNEL_IMAGE_MAXSIZE_poodle = "1294336"
 KERNEL_IMAGE_MAXSIZE_tosa = "1294336"
 KERNEL_IMAGE_MAXSIZE_spitz = "1294336"
 
-include linux-yocto-handhelds.inc
+require linux-yocto-handhelds.inc
