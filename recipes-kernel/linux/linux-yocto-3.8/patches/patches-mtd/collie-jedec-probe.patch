@@ -1,17 +1,27 @@
-* Zaurus 5500 contains 2 LH28F640BFHE-PTTL90 (64M 4Mx16) and
-* the LH28F640BFHE-PTTL90.pdf datasheet available on the net shows
-* the exact erasesize and the OTP support.
-* At the moment only jedec_probe can discover the chip and
-* the NOR is mounted read only probably because of wrong vpp
+From 3d3ca843f0c1e6c9cac64744343774e2f7718034 Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Mon, 15 Jul 2013 01:18:25 +0200
+Subject: [PATCH] collie.c: fall back to jedec_probe flash detection
+
+Zaurus 5500 contains 2 LH28F640BFHE-PTTL90 (64M 4Mx16) and
+the LH28F640BFHE-PTTL90.pdf datasheet available on the net shows
+the exact erasesize and the OTP support.
+At the moment only jedec_probe can discover the chip and
+the NOR is mounted read only probably because of wrong vpp
 
 Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
 
 Upstream-Status: Submitted
 http://lists.infradead.org/pipermail/linux-mtd/2013-February/045781.html
+---
+ arch/arm/mach-sa1100/collie.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/mach-sa1100/collie.c b/arch/arm/mach-sa1100/collie.c
+index 612a456..7fb96eb 100644
 --- a/arch/arm/mach-sa1100/collie.c
 +++ b/arch/arm/mach-sa1100/collie.c
-@@ -289,7 +289,7 @@
+@@ -289,7 +289,7 @@ static void collie_flash_exit(void)
  }
  
  static struct flash_platform_data collie_flash_data = {
@@ -20,3 +30,6 @@ http://lists.infradead.org/pipermail/linux-mtd/2013-February/045781.html
  	.init		= collie_flash_init,
  	.set_vpp	= collie_set_vpp,
  	.exit		= collie_flash_exit,
+-- 
+1.8.1.5
+
