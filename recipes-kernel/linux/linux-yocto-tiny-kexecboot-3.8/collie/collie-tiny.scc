@@ -7,7 +7,9 @@ include ktypes/tiny/tiny.scc
 kconf hardware collie-kexecboot.cfg
 
 patch ../patches/patches-locomokbd/locomo_kbd_tweak-r2.patch
+patch ../patches/patches-power/collie_battery-dev-pm.patch
 patch ../patches/patches-mfd/mcp-device.patch
+patch ../patches/patches-mfd/ucb1x00-device.patch
 patch ../patches/patches-mtd/collie-jedec-probe.patch
 patch ../patches/patches-mtd/collie-eraseinfo.patch
 patch ../patches/revert-check-on-console-device.patch
