@@ -1,0 +1,28 @@
+From f669a459cac00894ce4503c011103dbea5baabee Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Mon, 15 Jul 2013 18:16:57 +0200
+Subject: [PATCH] ucb1x00: explicitely include linux/device.h
+
+Fix
+linux/include/linux/mfd/ucb1x00.h:137:17: error: field 'dev' has incomplete type
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ include/linux/mfd/ucb1x00.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/mfd/ucb1x00.h b/include/linux/mfd/ucb1x00.h
+index 28af417..88f90cb 100644
+--- a/include/linux/mfd/ucb1x00.h
++++ b/include/linux/mfd/ucb1x00.h
+@@ -10,6 +10,7 @@
+ #ifndef UCB1200_H
+ #define UCB1200_H
+ 
++#include <linux/device.h>
+ #include <linux/mfd/mcp.h>
+ #include <linux/gpio.h>
+ #include <linux/mutex.h>
+-- 
+1.8.1.5
+
