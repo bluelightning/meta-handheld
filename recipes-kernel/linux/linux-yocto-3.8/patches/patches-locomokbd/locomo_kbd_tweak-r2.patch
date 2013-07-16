@@ -1,15 +1,18 @@
-From e60a4a9a3336a24a8e6ca3ea69587c60cb953881 Mon Sep 17 00:00:00 2001
+From c9a909cedb442a1a3d020f0c10683298dcc2246c Mon Sep 17 00:00:00 2001
 From: Andrea Adami <andrea.adami@gmail.com>
 Date: Sat, 21 Apr 2012 23:48:57 +0200
-Subject: [PATCH 43/43] locomokbd: apply tweaks for Zaurus
+Subject: [PATCH] locomokbd: apply tweaks for Zaurus
 
-* from http://www.rpsys.net/openzaurus/patches/
+from http://www.rpsys.net/openzaurus/patches/
 
 Signed-off-by: Richard Purdie <rpurdie@rpsys.net>
 Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
 
 Upstream-Status: Inappropriate [embedded specific]
 [Patch needed for initramfs w/out keymaps like kexecboot]
+---
+ drivers/input/keyboard/locomokbd.c | 44 ++++++++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/input/keyboard/locomokbd.c b/drivers/input/keyboard/locomokbd.c
 index c94d610..2b978c8 100644
@@ -76,3 +79,6 @@ index c94d610..2b978c8 100644
  
  struct locomokbd {
  	unsigned char keycode[LOCOMOKBD_NUMKEYS];
+-- 
+1.8.1.5
+
