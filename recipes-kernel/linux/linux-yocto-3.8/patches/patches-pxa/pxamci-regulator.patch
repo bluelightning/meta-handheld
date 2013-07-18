@@ -1,4 +1,7 @@
-From: Marko Katic <dromede.gmail.com>
+From 04e7345a49a7ab2eb725f8ee2569c49b9ea697bb Mon Sep 17 00:00:00 2001
+From: Marko Katic <dromede@gmail.com>
+Date: Mon, 15 Jul 2013 00:55:13 +0200
+Subject: [PATCH] pxamci: Refactor regulator support
 
 Here's an interesting scenario. The spitz machine has an
 Intersil 6271A voltage regulator and an ADS7846 touchscreen
@@ -59,14 +62,14 @@ Signed-off-by: Marko Katic <dromede@gmail.com>
 Upstream-Status: Submitted
 https://patchwork.kernel.org/patch/1875561/
 ---
- drivers/mmc/host/pxamci.c |   37 ++++++++++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 13 deletions(-)
+ drivers/mmc/host/pxamci.c | 40 +++++++++++++++++++++++++++-------------
+ 1 file changed, 27 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
-index 2b2f65a..6ec1566 100644
+index 2b2f65a..341d5dc 100644
 --- a/drivers/mmc/host/pxamci.c
 +++ b/drivers/mmc/host/pxamci.c
-@@ -83,18 +83,24 @@ struct pxamci_host {
+@@ -83,18 +83,26 @@ struct pxamci_host {
  static inline void pxamci_init_ocr(struct pxamci_host *host)
  {
  #ifdef CONFIG_REGULATOR
@@ -84,7 +87,9 @@ index 2b2f65a..6ec1566 100644
 +		else
 +			host->mmc->ocr_avail = ocr_mask;
 +
-+		if (host->pdata && host->pdata->ocr_mask && host->mmc->ocr_avail)
++		if (host->pdata &&
++			host->pdata->ocr_mask &&
++			host->mmc->ocr_avail)
  			dev_warn(mmc_dev(host->mmc),
  				"ocr_mask/setpower will not be used\n");
  	}
@@ -94,7 +99,7 @@ index 2b2f65a..6ec1566 100644
  		/* fall-back to platform data */
  		host->mmc->ocr_avail = host->pdata ?
  			host->pdata->ocr_mask :
-@@ -108,26 +114,31 @@ static inline int pxamci_set_power(struct pxamci_host *host,
+@@ -108,26 +116,32 @@ static inline int pxamci_set_power(struct pxamci_host *host,
  {
  	int on;
  
@@ -120,7 +125,8 @@ index 2b2f65a..6ec1566 100644
 +			return 0;
 +		else
 +			dev_warn(mmc_dev(host->mmc),
-+			 "mmc_regulator_set_ocr failed, falling back to platform data\n");
++			 "mmc_regulator_set_ocr failed, "
++			 "falling back to platform data\n");
  	}
 -	if (!host->vcc && host->pdata &&
 +#endif
@@ -136,3 +142,6 @@ index 2b2f65a..6ec1566 100644
  		host->pdata->setpower(mmc_dev(host->mmc), vdd);
  
  	return 0;
+-- 
+1.8.1.5
+
