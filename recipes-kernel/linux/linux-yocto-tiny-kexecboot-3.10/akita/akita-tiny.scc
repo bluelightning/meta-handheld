@@ -8,6 +8,4 @@ kconf hardware ../spitz/spitz-kexecboot.cfg
 kconf hardware akita.cfg
 
 patch ../patches/patches-pxa/sharpsl_param.patch
-patch ../patches/patches-pxa/pxa27x-sa1100-rtc.patch
-patch ../patches/patches-pxa/pxamci-regulator.patch
 patch ../patches/revert-check-on-console-device.patch
