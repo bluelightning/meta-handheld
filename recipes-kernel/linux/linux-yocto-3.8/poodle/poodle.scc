@@ -1,8 +1,0 @@
-kconf hardware poodle.cfg
-
-include ../zaurus-pxa-only.scc
-include ../zaurus-common.scc
-
-patch ../patches/patches-locomokbd/locomo_kbd_tweak-r2.patch
-patch ../patches/patches-pxa/sharpsl_param.patch
-patch ../patches/patches-pxa/pxamci-regulator.patch

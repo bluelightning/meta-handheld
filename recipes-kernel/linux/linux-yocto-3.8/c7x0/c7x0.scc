@@ -1,7 +1,0 @@
-kconf hardware c7x0.cfg
-
-include ../zaurus-pxa-only.scc
-include ../zaurus-common.scc
-
-patch ../patches/patches-pxa/sharpsl_param.patch
-patch ../patches/patches-pxa/pxamci-regulator.patch

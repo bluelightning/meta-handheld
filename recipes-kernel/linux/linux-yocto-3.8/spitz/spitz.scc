@@ -1,9 +1,0 @@
-kconf hardware spitz.cfg
-
-include ../zaurus-pxa-only.scc
-include ../zaurus-common.scc
-include ../zaurus-usb-host.scc
-
-patch ../patches/patches-pxa/sharpsl_param.patch
-patch ../patches/patches-pxa/pxa27x-sa1100-rtc.patch
-patch ../patches/patches-pxa/pxamci-regulator.patch
