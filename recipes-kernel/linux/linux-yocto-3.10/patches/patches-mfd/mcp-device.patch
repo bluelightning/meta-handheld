@@ -1,0 +1,30 @@
+From c297f9bcdf58ed5bc69095ac6ff7fc1088c377dc Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Mon, 15 Jul 2013 18:15:19 +0200
+Subject: [PATCH] mcp.h: add missing header
+
+Fix
+linux/include/linux/mfd/mcp.h:22:16: error: field 'attached_device' has incomplete type
+linux/include/linux/mfd/mcp.h:48:23: error: field 'drv' has incomplete type
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ include/linux/mfd/mcp.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/linux/mfd/mcp.h b/include/linux/mfd/mcp.h
+index a9e8bd1..f682953 100644
+--- a/include/linux/mfd/mcp.h
++++ b/include/linux/mfd/mcp.h
+@@ -10,6 +10,8 @@
+ #ifndef MCP_H
+ #define MCP_H
+ 
++#include <linux/device.h>
++
+ struct mcp_ops;
+ 
+ struct mcp {
+-- 
+1.8.1.5
+

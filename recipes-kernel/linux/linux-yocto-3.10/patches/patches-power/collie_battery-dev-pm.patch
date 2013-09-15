@@ -1,0 +1,39 @@
+From 94010e3700b65986c65960e2b7a0966773928347 Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Tue, 16 Jul 2013 17:33:39 +0200
+Subject: [PATCH] collie_battery.c: convert to use dev_pm_ops
+
+Fix
+linux/drivers/power/collie_battery.c:372:2: warning: initialization from
+incompatible pointer type [enabled by default]
+linux/drivers/power/collie_battery.c:372:2: warning: (near initialization
+for 'collie_bat_driver.suspend') [enabled by default]
+
+Referencess:
+MFD: ucb1x00-core: convert to use dev_pm_ops
+https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/commit/include/linux/mfd?id=5a09b7120a965a7d7e8494d0ed509135bbce0118
+
+MFD: mcp-core: remove legacy driver suspend/resume methods
+https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/commit/include/linux/mfd?id=cf4abfcc0df2985ff6061f74e63b8353f2a1d0bc
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ drivers/power/collie_battery.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/collie_battery.c b/drivers/power/collie_battery.c
+index c58d0e3..d02ae02 100644
+--- a/drivers/power/collie_battery.c
++++ b/drivers/power/collie_battery.c
+@@ -287,7 +287,7 @@ static struct gpio collie_batt_gpios[] = {
+ };
+ 
+ #ifdef CONFIG_PM
+-static int collie_bat_suspend(struct ucb1x00_dev *dev, pm_message_t state)
++static int collie_bat_suspend(struct ucb1x00_dev *dev)
+ {
+ 	/* flush all pending status updates */
+ 	flush_work(&bat_work);
+-- 
+1.8.1.5
+

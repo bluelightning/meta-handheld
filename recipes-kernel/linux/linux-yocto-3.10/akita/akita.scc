@@ -1,0 +1,8 @@
+kconf hardware ../spitz/spitz.cfg
+kconf hardware akita.cfg
+
+include ../zaurus-pxa-only.scc
+include ../zaurus-common.scc
+include ../zaurus-usb-host.scc
+
+patch ../patches/patches-pxa/sharpsl_param.patch
