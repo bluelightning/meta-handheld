@@ -12,8 +12,6 @@ SRC_URI[sha256sum] = "0d02edc12509f6dc98cded37c68238f939c522cbd398fd527785a1e7e3
 
 S = "${WORKDIR}/survive-1.1.0"
 
-EXTRA_OEMAKE_class-klibc = "-static -I${STAGING_INCDIR}"
-
 do_compile () {
         ${CC} ${CFLAGS} ${LDFLAGS} nandlogical.c -o nandlogical
 }
