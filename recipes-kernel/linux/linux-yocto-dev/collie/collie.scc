@@ -1,0 +1,5 @@
+kconf hardware collie.cfg
+
+include ../zaurus-common.scc
+
+patch ../patches/patches-locomokbd/locomo_kbd_tweak-r2.patch
