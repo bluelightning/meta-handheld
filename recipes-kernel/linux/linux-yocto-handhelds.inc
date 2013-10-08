@@ -1,5 +1,3 @@
-COMPATIBLE_MACHINE .= "|akita|c7x0|collie|poodle|spitz|tosa"
-
 KMACHINE_akita = "akita"
 KMACHINE_c7x0 = "c7x0"
 KMACHINE_collie = "collie"
