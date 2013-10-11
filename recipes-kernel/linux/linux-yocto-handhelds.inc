@@ -30,6 +30,7 @@ SRC_URI_append_h3600 = " \
 SRC_URI_append_hx4700 = " \
            file://defconfig \
            file://hx4700-change-led-trigger-assignments.patch \
+           file://vga/logo_linux_clut224.ppm.bz2 \
            "
 
 SRC_URI_append_poodle = " \
