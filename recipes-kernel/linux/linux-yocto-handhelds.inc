@@ -2,6 +2,7 @@ KMACHINE_akita = "akita"
 KMACHINE_c7x0 = "c7x0"
 KMACHINE_collie = "collie"
 KMACHINE_h3600 = "h3600"
+KMACHINE_hx4700 = "hx4700"
 KMACHINE_poodle = "poodle"
 KMACHINE_spitz = "spitz"
 KMACHINE_tosa = "tosa"
@@ -24,6 +25,11 @@ SRC_URI_append_collie = " \
 SRC_URI_append_h3600 = " \
            file://defconfig \
            file://qvga/logo_linux_clut224.ppm.bz2 \
+           "
+
+SRC_URI_append_hx4700 = " \
+           file://defconfig \
+           file://hx4700-change-led-trigger-assignments.patch \
            "
 
 SRC_URI_append_poodle = " \
