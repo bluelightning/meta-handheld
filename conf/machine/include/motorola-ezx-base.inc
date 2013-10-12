@@ -33,8 +33,6 @@ MACHINE_FEATURES += " iwmmxt"
 #
 PREFERRED_PROVIDER_virtual/kernel ?= "openezx-kernel"
 MODUTILS = "26"
-XSERVER = "xserver-kdrive-fbdev"
-PREFERRED_PROVIDER_virtual/xserver = "xserver-kdrive"
 
 IMAGE_FSTYPES ?= "jffs2"
 EXTRA_IMAGECMD_jffs2 = "--pad=14680064 --little-endian --eraseblock=0x20000 -n"

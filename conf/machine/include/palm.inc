@@ -15,8 +15,6 @@ MACHINE_FEATURES = "kernel26 touchscreen apm alsa bluetooth irda usbgadget scree
 
 PREFERRED_PROVIDER_virtual/kernel = "linux-hackndev-2.6"
 
-PREFERRED_PROVIDER_virtual/xserver = "xserver-kdrive"
-
 module_autoload_sa1100-rtc = "sa1100-rtc"
 module_autoload_snd-ac97-bus = "snd-ac97-bus"
 module_autoload_apm_power = "apm_power"
