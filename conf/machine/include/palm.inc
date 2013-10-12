@@ -2,8 +2,6 @@
 # Hardware-based properties
 #
 
-TARGET_ARCH = "arm"
-
 SERIAL_CONSOLE = "115200 ttyS0"
 
 # Use tune-xscale per default. Machine independent feeds should be built with tune-strongarm.
