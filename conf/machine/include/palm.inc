@@ -7,7 +7,7 @@ SERIAL_CONSOLE = "115200 ttyS0"
 # Use tune-xscale per default. Machine independent feeds should be built with tune-strongarm.
 require conf/machine/include/tune-xscale.inc
 
-MACHINE_FEATURES = "kernel26 touchscreen apm alsa bluetooth irda usbgadget screen ext2 vfat"
+MACHINE_FEATURES = "touchscreen apm alsa bluetooth irda usbgadget screen ext2 vfat"
 
 #
 # Software/packages selection
