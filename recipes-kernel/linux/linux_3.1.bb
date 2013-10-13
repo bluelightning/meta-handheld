@@ -6,7 +6,7 @@ COMPATIBLE_MACHINE = "h1940"
 SRC_URI += "${KERNELORG_MIRROR}/linux/kernel/v3.x/linux-${PV}.tar.bz2;name=kernel \
            ${KERNELORG_MIRROR}/linux/kernel/v3.x/patch-${PV}.10.bz2;apply=yes;name=stablepatch \
            file://defconfig \
-           file://${LOGO_SIZE}/logo_linux_clut224.ppm.bz2 \
+           file://qvga/logo_linux_clut224.ppm.bz2 \
            "
 
 SRC_URI_append_h1940 = " \
