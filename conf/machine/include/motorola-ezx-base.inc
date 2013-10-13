@@ -20,11 +20,6 @@ PACKAGE_EXTRA_ARCHS_tune-xscale += "iwmmxt"
 #mtd3: 00020000 00020000 "Logo"
 
 ROOT_FLASH_SIZE = "24"
-MACHINE_GUI_CLASS = "smallscreen"
-MACHINE_DISPLAY_WIDTH_PIXELS = "240"
-MACHINE_DISPLAY_HEIGHT_PIXELS = "320"
-MACHINE_DISPLAY_ORIENTATION = "0"
-MACHINE_DISPLAY_PPI = "180"
 MACHINE_FEATURES = "alsa apm bluetooth keyboard phone screen touchscreen usbgadget usbhost vfat qvga"
 MACHINE_FEATURES += " iwmmxt"
 
