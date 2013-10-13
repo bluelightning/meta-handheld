@@ -97,8 +97,10 @@ CMDLINE_tosa = "console=ttyS0,115200n8 console=tty1"
 
 MACHINE_FEATURES = "apm alsa pcmcia irda usbgadget keyboard touchscreen screen vfat ext2"
 MACHINE_FEATURES_append_akita = " usbhost"
+MACHINE_FEATURES_append_collie  = " qvga"
+MACHINE_FEATURES_append_poodle  = " qvga"
 MACHINE_FEATURES_append_spitz = " usbhost"
-MACHINE_FEATURES_append_tosa  = " usbhost wifi "
+MACHINE_FEATURES_append_tosa  = " usbhost wifi"
 
 MACHINE_EXTRA_RDEPENDS = "zaurusd mtd-utils mtd-utils-jffs2 mtd-utils-ubifs nandlogical"
 MACHINE_EXTRA_RDEPENDS_collie = "zaurusd mtd-utils mtd-utils-jffs2 mtd-utils-ubifs"
