@@ -19,7 +19,6 @@ PACKAGE_EXTRA_ARCHS_tune-xscale += "iwmmxt"
 #mtd2: 00580000 00020000 "VFM_Filesystem"
 #mtd3: 00020000 00020000 "Logo"
 
-ROOT_FLASH_SIZE = "24"
 MACHINE_FEATURES = "alsa apm bluetooth keyboard phone screen touchscreen usbgadget usbhost vfat qvga"
 MACHINE_FEATURES += " iwmmxt"
 
