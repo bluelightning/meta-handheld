@@ -6,13 +6,6 @@ IMAGE_FSTYPES ?= "tar.gz jffs2 sum.jffs2 ubifs"
 INITRAMFS_FSTYPES ?= "cpio.gz cpio.lzma"
 IMAGE_DEVICE_TABLES = ""
 
-# kernel now supports favourlzo
-EXTRA_IMAGECMD_jffs2 = "-p -l --eraseblock=${ERASEBLOCKSIZE}"
-EXTRA_IMAGECMD_sum.jffs2 = "${EXTRA_IMAGECMD_jffs2}"
-
-EXTRA_IMAGECMD_jffs2_collie = "--pad=14680064 --little-endian --eraseblock=0x20000 -n"
-EXTRA_IMAGECMD_sum.jffs2_collie = "--pad -l --eraseblock=0x20000 -n"
-
 #########
 # xserver
 #########
