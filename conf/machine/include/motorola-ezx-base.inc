@@ -29,7 +29,8 @@ PREFERRED_PROVIDER_virtual/kernel ?= "openezx-kernel"
 MODUTILS = "26"
 
 IMAGE_FSTYPES ?= "jffs2"
-EXTRA_IMAGECMD_jffs2 = "--pad=14680064 --little-endian --eraseblock=0x20000 -n"
+JFFS2_ERASEBLOCK = "0x20000"
+EXTRA_IMAGECMD_jffs2 = "--pad=14680064 --little-endian --eraseblock=${JFFS2_ERASEBLOCK} -n"
 
 # In order to enable UIBIFS add "uibi and ubifs"
 #IMAGE_FSTYPES += "ubi ubifs"
