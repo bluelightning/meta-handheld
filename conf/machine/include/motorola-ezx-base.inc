@@ -1,6 +1,3 @@
-# use this for overrides
-MACHINE_CLASS = "motorola-ezx"
-
 #
 # Hardware-based properties
 #
@@ -26,7 +23,6 @@ MACHINE_FEATURES += " iwmmxt"
 # Software/packages selection
 #
 PREFERRED_PROVIDER_virtual/kernel ?= "openezx-kernel"
-MODUTILS = "26"
 
 IMAGE_FSTYPES ?= "jffs2"
 JFFS2_ERASEBLOCK = "0x20000"
