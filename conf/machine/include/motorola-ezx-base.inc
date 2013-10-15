@@ -2,12 +2,12 @@
 # Hardware-based properties
 #
 
-# Use tune-xscale per default. Machine independent feeds should be built with tune-strongarm.
 require conf/machine/include/tune-xscale.inc
-PACKAGE_EXTRA_ARCHS_tune-xscale += "iwmmxt"
 
-# Uncomment this to use iwmmxt optimizations. Remove the above xscale stuff first
-#require conf/machine/include/tune-iwmmxt.inc
+MACHINE_FEATURES = "alsa apm bluetooth keyboard phone screen touchscreen usbgadget usbhost vfat qvga"
+MACHINE_FEATURES += " iwmmxt"
+
+PACKAGE_EXTRA_ARCHS_tune-xscale += "iwmmxt"
 
 #cat /proc/mtd
 #dev:    size   erasesize  name
@@ -16,8 +16,6 @@ PACKAGE_EXTRA_ARCHS_tune-xscale += "iwmmxt"
 #mtd2: 00580000 00020000 "VFM_Filesystem"
 #mtd3: 00020000 00020000 "Logo"
 
-MACHINE_FEATURES = "alsa apm bluetooth keyboard phone screen touchscreen usbgadget usbhost vfat qvga"
-MACHINE_FEATURES += " iwmmxt"
 
 #
 # Software/packages selection
