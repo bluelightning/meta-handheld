@@ -16,6 +16,9 @@ PACKAGE_EXTRA_ARCHS_tune-xscale += "iwmmxt"
 #mtd2: 00580000 00020000 "VFM_Filesystem"
 #mtd3: 00020000 00020000 "Logo"
 
+MACHINE_GUI_CLASS = "smallscreen"
+MACHINE_DISPLAY_WIDTH_PIXELS = "240"
+MACHINE_DISPLAY_HEIGHT_PIXELS = "320"
 
 #
 # Software/packages selection
