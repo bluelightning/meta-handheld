@@ -3,7 +3,7 @@
 ########################
 
 IMAGE_FSTYPES ?= "tar.gz jffs2 sum.jffs2 ubifs"
-EXTRA_IMAGECMD_sum.jffs2 = "-p -l -e ${JFFS2_ERASEBLOCK}"
+EXTRA_IMAGECMD_sum.jffs2 = "-p -l -e ${JFFS2_ERASEBLOCK} -n"
 
 INITRAMFS_FSTYPES ?= "cpio.gz cpio.lzma"
 IMAGE_DEVICE_TABLES = ""
