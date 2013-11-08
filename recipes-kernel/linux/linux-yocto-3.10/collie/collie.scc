@@ -10,3 +10,4 @@ patch ../patches/patches-mfd/ucb1x00-device.patch
 patch ../patches/patches-mtd/collie-eraseinfo.patch
 patch ../patches/patches-mtd/collie-force-cfi.patch
 patch ../patches/patches-mtd/collie-mtd-resize.patch
+patch ../patches/patches-mtd/collie-force-unlock.patch

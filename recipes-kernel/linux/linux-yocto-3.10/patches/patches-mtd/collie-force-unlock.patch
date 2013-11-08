@@ -1,0 +1,22 @@
+From c39115ed52359eb5f0475ea2b4a2e71acb5da54b Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Thu, 7 Nov 2013 23:17:36 +0100
+Subject: [PATCH] collie: force flash unlock on boot
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ drivers/mtd/chips/cfi_cmdset_0001.c | 1 +
+ 1 file changed, 1 insertions(+), 0 deletion(-)
+
+diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
+index 7751443..d9d6f0e 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0001.c
++++ b/drivers/mtd/chips/cfi_cmdset_0001.c
+@@ -310,6 +310,7 @@ static struct cfi_fixup cfi_fixup_table[] = {
+ 	{ CFI_MFR_ST, 0x00ba, /* M28W320CT */ fixup_st_m28w320ct },
+ 	{ CFI_MFR_ST, 0x00bb, /* M28W320CB */ fixup_st_m28w320cb },
+ 	{ CFI_MFR_INTEL, CFI_ID_ANY, fixup_unlock_powerup_lock },
++	{ CFI_MFR_SHARP, 0x00b0, fixup_unlock_powerup_lock },
+ 	{ 0, 0, NULL }
+ };
+ 
