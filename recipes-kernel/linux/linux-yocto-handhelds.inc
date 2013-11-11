@@ -24,6 +24,13 @@ SRC_URI_append_collie = " \
 
 SRC_URI_append_h3600 = " \
            file://defconfig \
+	   file://0001-MFD-driver-for-Atmel-Microcontroller-on-iPaq-h3xxx.patch \
+	   file://0002-ARM-sa1100-add-Micro-ASIC-platform-device.patch \
+	   file://0003-input-driver-for-microcontroller-keys-on-the-iPaq-h3.patch \
+	   file://0004-input-driver-for-touchscreen-on-iPaq-h3xxx.patch \
+	   file://0005-power-add-driver-for-battery-reading-on-iPaq-h3xxx.patch \
+	   file://0006-leds-add-driver-for-the-iPAQ-micro.patch \
+	   file://0007-fb-backlight-add-driver-for-iPAQ-micro-backlight.patch \
            file://qvga/logo_linux_clut224.ppm.bz2 \
            "
 
