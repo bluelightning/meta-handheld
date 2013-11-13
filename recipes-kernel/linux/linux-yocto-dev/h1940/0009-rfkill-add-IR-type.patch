@@ -1,0 +1,51 @@
+From c21acad16e8a1fc7840f67c272657f8cf7ad81fc Mon Sep 17 00:00:00 2001
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Thu, 17 Oct 2013 12:19:47 +0300
+Subject: [PATCH 09/12] rfkill: add IR type
+
+Infrared receivers/transmitters can also be disabled,
+so add IR type to rfkill subsystem
+
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ include/uapi/linux/rfkill.h | 1 +
+ net/rfkill/core.c           | 4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/rfkill.h b/include/uapi/linux/rfkill.h
+index 058757f..164ec17 100644
+--- a/include/uapi/linux/rfkill.h
++++ b/include/uapi/linux/rfkill.h
+@@ -50,6 +50,7 @@ enum rfkill_type {
+ 	RFKILL_TYPE_GPS,
+ 	RFKILL_TYPE_FM,
+ 	RFKILL_TYPE_NFC,
++	RFKILL_TYPE_IR,
+ 	NUM_RFKILL_TYPES,
+ };
+ 
+diff --git a/net/rfkill/core.c b/net/rfkill/core.c
+index 1bacc10..5b824f9 100644
+--- a/net/rfkill/core.c
++++ b/net/rfkill/core.c
+@@ -587,7 +587,7 @@ static DEVICE_ATTR_RO(name);
+ 
+ static const char *rfkill_get_type_str(enum rfkill_type type)
+ {
+-	BUILD_BUG_ON(NUM_RFKILL_TYPES != RFKILL_TYPE_NFC + 1);
++	BUILD_BUG_ON(NUM_RFKILL_TYPES != RFKILL_TYPE_IR + 1);
+ 
+ 	switch (type) {
+ 	case RFKILL_TYPE_WLAN:
+@@ -606,6 +606,8 @@ static const char *rfkill_get_type_str(enum rfkill_type type)
+ 		return "fm";
+ 	case RFKILL_TYPE_NFC:
+ 		return "nfc";
++	case RFKILL_TYPE_IR:
++		return "ir";
+ 	default:
+ 		BUG();
+ 	}
+-- 
+1.8.4
+

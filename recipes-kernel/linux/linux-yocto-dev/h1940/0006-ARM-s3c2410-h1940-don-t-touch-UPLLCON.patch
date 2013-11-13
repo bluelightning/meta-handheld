@@ -1,0 +1,41 @@
+From 6e1b56f2dbb94a1ff320141819bc8cea2462daec Mon Sep 17 00:00:00 2001
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Thu, 17 Oct 2013 12:15:16 +0300
+Subject: [PATCH 06/12] ARM: s3c2410: h1940: don't touch UPLLCON
+
+It's a bit late to modify UPLLCON in board init,
+anyway bootloader already puts correct value in it.
+
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ arch/arm/mach-s3c24xx/mach-h1940.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index 6f2e979..570450d 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -730,8 +730,6 @@ static void __init h1940_reserve(void)
+ 
+ static void __init h1940_init(void)
+ {
+-	u32 tmp;
+-
+ 	s3c24xx_fb_set_platdata(&h1940_fb_info);
+ 	s3c24xx_mci_set_platdata(&h1940_mmc_cfg);
+  	s3c24xx_udc_set_platdata(&h1940_udc_cfg);
+@@ -746,11 +744,6 @@ static void __init h1940_init(void)
+ 			      S3C2410_MISCCR_USBSUSPND0 |
+ 			      S3C2410_MISCCR_USBSUSPND1, 0x0);
+ 
+-	tmp =   (0x78 << S3C24XX_PLL_MDIV_SHIFT)
+-	      | (0x02 << S3C24XX_PLL_PDIV_SHIFT)
+-	      | (0x03 << S3C24XX_PLL_SDIV_SHIFT);
+-	writel(tmp, S3C2410_UPLLCON);
+-
+ 	gpio_request(S3C2410_GPC(0), "LCD power");
+ 	gpio_request(S3C2410_GPC(1), "LCD power");
+ 	gpio_request(S3C2410_GPC(4), "LCD power");
+-- 
+1.8.4
+
