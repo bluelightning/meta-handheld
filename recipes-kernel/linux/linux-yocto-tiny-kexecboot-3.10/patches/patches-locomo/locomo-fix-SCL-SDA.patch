@@ -1,0 +1,28 @@
+From acc2f94781ab11bead994bb3faaad149f9187bd4 Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Tue, 12 Nov 2013 22:21:20 +0100
+Subject: [PATCH 631/631] linux-yocto: collie: locomo.c: fix SCL line instead
+ of SDA
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ arch/arm/common/locomo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/common/locomo.c b/arch/arm/common/locomo.c
+index b55c362..d827bcb 100644
+--- a/arch/arm/common/locomo.c
++++ b/arch/arm/common/locomo.c
+@@ -629,7 +629,7 @@ static void locomo_m62332_sendbit(void *mapbase, int bit)
+ 	unsigned int r;
+ 
+ 	r = locomo_readl(mapbase + LOCOMO_DAC);
+-	r &=  ~(LOCOMO_DAC_SCLOEB);
++	r &=  ~(LOCOMO_DAC_SDAOEB);
+ 	locomo_writel(r, mapbase + LOCOMO_DAC);
+ 	udelay(DAC_LOW_SETUP_TIME);	/* 300 nsec */
+ 	udelay(DAC_DATA_HOLD_TIME);	/* 300 nsec */
+-- 
+1.8.1.5
+
