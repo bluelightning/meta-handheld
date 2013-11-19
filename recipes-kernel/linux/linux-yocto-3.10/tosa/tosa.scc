@@ -6,3 +6,4 @@ include ../zaurus-usb-host.scc
 
 patch ../patches/patches-pxa/sharpsl_param.patch
 patch ../patches/patches-power/tosa_battery_irq_to_gpio.patch
+patch ../patches/patches-pxa/tosa-keys-mapping.patch
