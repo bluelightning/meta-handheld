@@ -7,7 +7,6 @@ patch ../patches/patches-mtd/collie-cfi-probe-again.patch
 patch ../patches/patches-mtd/collie-force-cfi.patch
 patch ../patches/patches-mtd/collie-mtd-resize.patch
 patch ../patches/patches-mtd/collie-force-unlock.patch
-patch ../patches/patches-mtd/collie-fixup-strataflash.patch
 patch ../patches/patches-mtd/collie-PCR.patch
 patch ../patches/patches-sa1100/collie-irda.patch
 patch ../patches/patches-sa1100/collie-add-bootblock.patch
