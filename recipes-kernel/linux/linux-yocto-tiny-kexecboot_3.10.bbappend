@@ -47,6 +47,7 @@ SRC_URI_append_collie = " \
            file://patches/patches-mtd/collie-mtd-resize.patch \
            file://patches/patches-mtd/collie-force-unlock.patch \
            file://patches/patches-mtd/collie-fixup-strataflash.patch \
+           file://patches/patches-mtd/collie-PCR.patch \
            file://patches/patches-sa1100/collie-irda.patch \
            file://patches/patches-sa1100/collie-add-bootblock.patch \
            file://patches/patches-sa1100/arm-sa1100-add-cpu-clock.patch \
