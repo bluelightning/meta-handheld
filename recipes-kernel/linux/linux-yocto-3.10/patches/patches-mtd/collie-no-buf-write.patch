@@ -1,0 +1,31 @@
+From 5f535adb0a2cd914eb1d6ef5fd2a703b9886bec0 Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Sun, 15 Dec 2013 16:53:27 +0100
+Subject: [PATCH] MTD: HACK - disable CFI buffered write
+
+Something bad (timeout ?) is happening and the fs is corrupted
+on remount/reboot.
+
+Going back to word write offers a stable base for further debugging.
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ drivers/mtd/chips/cfi_cmdset_0001.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
+index d9d6f0e..a5c984a 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0001.c
++++ b/drivers/mtd/chips/cfi_cmdset_0001.c
+@@ -40,7 +40,7 @@
+ /* #define CMDSET0001_DISABLE_WRITE_SUSPEND */
+ 
+ // debugging, turns off buffer write mode if set to 1
+-#define FORCE_WORD_WRITE 0
++#define FORCE_WORD_WRITE 1
+ 
+ /* Intel chips */
+ #define I82802AB	0x00ad
+-- 
+1.8.1.5
+
