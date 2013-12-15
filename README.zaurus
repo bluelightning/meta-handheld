@@ -19,8 +19,9 @@ In the Japanese Menu select 4 and finally 3 for SD card or 4 for CF).
 
 For the SL-5500 (collie) and optionally for other Zaurus too, flashing is 
 possible just using the routines of the original firmware: reset the unit,
-Press C and D button during restart. Note the kernel must be renamed 'zImage'
-(not 'zImage.bin') and the CF card must be formatted FAT.
+Press C and D button together and shortly push the reset switch.
+Note that the kernel must be renamed 'zImage' (not 'zImage.bin') and the CF card
+must be formatted FAT16.
 
 
 ZAURUS FLASHING HOW-TO
@@ -72,11 +73,29 @@ Example: one image on mtd2 and another one on mtd3 (optional)
 Note: flash_eraseall is deprecated because the erase-counters are reset!
 
 
+NOTES FOR COLLIE
+======================
+Collie flash memory is NOR and not NAND as on the other models so the utility
+to use is flashcp instead of nandwrite.
+
+for kernel:  flashcp /zImage /dev/mtd1
+
+for rootfs:  flashcp /initrd.bin /dev/mtd2
+
+
 UBIFS images
 ============
 Recent kexecboot versions can boot the first ubi volume found on each device.
-
 Ubi volumes must be created with the proper ubi-tools (from mtd-utils).
+
+The quick and easy way is to flash the rootfs.ubi image created by ubinize:
+the flash will be erased by ubiformat.
+
+ ubiformat /dev/mtd2 -f /rootfs.ubi
+
+
+Alternatively you can do the single steps and populate the volume(s) with
+one custom rootfs.ubifs.
 
 Example: one volume with max available size
 
@@ -85,4 +104,4 @@ Example: one volume with max available size
  ubimkvol /dev/ubi0 -N volume_name -m
  ubiupdatevol /dev/ubi0_0 /path/to/core-image-base-<machine>-<date>.rootfs.ubifs
 
-Same operations can be done for mtd3.
+Same operations can be done for mtd3 where available.
