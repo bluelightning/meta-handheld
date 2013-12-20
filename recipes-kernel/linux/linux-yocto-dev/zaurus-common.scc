@@ -10,3 +10,5 @@ include features/vfat/vfat.scc
 include features/scsi/disk.scc
 include features/hostapd/hostapd.scc
 include features/mac80211/mac80211.scc
+
+kconf hardware shrink_kernel.cfg
