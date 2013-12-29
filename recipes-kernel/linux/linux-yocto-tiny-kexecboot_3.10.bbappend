@@ -43,7 +43,6 @@ SRC_URI_append_collie = " \
            file://patches/patches-mtd/collie-jedec-probe.patch \
            file://patches/patches-mtd/collie-eraseinfo.patch \
            file://patches/patches-mtd/collie-cfi-probe-again.patch \
-           file://patches/patches-mtd/collie-force-cfi.patch \
            file://patches/patches-mtd/collie-mtd-resize.patch \
            file://patches/patches-mtd/collie-force-unlock.patch \
            file://patches/patches-mtd/collie-PCR.patch \

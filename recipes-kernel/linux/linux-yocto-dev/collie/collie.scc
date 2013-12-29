@@ -4,7 +4,6 @@ include ../zaurus-common.scc
 
 patch ../patches/patches-locomokbd/locomo_kbd_tweak-r2.patch
 patch ../patches/patches-mtd/collie-cfi-probe-again.patch
-patch ../patches/patches-mtd/collie-force-cfi.patch
 patch ../patches/patches-mtd/collie-mtd-resize.patch
 patch ../patches/patches-mtd/collie-force-unlock.patch
 patch ../patches/patches-mtd/collie-PCR.patch
