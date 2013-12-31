@@ -8,6 +8,7 @@ patch ../patches/patches-mtd/collie-mtd-resize.patch
 patch ../patches/patches-mtd/collie-force-unlock.patch
 patch ../patches/patches-mtd/collie-PCR.patch
 patch ../patches/patches-mtd/collie-match-cfi-qry.patch
+patch ../patches/patches-mtd/collie-cfi-partitions.patch
 patch ../patches/patches-mtd/collie-no-buf-write.patch
 patch ../patches/patches-sa1100/collie-irda.patch
 patch ../patches/patches-sa1100/collie-add-bootblock.patch

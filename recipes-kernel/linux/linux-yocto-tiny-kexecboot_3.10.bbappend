@@ -47,6 +47,7 @@ SRC_URI_append_collie = " \
            file://patches/patches-mtd/collie-force-unlock.patch \
            file://patches/patches-mtd/collie-PCR.patch \
            file://patches/patches-mtd/collie-match-cfi-qry.patch \
+           file://patches/patches-mtd/collie-cfi-partitions.patch \
            file://patches/patches-mtd/collie-no-buf-write.patch \
            file://patches/patches-sa1100/collie-irda.patch \
            file://patches/patches-sa1100/collie-add-bootblock.patch \
