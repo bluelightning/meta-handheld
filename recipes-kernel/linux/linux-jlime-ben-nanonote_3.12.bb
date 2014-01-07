@@ -1,4 +1,4 @@
-DESCRIPTION = "Linux 2.6.36 kernel for the Ben Nanonote"
+DESCRIPTION = "Linux kernel 3.12 for the Ben Nanonote"
 SECTION = "kernel"
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
@@ -12,13 +12,7 @@ COMPATIBLE_MACHINE = "ben-nanonote"
 
 KERNEL_IMAGETYPE = "vmlinux.bin"
 
-SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/kristoffer/linux-hpc.git;protocol=git;branch=v2.6.36-hpc \
-	   file://logo_linux_clut224.tar.gz \
-	   file://modifier-keys.patch \
-	   file://config-ben-nanonote \
-	   file://jz4740-udc.patch \
-	   file://fix-gcc-4.6.0-build-errors.patch \
-	   "
+SRC_URI = "git://projects.qi-hardware.com/qi-kernel.git;protocol=git;branch=jz-3.12"
 
 S = "${WORKDIR}/git"
 
@@ -27,8 +21,7 @@ inherit kernel
 FILES_kernel-image = "/boot/uImage*"
 
 do_configure_prepend() {
-	install -m 0644 ${WORKDIR}/config-ben-nanonote ${S}/.config
-	mv -f ${WORKDIR}/logo_linux_clut224.ppm ${S}/drivers/video/logo
+	install -m 0644 ${S}/arch/mips/configs/qi_lb60_defconfig ${S}/.config
 }
 
 do_install_append() {
