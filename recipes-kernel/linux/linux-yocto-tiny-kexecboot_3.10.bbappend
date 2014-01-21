@@ -45,6 +45,7 @@ SRC_URI_append_collie = " \
            file://patches/patches-mtd/collie-cfi-probe-again.patch \
            file://patches/patches-mtd/collie-mtd-resize.patch \
            file://patches/patches-mtd/collie-match-cfi-qry.patch \
+           file://patches/patches-mtd/collie-LH28F640BF.patch \
            file://patches/patches-sa1100/collie-irda.patch \
            file://patches/patches-sa1100/collie-add-bootblock.patch \
            file://patches/patches-sa1100/arm-sa1100-add-cpu-clock.patch \

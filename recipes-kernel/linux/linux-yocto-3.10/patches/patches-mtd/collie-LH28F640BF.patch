@@ -1,0 +1,131 @@
+From 7485f38ec10b7474932edebc4f3db60a8e32097c Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Tue, 21 Jan 2014 00:51:26 +0100
+Subject: mtd: add support for Sharp LH28F640BF NOR chips
+
+Tested on Zaurus SL-5500 (Collie) 2x16 on 32 bit bus
+
+Buffer write fixes as seen in 2007 patch c/o
+Anti Sullin <anti.sullin <at> artecdesign.ee>
+http://comments.gmane.org/gmane.linux.ports.arm.kernel/36733
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ drivers/mtd/chips/cfi_cmdset_0001.c | 66 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+
+diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
+index 7751443..c3c0b41 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0001.c
++++ b/drivers/mtd/chips/cfi_cmdset_0001.c
+@@ -53,6 +53,11 @@
+ /* Atmel chips */
+ #define AT49BV640D	0x02de
+ #define AT49BV640DT	0x02db
++/* Sharp chips */
++#define LH28F640BFHE_PTTL90	0x00b0
++#define LH28F640BFHE_PBTL90	0x00b1
++#define LH28F640BFHE_PTTL70A	0x00b2
++#define LH28F640BFHE_PBTL70A	0x00b3
+ 
+ static int cfi_intelext_read (struct mtd_info *, loff_t, size_t, size_t *, u_char *);
+ static int cfi_intelext_write_words(struct mtd_info *, loff_t, size_t, size_t *, const u_char *);
+@@ -259,6 +264,47 @@ static void fixup_st_m28w320cb(struct mtd_info *mtd)
+ 		(cfi->cfiq->EraseRegionInfo[1] & 0xffff0000) | 0x3e;
+ };
+ 
++static int is_LH28F640BF(struct cfi_private *cfi)
++{
++	/* Sharp LH28F640BF Series */
++	if (cfi->mfr == CFI_MFR_SHARP && (
++	    cfi->id == LH28F640BFHE_PTTL90 || cfi->id == LH28F640BFHE_PBTL90 ||
++	    cfi->id == LH28F640BFHE_PTTL70A || cfi->id == LH28F640BFHE_PBTL70A))
++		return 1;
++	return 0;
++}
++
++static void fixup_LH28F640BF(struct mtd_info *mtd)
++{
++	struct map_info *map = mtd->priv;
++	struct cfi_private *cfi = map->fldrv_priv;
++	struct cfi_pri_intelext *extp = cfi->cmdset_priv;
++
++	/* Reset the Partition Configuration Register on LH28F640BF
++	 * to a single partition (PCRC = 0x000): PCRC is embedded into A0-A15. */
++	if (is_LH28F640BF(cfi)) {
++		printk(KERN_INFO "Reset Partition Config. Register: 1 Partition of 4 planes\n" );
++		map_write(map, CMD(0x60), 0);
++		map_write(map, CMD(0x04), 0);
++		/* NOTE: Sharp Extended Query reports the nr of hardware partitions
++		 * with an offset of +3. Change of the PCR are not reflected.
++		 * Keep the wrong reading (0) and let the code convert it to 1 */
++
++		/* Sharp LH28F640BF Series has been set to one partition
++		 * so Simultaneous Operations are disabled */
++		printk(KERN_WARNING "cfi_cmdset_0001: Simultaneous Operations disabled\n");
++		extp->FeatureSupport &= ~512;
++
++		/* To avoid issues with ubifs with concurrent erase-suspend
++		 * we have to disable SuspendCmdSupport.
++		 * The fixes described in "Micron TN-12-06: Adapting the
++		 * Linux Kernel for P30, P33, and J3 Flash" do not help. */
++		printk(KERN_WARNING "cfi_cmdset_0001: Suspend "
++		                    "erase on write disabled.\n");
++		extp->SuspendCmdSupport &= ~1;
++	}
++}
++
+ static void fixup_use_point(struct mtd_info *mtd)
+ {
+ 	struct map_info *map = mtd->priv;
+@@ -310,6 +356,8 @@ static struct cfi_fixup cfi_fixup_table[] = {
+ 	{ CFI_MFR_ST, 0x00ba, /* M28W320CT */ fixup_st_m28w320ct },
+ 	{ CFI_MFR_ST, 0x00bb, /* M28W320CB */ fixup_st_m28w320cb },
+ 	{ CFI_MFR_INTEL, CFI_ID_ANY, fixup_unlock_powerup_lock },
++	{ CFI_MFR_SHARP, CFI_ID_ANY, fixup_unlock_powerup_lock },
++	{ CFI_MFR_SHARP, CFI_ID_ANY, fixup_LH28F640BF },
+ 	{ 0, 0, NULL }
+ };
+ 
+@@ -387,6 +435,12 @@ read_pri_intelext(struct map_info *map, __u16 adr)
+ 	if (extp->MinorVersion >= '3') {
+ 		int nb_parts, i;
+ 
++		/* Sharp LH28F640BF query does not respect the nr of synch
++		 * modes/fields. The value of "Synchronous mode read capability
++		 * configuration" is 0 but 3 fields are reserved so the
++		 * number of partitions is at offsets +3. Ignore, we have set PCR to 1. */
++		/* if (is_LH28F640BF(cfi)) extra_size += 3; */
++
+ 		/* Number of hardware-partitions */
+ 		extra_size += 1;
+ 		if (extp_size < sizeof(*extp) + extra_size)
+@@ -656,6 +710,12 @@ static int cfi_intelext_partition_fixup(struct mtd_info *mtd,
+ 		/* Burst Read info */
+ 		offs += extp->extra[offs+1]+2;
+ 
++		/* Sharp LH28F640BF query does not respect the nr of synch
++		 * modes/fields. The value of "Synchronous mode read capability
++		 * configuration" is 0 but 3 fields are reserved so the
++		 * number of partitions is at offsets +3. Ignore, we have set PCR to 1. */
++		/* if (is_LH28F640BF(cfi)) offs += 3; */
++
+ 		/* Number of partition regions */
+ 		numregions = extp->extra[offs];
+ 		offs += 1;
+@@ -1654,6 +1714,12 @@ static int __xipram do_write_buffer(struct map_info *map, struct flchip *chip,
+ 	initial_adr = adr;
+ 	cmd_adr = adr & ~(wbufsize-1);
+ 
++	/* Sharp LH28F640BF chips need the first address for the
++	 * Page Buffer Program command. See Table 5 of
++	 * LH28F320BF, LH28F640BF, LH28F128BF Series (Appendix FUM00701)
++	 * Apparently some Intel Strataflash can be programmed this way as well */
++	if (is_LH28F640BF(cfi)) cmd_adr = adr;
++
+ 	/* Let's determine this according to the interleave only once */
+ 	write_cmd = (cfi->cfiq->P_ID != P_ID_INTEL_PERFORMANCE) ? CMD(0xe8) : CMD(0xe9);
+ 
+-- 
+1.8.1.5
+
