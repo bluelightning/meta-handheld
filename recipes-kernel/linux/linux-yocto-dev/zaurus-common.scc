@@ -3,7 +3,7 @@ kconf non-hardware zaurus-non-hardware.cfg
 
 include cfg/fs/flash_fs.scc
 include cfg/fs/vfat.scc
-include cfg/serial-8250.cfg
+include cfg/8250.scc
 include cfg/sound.scc
 
 include features/vfat/vfat.scc
