@@ -68,7 +68,7 @@ Example: one image on mtd2 and another one on mtd3 (optional)
 
 2nd rootfs: JFFS2-summary image
  flash_eraseall -j /dev/mtd3
- nandwrite /dev/mtd3 /path/to/core-image-base-<machine>-<date>.rootfs.sum.jffs2
+ nandwrite /dev/mtd3 /path/to/core-image-base-<machine>-<date>.rootfs.jffs2.sum
 
 Note: flash_eraseall is deprecated because the erase-counters are reset!
 

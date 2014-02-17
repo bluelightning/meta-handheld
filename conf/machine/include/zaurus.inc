@@ -2,8 +2,8 @@
 # Zaurus common settings
 ########################
 
-IMAGE_FSTYPES ?= "tar.gz jffs2 sum.jffs2 ubi ubifs"
-EXTRA_IMAGECMD_sum.jffs2 = "-p -l -e ${JFFS2_ERASEBLOCK} -n"
+IMAGE_FSTYPES ?= "tar.gz jffs2 jffs2.sum ubi ubifs"
+EXTRA_IMAGECMD_jffs2.sum = "-p -l -e ${JFFS2_ERASEBLOCK} -n"
 
 INITRAMFS_FSTYPES ?= "cpio.gz cpio.lzma"
 IMAGE_DEVICE_TABLES = ""
