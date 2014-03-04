@@ -1,30 +1,28 @@
-DESCRIPTION = "Daemon to handle device specific features."
+SUMMARY = "Daemon to handle device-specific features"
 SECTION = "base"
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=94d55d512a9ba36caa9b7df079bae19f"
 DEPENDS = "tslib"
 
 PE = "1"
-PV = "0.0+gitr${SRCPV}"
-PR = "r26"
+PV = "0.1+git${SRCPV}"
 
-SRCREV = "82b30c7865f007fff81372c3cdc71b2ff6843ccc"
-SRC_URI = "git://git.yoctoproject.org/zaurusd;protocol=git \
+SRCREV = "85d941d87f0c41b196766a173feaafffa6de2dc2"
+SRC_URI = "git://git.yoctoproject.org/${BPN} \
            file://zaurus-hinge.in \
-	   file://add-poodle.patch \
-	   file://alsa-cxx00-default.state.patch \
-	   file://alsa-6000x-default.state.patch \
-	   file://disable-alsa-handling.patch \
-	   file://avoid-rotated-server.patch \
-	   file://new-make.patch \
-	   file://scripts_pidof.patch \
-	   file://zaurus-hinge.matchbox-portrait \
-	   file://zaurus-hinge.matchbox-landscape \
-	   file://zaurus-hinge.bl-on \
-	   file://zaurus-hinge.bl-off \
-	   file://01-check-toggle-landscape \
-	   file://01-check-toggle-portait \
-       file://use-ts-symlink-instead-of-hardcoding.diff "
+           file://add-poodle.patch \
+           file://alsa-cxx00-default.state.patch \
+           file://alsa-6000x-default.state.patch \
+           file://disable-alsa-handling.patch \
+           file://avoid-rotated-server.patch \
+           file://scripts_pidof.patch \
+           file://zaurus-hinge.matchbox-portrait \
+           file://zaurus-hinge.matchbox-landscape \
+           file://zaurus-hinge.bl-on \
+           file://zaurus-hinge.bl-off \
+           file://01-check-toggle-landscape \
+           file://01-check-toggle-portait \
+           file://use-ts-symlink-instead-of-hardcoding.diff "
 
 
 S = "${WORKDIR}/git"
