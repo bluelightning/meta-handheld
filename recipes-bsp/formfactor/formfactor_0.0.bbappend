@@ -1,5 +1,3 @@
-PRINC := "${@int(PRINC) + 3}"
-
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 do_install_prepend () {
