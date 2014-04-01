@@ -1,4 +1,4 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-3.10:${THISDIR}/${PN}:${THISDIR}/files:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-3.10:${THISDIR}/linux-yocto-3.10:${THISDIR}/files:"
 
 # re-expand the defconfig produced by 'make savedefconfig'
 KCONFIG_MODE = "--alldefconfig"
