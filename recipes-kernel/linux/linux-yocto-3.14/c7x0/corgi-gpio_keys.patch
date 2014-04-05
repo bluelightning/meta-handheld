@@ -1,0 +1,80 @@
+From dc5dfab4ed18f0756f304dc5699b5743ddf56f90 Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Tue, 25 Feb 2014 15:59:19 +0400
+Subject: [PATCH] ARM: pxa: add gpio keys information
+
+Switching from corgikbd to matrixkbd corgi has lost support for few switches.
+Readd them through gpio-keys-polled device (-polled, since scoop does
+not provide IRQ for GPIO).
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Signed-off-by: Haojian Zhuang <haojian.zhuang@gmail.com>
+
+diff --git a/arch/arm/mach-pxa/corgi.c b/arch/arm/mach-pxa/corgi.c
+index f162f1b..57d6054 100644
+--- a/arch/arm/mach-pxa/corgi.c
++++ b/arch/arm/mach-pxa/corgi.c
+@@ -32,6 +32,7 @@
+ #include <linux/spi/pxa2xx_spi.h>
+ #include <linux/mtd/sharpsl.h>
+ #include <linux/input/matrix_keypad.h>
++#include <linux/gpio_keys.h>
+ #include <linux/module.h>
+ #include <video/w100fb.h>
+ 
+@@ -405,6 +406,44 @@ static struct platform_device corgikbd_device = {
+ 	},
+ };
+ 
++static struct gpio_keys_button corgi_gpio_keys[] = {
++	{
++		.type	= EV_SW,
++		.code	= SW_LID,
++		.gpio	= CORGI_GPIO_SWA,
++		.desc	= "Lid close switch",
++		.debounce_interval = 500,
++	},
++	{
++		.type	= EV_SW,
++		.code	= SW_TABLET_MODE,
++		.gpio	= CORGI_GPIO_SWB,
++		.desc	= "Tablet mode switch",
++		.debounce_interval = 500,
++	},
++	{
++		.type	= EV_SW,
++		.code	= SW_HEADPHONE_INSERT,
++		.gpio	= CORGI_GPIO_AK_INT,
++		.desc	= "HeadPhone insert",
++		.debounce_interval = 500,
++	},
++};
++
++static struct gpio_keys_platform_data corgi_gpio_keys_platform_data = {
++	.buttons	= corgi_gpio_keys,
++	.nbuttons	= ARRAY_SIZE(corgi_gpio_keys),
++	.poll_interval	= 250,
++};
++
++static struct platform_device corgi_gpio_keys_device = {
++	.name	= "gpio-keys-polled",
++	.id	= -1,
++	.dev	= {
++		.platform_data	= &corgi_gpio_keys_platform_data,
++	},
++};
++
+ /*
+  * Corgi LEDs
+  */
+@@ -646,6 +685,7 @@ static struct platform_device sharpsl_rom_device = {
+ static struct platform_device *devices[] __initdata = {
+ 	&corgiscoop_device,
+ 	&corgifb_device,
++	&corgi_gpio_keys_device,
+ 	&corgikbd_device,
+ 	&corgiled_device,
+ 	&corgi_audio_device,
+-- 
+cgit v0.10.1
+

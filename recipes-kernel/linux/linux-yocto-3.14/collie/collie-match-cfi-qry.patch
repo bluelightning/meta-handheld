@@ -1,0 +1,47 @@
+From 66ec11df6561d5ba7cdf41977af828a53ba6b99f Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Sat, 1 Feb 2014 13:17:24 +0100
+Subject: [PATCH] mtd: cfi_util.c: force CFI detection of 2x LH28F640BF
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ drivers/mtd/chips/cfi_util.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/drivers/mtd/chips/cfi_util.c b/drivers/mtd/chips/cfi_util.c
+index f992418..2c7a13d 100644
+--- a/drivers/mtd/chips/cfi_util.c
++++ b/drivers/mtd/chips/cfi_util.c
+@@ -29,6 +29,7 @@ int __xipram cfi_qry_present(struct map_info *map, __u32 base,
+ 	int osf = cfi->interleave * cfi->device_type;	/* scale factor */
+ 	map_word val[3];
+ 	map_word qry[3];
++	unsigned long mask = (1 << (cfi->device_type * 8)) - 1;
+ 
+ 	qry[0] = cfi_build_cmd('Q', map, cfi);
+ 	qry[1] = cfi_build_cmd('R', map, cfi);
+@@ -38,6 +39,21 @@ int __xipram cfi_qry_present(struct map_info *map, __u32 base,
+ 	val[1] = map_read(map, base + osf*0x11);
+ 	val[2] = map_read(map, base + osf*0x12);
+ 
++	/* Apparently only one of the 2 interleaved LH28F640BF 16 bit chips on
++	 * a 32 bit wide bus is answering to the CFI Query.
++	 * Using the expected map bankwidth=4 and chip interleave=2 we get wrong
++	 * readings like 0xffff0051 instead of 0x00510051 etc.
++	 * We take the valid bytes and recreate the expected answer as workaround.
++	 */
++	if (((val[0].x[0] >> (cfi->device_type * 8)) == mask) &&
++	    ((val[1].x[0] >> (cfi->device_type * 8)) == mask) &&
++	    ((val[2].x[0] >> (cfi->device_type * 8)) == mask))
++	{
++	val[0].x[0] = (val[0].x[0] & mask) + ((val[0].x[0] & mask) << (cfi->device_type * 8));
++	val[1].x[0] = (val[1].x[0] & mask) + ((val[1].x[0] & mask) << (cfi->device_type * 8));
++	val[2].x[0] = (val[2].x[0] & mask) + ((val[2].x[0] & mask) << (cfi->device_type * 8));
++	}
++
+ 	if (!map_word_equal(map, qry[0], val[0]))
+ 		return 0;
+ 
+-- 
+1.8.1.5
+
