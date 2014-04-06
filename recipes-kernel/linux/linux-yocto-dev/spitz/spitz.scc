@@ -1,5 +1,0 @@
-kconf hardware spitz.cfg
-
-include ../zaurus-pxa-only.scc
-include ../zaurus-common.scc
-include ../zaurus-usb-host.scc
