@@ -1,21 +1,42 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-3.14:${THISDIR}/${PN}:"
 
+# Declare more compatible machines
 COMPATIBLE_MACHINE .= "|akita|c7x0|collie|h3600|hx4700|poodle|spitz|tosa"
 
-KMACHINE_${MACHINE} = "${MACHINE}"
-KERNEL_EXTRA_FEATURES_${MACHINE} ?= ""
+KERNEL_EXTRA_FEATURES_akita ?= ""
+KERNEL_EXTRA_FEATURES_c7x0 ?= ""
+KERNEL_EXTRA_FEATURES_collie ?= ""
+KERNEL_EXTRA_FEATURES_h3600 ?= ""
+KERNEL_EXTRA_FEATURES_hx4700 ?= ""
+KERNEL_EXTRA_FEATURES_poodle ?= ""
+KERNEL_EXTRA_FEATURES_spitz ?= ""
+KERNEL_EXTRA_FEATURES_tosa ?= ""
 
-OELOGO_PATCH = '${@base_contains("MACHINE_FEATURES", "qvga", "OE-qvga-logo.patch", "OE-vga-logo.patch", d)}'
-SRC_URI += "file://${OELOGO_PATCH}"
+KMACHINE_akita = "akita"
+KMACHINE_c7x0 = "c7x0"
+KMACHINE_collie = "collie"
+KMACHINE_h3600 = "h3600"
+KMACHINE_hx4700 = "hx4700"
+KMACHINE_poodle = "poodle"
+KMACHINE_spitz = "spitz"
+KMACHINE_tosa = "tosa"
 
 # Note: Providing "defconfig" we bypass the linux-yocto processing
-SRC_URI += "file://defconfig"
+
+SRC_URI_append_akita = " \
+           file://defconfig \
+           file://OE-vga-logo.patch \
+           "
 
 SRC_URI_append_c7x0 = " \
+           file://defconfig \
+           file://OE-vga-logo.patch \
            file://corgi-gpio_keys.patch \
            "
 
 SRC_URI_append_collie = " \
+           file://defconfig \
+           file://OE-qvga-logo.patch \
            file://locomo_kbd_tweak-r2.patch \
            \
            file://collie-irda.patch \
@@ -40,6 +61,8 @@ SRC_URI_append_collie = " \
            "
 
 SRC_URI_append_h3600 = " \
+           file://defconfig \
+           file://OE-qvga-logo.patch \
            file://0001-MFD-driver-for-Atmel-Microcontroller-on-iPaq-h3xxx.patch \
            file://0002-ARM-sa1100-add-Micro-ASIC-platform-device.patch \
            file://0003-input-driver-for-microcontroller-keys-on-the-iPaq-h3.patch \
@@ -50,17 +73,28 @@ SRC_URI_append_h3600 = " \
            "
 
 SRC_URI_append_hx4700 = " \
+           file://defconfig \
+           file://OE-vga-logo.patch \
            file://hx4700-change-led-trigger-assignments.patch \
            file://hx4700.h-include-irqs.h-for-PXA_NR_BUILTIN_G.patch \
            "
 
 SRC_URI_append_poodle = " \
+           file://defconfig \
+           file://OE-qvga-logo.patch \
            file://locomo_kbd_tweak-r2.patch \
            file://locomo-fix-SCL-SDA.patch \
            file://locomolcd-suspend-resume.patch \
            "
 
+SRC_URI_append_spitz = " \
+           file://defconfig \
+           file://OE-vga-logo.patch \
+           "
+
 SRC_URI_append_tosa = " \
+           file://defconfig \
+           file://OE-vga-logo.patch \
            file://0001-HACK-video-move-backlight-to-the-end-of-Makefile.patch \
            file://0002-tosa-bl-correct-backlight-calculations.patch \
            file://0003-tmio-call-tmiofb_set_par-in-tmiofb_probe.patch \
