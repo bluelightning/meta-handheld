@@ -14,7 +14,7 @@ IMAGE_DEVICE_TABLES = ""
 
 # Zaurus gets preferred providers settings
 # from distro/include/default-providers.inc
-XSERVER = "xserver-xorg xf86-video-fbdev xf86-input-keyboard xf86-input-mouse xf86-input-evdev"
+XSERVER = "xserver-xorg xf86-video-fbdev xf86-input-keyboard xf86-input-mouse xf86-input-evdev xinput-calibrator"
 
 ########
 # kernel
