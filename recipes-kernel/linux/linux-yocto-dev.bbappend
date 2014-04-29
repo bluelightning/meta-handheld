@@ -8,6 +8,10 @@ COMPATIBLE_MACHINE .= "|h1940"
 KERNEL_EXTRA_FEATURES_h1940 ?= ""
 KMACHINE_h1940 = "h1940"
 
+# Note: Providing "defconfig" we bypass the linux-yocto processing
+# re-expand the defconfig produced by "make_savedefconfig"
+KCONFIG_MODE_h1940 = "--alldefconfig"
+
 SRC_URI_append_h1940 = " \
            file://defconfig \
            file://0001-s3c24xx-DMA-don-t-use-autoreload-feature.patch \

@@ -1,8 +1,5 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-3.10:${THISDIR}/linux-yocto-3.10:${THISDIR}/files:"
 
-# re-expand the defconfig produced by 'make savedefconfig'
-KCONFIG_MODE = "--alldefconfig"
-
 COMPATIBLE_MACHINE .= "|akita|c7x0|collie|poodle|spitz|tosa"
 
 # Zaurus machines need kernel size-check.
@@ -10,8 +7,8 @@ KERNEL_IMAGE_MAXSIZE_akita = "1294336"
 KERNEL_IMAGE_MAXSIZE_c7x0 = "1294336"
 KERNEL_IMAGE_MAXSIZE_collie = "1048576"
 KERNEL_IMAGE_MAXSIZE_poodle = "1294336"
-KERNEL_IMAGE_MAXSIZE_tosa = "1294336"
 KERNEL_IMAGE_MAXSIZE_spitz = "1294336"
+KERNEL_IMAGE_MAXSIZE_tosa = "1294336"
 
 KMACHINE_akita = "akita"
 KMACHINE_c7x0 = "c7x0"
@@ -19,6 +16,15 @@ KMACHINE_collie = "collie"
 KMACHINE_poodle = "poodle"
 KMACHINE_spitz = "spitz"
 KMACHINE_tosa = "tosa"
+
+# Note: Providing "defconfig" we bypass the linux-yocto processing
+# re-expand the defconfig produced by "make_savedefconfig"
+KCONFIG_MODE_akita = "--alldefconfig"
+KCONFIG_MODE_c7x0 = "--alldefconfig"
+KCONFIG_MODE_collie = "--alldefconfig"
+KCONFIG_MODE_poodle = "--alldefconfig"
+KCONFIG_MODE_spitz = "--alldefconfig"
+KCONFIG_MODE_tosa = "--alldefconfig"
 
 SRC_URI_append_akita = " \
            file://defconfig \

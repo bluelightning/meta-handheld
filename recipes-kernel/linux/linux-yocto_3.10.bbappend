@@ -23,6 +23,17 @@ KMACHINE_poodle = "poodle"
 KMACHINE_spitz = "spitz"
 KMACHINE_tosa = "tosa"
 
+# Note: Providing "defconfig" we bypass the linux-yocto processing
+# re-expand the defconfig produced by "make_savedefconfig"
+KCONFIG_MODE_akita = "--alldefconfig"
+KCONFIG_MODE_c7x0 = "--alldefconfig"
+KCONFIG_MODE_collie = "--alldefconfig"
+KCONFIG_MODE_h3600 = "--alldefconfig"
+KCONFIG_MODE_hx4700 = "--alldefconfig"
+KCONFIG_MODE_poodle = "--alldefconfig"
+KCONFIG_MODE_spitz = "--alldefconfig"
+KCONFIG_MODE_tosa = "--alldefconfig"
+
 SRC_URI_append_akita = " \
            file://feature-top.scc \
            file://vga/logo_linux_clut224.ppm.bz2 \
