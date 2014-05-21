@@ -1,11 +1,12 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-3.14:${THISDIR}/${PN}:"
 
 # Declare more compatible machines
-COMPATIBLE_MACHINE .= "|akita|c7x0|collie|h3600|hx4700|poodle|spitz|tosa"
+COMPATIBLE_MACHINE .= "|akita|c7x0|collie|h1940|h3600|hx4700|poodle|spitz|tosa"
 
 KERNEL_EXTRA_FEATURES_akita ?= ""
 KERNEL_EXTRA_FEATURES_c7x0 ?= ""
 KERNEL_EXTRA_FEATURES_collie ?= ""
+KERNEL_EXTRA_FEATURES_h1940 ?= ""
 KERNEL_EXTRA_FEATURES_h3600 ?= ""
 KERNEL_EXTRA_FEATURES_hx4700 ?= ""
 KERNEL_EXTRA_FEATURES_poodle ?= ""
@@ -15,6 +16,7 @@ KERNEL_EXTRA_FEATURES_tosa ?= ""
 KMACHINE_akita = "akita"
 KMACHINE_c7x0 = "c7x0"
 KMACHINE_collie = "collie"
+KMACHINE_h1940 = "h1940"
 KMACHINE_h3600 = "h3600"
 KMACHINE_hx4700 = "hx4700"
 KMACHINE_poodle = "poodle"
@@ -26,6 +28,7 @@ KMACHINE_tosa = "tosa"
 KCONFIG_MODE_akita = "--alldefconfig"
 KCONFIG_MODE_c7x0 = "--alldefconfig"
 KCONFIG_MODE_collie = "--alldefconfig"
+KCONFIG_MODE_h1940 = "--alldefconfig"
 KCONFIG_MODE_h3600 = "--alldefconfig"
 KCONFIG_MODE_hx4700 = "--alldefconfig"
 KCONFIG_MODE_poodle = "--alldefconfig"
@@ -67,6 +70,28 @@ SRC_URI_append_collie = " \
            \
            file://collie-use-gpio-charger.patch \
            \
+           "
+
+SRC_URI_append_h1940 = " \
+           file://defconfig \
+           file://OE-qvga-logo.patch \
+           file://0001-rfkill-add-IR-type.patch \
+           file://0002-ARM-s3c24xx-Remove-S3C24XX_DMA-dependency-from-S3C24.patch \
+           file://0003-ARM-s3c24xx-add-dma_coherent_mask-for-DMA-devices.patch \
+           file://0004-ARM-s3c24xx-Add-DMA-resources-for-SDI-and-I2S.patch \
+           file://0005-ARM-s3c24xx-drop-RFKILL-driver-for-H1940-bluetooth.patch \
+           file://0006-ARM-s3c24xx-h1940-Add-nand-device.patch \
+           file://0007-ARM-s3c24xx-h1940-don-t-touch-UPLLCON.patch \
+           file://0008-ARM-s3c24xx-h1940-unlock-reset-button.patch \
+           file://0009-ARM-s3c24xx-h1940-add-bluetooth-RF-kill-switch.patch \
+           file://0010-ARM-s3c24xx-h1940-add-IR-switch.patch \
+           file://0011-ARM-s3c24xx-h1940-increase-oversampling-shift.patch \
+           file://0012-ARM-s3c24xx-h1940-Add-DMA-device.patch \
+           file://0013-dmaengine-s3c24xx-dma-Process-whole-SG-chain.patch \
+           file://0014-dmaengine-s3c24xx-dma-Add-cyclic-transfer-support.patch \
+           file://0015-s3cmci-port-DMA-code-to-dmaengine-API.patch \
+           file://0016-ASoC-samsung-s3c24-xx-12-i2s-port-to-use-generic-dma.patch \
+           file://0017-ASoC-samsung-drop-support-for-legacy-S3C24XX-DMA-API.patch \
            "
 
 SRC_URI_append_h3600 = " \
