@@ -11,7 +11,6 @@ patch ../patches/patches-mtd/collie-eraseinfo.patch
 // for 3.12
 patch ../patches/patches-mtd/collie-cfi-probe-again.patch
 patch ../patches/patches-mtd/collie-mtd-resize.patch
-patch ../patches/patches-mtd/collie-match-cfi-qry.patch
 patch ../patches/patches-mtd/collie-LH28F640BF.patch
 patch ../patches/patches-sa1100/collie-irda.patch
 patch ../patches/patches-sa1100/collie-add-bootblock.patch
