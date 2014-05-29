@@ -110,7 +110,6 @@ SRC_URI_append_hx4700 = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            file://hx4700-change-led-trigger-assignments.patch \
-           file://hx4700.h-include-irqs.h-for-PXA_NR_BUILTIN_G.patch \
            "
 
 SRC_URI_append_poodle = " \
