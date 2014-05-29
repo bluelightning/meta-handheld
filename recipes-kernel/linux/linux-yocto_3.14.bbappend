@@ -55,7 +55,6 @@ SRC_URI_append_collie = " \
            \
            file://collie-cfi-probe-again.patch \
            file://collie-mtd-resize.patch \
-           file://collie-match-cfi-qry.patch \
            file://collie-LH28F640BF.patch \
            file://collie-add-bootblock.patch \
            \
