@@ -1,27 +1,27 @@
-From 12402bf48cf2494a65aac0cf1e55cdc6296691bc Mon Sep 17 00:00:00 2001
+From 4a141aadc97f6493d3af58238acb681c41ef496d Mon Sep 17 00:00:00 2001
 From: Andrea Adami <andrea.adami@gmail.com>
-Date: Sun, 6 Apr 2014 21:21:22 +0200
-Subject: [PATCH] mtd: add support for Sharp LH28F640BF NOR chips
+Date: Sat, 31 May 2014 00:23:51 +0200
+Subject: [PATCH] mtd: cfi_cmdset_0001.c: add support for Sharp LH28F640BF NOR
 
-Tested on Zaurus SL-5500 (Collie) 2x16 on 32 bit bus
+This family of chips was long ago supported by the pre-cfi driver.
+CFI code tested on several Zaurus SL-5500 (Collie) 2x16 on 32 bit bus.
+
+Function is_LH28F640BF() mimics is_m29ew() from cmdset_0002.c
 
 Buffer write fixes as seen in 2007 patch c/o
 Anti Sullin <anti.sullin <at> artecdesign.ee>
 http://comments.gmane.org/gmane.linux.ports.arm.kernel/36733
 
-Other fixes as seen in
-Micron: TN-12-06: Adapting the Linux Kernel for P30, P33, and J3 Flash
-
 Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
 ---
- drivers/mtd/chips/cfi_cmdset_0001.c | 60 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 59 insertions(+), 1 deletion(-)
+ drivers/mtd/chips/cfi_cmdset_0001.c | 43 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
 diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
-index 7751443..d83b603 100644
+index e4ec355..a7543ba 100644
 --- a/drivers/mtd/chips/cfi_cmdset_0001.c
 +++ b/drivers/mtd/chips/cfi_cmdset_0001.c
-@@ -53,6 +53,11 @@
+@@ -52,6 +52,11 @@
  /* Atmel chips */
  #define AT49BV640D	0x02de
  #define AT49BV640DT	0x02db
@@ -33,7 +33,7 @@ index 7751443..d83b603 100644
  
  static int cfi_intelext_read (struct mtd_info *, loff_t, size_t, size_t *, u_char *);
  static int cfi_intelext_write_words(struct mtd_info *, loff_t, size_t, size_t *, const u_char *);
-@@ -259,6 +264,40 @@ static void fixup_st_m28w320cb(struct mtd_info *mtd)
+@@ -258,6 +263,36 @@ static void fixup_st_m28w320cb(struct mtd_info *mtd)
  		(cfi->cfiq->EraseRegionInfo[1] & 0xffff0000) | 0x3e;
  };
  
@@ -53,20 +53,16 @@ index 7751443..d83b603 100644
 +	struct cfi_private *cfi = map->fldrv_priv;
 +	struct cfi_pri_intelext *extp = cfi->cmdset_priv;
 +
-+	/* NOTE: Sharp Extended Query reports the nr of hardware partitions
-+	 * with an offset of +3. Change of the PCR are not reflected.
-+	 * Keep the wrong reading (0) and let the code convert it to 1 */
-+
 +	/* Reset the Partition Configuration Register on LH28F640BF
-+	 * to a single partition (PCRC = 0x000): PCRC is embedded into A0-A15. */
++	 * to a single partition (PCR = 0x000): PCR is embedded into A0-A15. */
 +	if (is_LH28F640BF(cfi)) {
-+		printk(KERN_INFO "Reset Partition Config. Register: 1 Partition of 4 planes\n" );
++		printk(KERN_INFO "Reset Partition Config. Register: 1 Partition of 4 planes\n");
 +		map_write(map, CMD(0x60), 0);
 +		map_write(map, CMD(0x04), 0);
 +
 +		/* We have set one single partition thus
 +		 * Simultaneous Operations are not allowed */
-+		printk(KERN_WARNING "cfi_cmdset_0001: Simultaneous Operations disabled\n");
++		printk(KERN_INFO "cfi_cmdset_0001: Simultaneous Operations disabled\n");
 +		extp->FeatureSupport &= ~512;
 +	}
 +}
@@ -74,7 +70,7 @@ index 7751443..d83b603 100644
  static void fixup_use_point(struct mtd_info *mtd)
  {
  	struct map_info *map = mtd->priv;
-@@ -310,6 +349,8 @@ static struct cfi_fixup cfi_fixup_table[] = {
+@@ -309,6 +344,8 @@ static struct cfi_fixup cfi_fixup_table[] = {
  	{ CFI_MFR_ST, 0x00ba, /* M28W320CT */ fixup_st_m28w320ct },
  	{ CFI_MFR_ST, 0x00bb, /* M28W320CB */ fixup_st_m28w320cb },
  	{ CFI_MFR_INTEL, CFI_ID_ANY, fixup_unlock_powerup_lock },
@@ -83,55 +79,19 @@ index 7751443..d83b603 100644
  	{ 0, 0, NULL }
  };
  
-@@ -655,7 +696,6 @@ static int cfi_intelext_partition_fixup(struct mtd_info *mtd,
- 
- 		/* Burst Read info */
- 		offs += extp->extra[offs+1]+2;
--
- 		/* Number of partition regions */
- 		numregions = extp->extra[offs];
- 		offs += 1;
-@@ -1003,8 +1043,16 @@ static void put_chip(struct map_info *map, struct flchip *chip, unsigned long ad
- 		   sending the 0x70 (Read Status) command to an erasing
- 		   chip and expecting it to be ignored, that's what we
- 		   do. */
-+
-+		 /* Fix Erase-Suspend hangups: dummy 0xFF cycle before Resume */
-+		if (is_LH28F640BF(cfi)) map_write(map, CMD(0xFF), adr);
-+
- 		map_write(map, CMD(0xd0), adr);
- 		map_write(map, CMD(0x70), adr);
-+
-+		 /* Fix Erase-Suspend following Erase-Resume: add latency */
-+		if (is_LH28F640BF(cfi)) cfi_udelay(1200);
-+
- 		chip->oldstate = FL_READY;
- 		chip->state = FL_ERASING;
- 		break;
-@@ -1162,6 +1210,10 @@ static int __xipram xip_wait_for_operation(
- 			local_irq_disable();
- 
- 			/* Resume the write or erase operation */
-+
-+			 /* Fix Erase-Suspend hangups: dummy 0xFF cycle before Resume */
-+			if (is_LH28F640BF(cfi)) map_write(map, CMD(0xFF), adr);
-+
- 			map_write(map, CMD(0xd0), adr);
- 			map_write(map, CMD(0x70), adr);
- 			chip->state = oldstate;
-@@ -1654,6 +1706,12 @@ static int __xipram do_write_buffer(struct map_info *map, struct flchip *chip,
+@@ -1649,6 +1686,12 @@ static int __xipram do_write_buffer(struct map_info *map, struct flchip *chip,
  	initial_adr = adr;
  	cmd_adr = adr & ~(wbufsize-1);
  
 +	/* Sharp LH28F640BF chips need the first address for the
 +	 * Page Buffer Program command. See Table 5 of
-+	 * LH28F320BF, LH28F640BF, LH28F128BF Series (Appendix FUM00701)
-+	 * Apparently some Intel Strataflash can be programmed this way as well */
-+	if (is_LH28F640BF(cfi)) cmd_adr = adr;
++	 * LH28F320BF, LH28F640BF, LH28F128BF Series (Appendix FUM00701) */
++	if (is_LH28F640BF(cfi))
++		cmd_adr = adr;
 +
  	/* Let's determine this according to the interleave only once */
  	write_cmd = (cfi->cfiq->P_ID != P_ID_INTEL_PERFORMANCE) ? CMD(0xe8) : CMD(0xe9);
  
 -- 
-1.8.1.5
+1.9.1
 
