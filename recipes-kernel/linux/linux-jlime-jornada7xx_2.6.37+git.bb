@@ -1,6 +1,7 @@
 SECTION = "kernel"
 DESCRIPTION = "JLime Linux kernel for Arm based Jornada 7xx"
 LICENSE = "GPLv2"
+LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 PR = "r0"
 
 SRCREV="7ee4a9696f324ee5b721904b24591ed7b8ab6504"
