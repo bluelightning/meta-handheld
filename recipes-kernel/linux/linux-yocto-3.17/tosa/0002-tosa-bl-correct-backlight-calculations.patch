@@ -1,0 +1,39 @@
+From 0e7ecb12cdc3e89242738a525c8f6c6419fb976e Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dmitry_eremin@mentor.com>
+Date: Wed, 9 Oct 2013 05:49:57 +0400
+Subject: [PATCH 2/7] tosa-bl: correct backlight calculations
+
+To behave like old (Sharp) kernels enable 20mA drain when backlight is
+enabled. Accordingly limit max_backlight to 255 (8-bit value).
+Rebased for 3.14
+
+Signed-off-by: Dmitry Eremin-Solenikov <dmitry_eremin@mentor.com>
+---
+ drivers/video/backlight/tosa_bl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/backlight/tosa_bl.c b/drivers/video/backlight/tosa_bl.c
+index 3ad6765..0caae3a 100644
+--- a/drivers/video/backlight/tosa_bl.c
++++ b/drivers/video/backlight/tosa_bl.c
+@@ -46,7 +46,7 @@ static void tosa_bl_set_backlight(struct tosa_bl_data *data, int brightness)
+ 	i2c_smbus_write_byte_data(data->i2c, DAC_CH2, (u8)(brightness & 0xff));
+ 
+ 	/* SetBacklightVR */
+-	gpio_set_value(TOSA_GPIO_BL_C20MA, brightness & 0x100);
++	gpio_set_value(TOSA_GPIO_BL_C20MA, !!brightness);
+ 
+ 	tosa_bl_enable(spi, brightness);
+ }
+@@ -104,7 +104,7 @@ static int tosa_bl_probe(struct i2c_client *client,
+ 
+ 	memset(&props, 0, sizeof(struct backlight_properties));
+ 	props.type = BACKLIGHT_RAW;
+-	props.max_brightness = 512 - 1;
++	props.max_brightness = 255;
+ 	data->bl = devm_backlight_device_register(&client->dev, "tosa-bl",
+ 						&client->dev, data, &bl_ops,
+ 						&props);
+-- 
+1.8.5.2
+

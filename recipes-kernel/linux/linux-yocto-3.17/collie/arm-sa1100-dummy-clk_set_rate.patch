@@ -1,0 +1,33 @@
+From f05a8d9d9f20283ba5cb58c519f5aed1b89ebc9a Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Sat, 5 Apr 2014 16:44:07 +0200
+Subject: [PATCH] ARM: SA1100: Create dummy clk_set_rate() function
+
+MODPOST 247 modules
+ERROR: "clk_set_rate" [drivers/usb/phy/phy-generic.ko] undefined!
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ arch/arm/mach-sa1100/clock.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/mach-sa1100/clock.c b/arch/arm/mach-sa1100/clock.c
+index abf1dc1..1872521 100644
+--- a/arch/arm/mach-sa1100/clock.c
++++ b/arch/arm/mach-sa1100/clock.c
+@@ -104,6 +104,12 @@ unsigned long clk_get_rate(struct clk *clk)
+ }
+ EXPORT_SYMBOL(clk_get_rate);
+ 
++int clk_set_rate(struct clk *clk, unsigned long rate)
++{
++	return -EINVAL;
++}
++EXPORT_SYMBOL_GPL(clk_set_rate);
++
+ const struct clkops clk_gpio27_ops = {
+ 	.enable		= clk_gpio27_enable,
+ 	.disable	= clk_gpio27_disable,
+-- 
+1.8.1.5
+
