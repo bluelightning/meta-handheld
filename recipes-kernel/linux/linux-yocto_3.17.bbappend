@@ -51,6 +51,7 @@ SRC_URI_append_collie = " \
            file://locomolcd-suspend-resume.patch \
            \
            file://collie-use-gpio-charger.patch \
+           file://mtd-resume.patch \
            \
            "
 

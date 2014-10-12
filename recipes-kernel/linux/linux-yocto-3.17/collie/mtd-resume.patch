@@ -1,0 +1,34 @@
+From 6d34f776e8dba9cba5520db7d27a31102238f66e Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Sun, 12 Oct 2014 12:31:36 +0200
+Subject: [PATCH 1130/1130] mtd: cfi_cmdset_0001.c: fix resume for LH28F640BF
+ chips
+
+After '#echo mem > /sys/power/state' the device can not be resumed
+because apparently the Partition Configuration Register has been reset
+to default. This should only happen after cold/boot or hard reset but
+the behavior is confirmed on 2 different end-user devices.
+
+Tested on zaurus collie with kernel 3.17-rc7
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ drivers/mtd/chips/cfi_cmdset_0001.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/mtd/chips/cfi_cmdset_0001.c b/drivers/mtd/chips/cfi_cmdset_0001.c
+index a7543ba..59e2355 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0001.c
++++ b/drivers/mtd/chips/cfi_cmdset_0001.c
+@@ -2590,6 +2590,8 @@ static void cfi_intelext_resume(struct mtd_info *mtd)
+ 
+ 		/* Go to known state. Chip may have been power cycled */
+ 		if (chip->state == FL_PM_SUSPENDED) {
++			/* Refresh LH28F640BF Partition Configuration Register */
++			fixup_LH28F640BF(mtd);
+ 			map_write(map, CMD(0xFF), cfi->chips[i].start);
+ 			chip->oldstate = chip->state = FL_READY;
+ 			wake_up(&chip->wq);
+-- 
+1.9.1
+
