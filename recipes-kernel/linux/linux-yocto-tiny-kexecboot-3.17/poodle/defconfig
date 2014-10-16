@@ -34,7 +34,7 @@ CONFIG_AEABI=y
 # CONFIG_COMPACTION is not set
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE="console=tty1 console=ttyS0,115200n8 fbcon=rotate:1 loglevel=3"
+CONFIG_CMDLINE="console=tty1 console=ttyS0,115200n8 rdinit=/usr/bin/kexecboot fbcon=rotate:1 loglevel=3"
 CONFIG_CMDLINE_FORCE=y
 CONFIG_KEXEC=y
 # CONFIG_BINFMT_SCRIPT is not set
