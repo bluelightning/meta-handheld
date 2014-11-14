@@ -1,7 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-3.17:${THISDIR}/${PN}:"
 
 # Declare more compatible machines
-COMPATIBLE_MACHINE .= "|akita|c7x0|collie|poodle|spitz|tosa"
+COMPATIBLE_MACHINE .= "|akita|c7x0|collie|h3600|poodle|spitz|tosa"
 
 KERNEL_EXTRA_FEATURES_akita ?= ""
 KERNEL_EXTRA_FEATURES_c7x0 ?= ""
@@ -13,6 +13,7 @@ KERNEL_EXTRA_FEATURES_tosa ?= ""
 KMACHINE_akita = "akita"
 KMACHINE_c7x0 = "c7x0"
 KMACHINE_collie = "collie"
+KMACHINE_h3600 = "h3600"
 KMACHINE_poodle = "poodle"
 KMACHINE_spitz = "spitz"
 KMACHINE_tosa = "tosa"
@@ -22,6 +23,7 @@ KMACHINE_tosa = "tosa"
 KCONFIG_MODE_akita = "--alldefconfig"
 KCONFIG_MODE_c7x0 = "--alldefconfig"
 KCONFIG_MODE_collie = "--alldefconfig"
+KCONFIG_MODE_h3600 = "--alldefconfig"
 KCONFIG_MODE_poodle = "--alldefconfig"
 KCONFIG_MODE_spitz = "--alldefconfig"
 KCONFIG_MODE_tosa = "--alldefconfig"
@@ -53,6 +55,12 @@ SRC_URI_append_collie = " \
            file://collie-use-gpio-charger.patch \
            file://mtd-resume.patch \
            \
+           "
+SRC_URI_append_h3600 = " \
+           file://defconfig \
+           file://OE-qvga-logo.patch \
+           file://0001-ARM-sa1100-add-Micro-ASIC-platform-device.patch \
+           file://0002-input-driver-for-microcontroller-keys-on-the-iPaq-h3.patch \
            "
 
 SRC_URI_append_poodle = " \
