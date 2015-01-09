@@ -53,9 +53,8 @@ SRC_URI_append_collie = " \
            file://locomolcd-suspend-resume.patch \
            \
            file://collie-use-gpio-charger.patch \
-           file://mtd-resume.patch \
-           \
            "
+
 SRC_URI_append_h3600 = " \
            file://defconfig \
            file://OE-qvga-logo.patch \
