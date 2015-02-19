@@ -26,6 +26,7 @@ do_configure_append () {
 do_install_append () {
     case ${MACHINE} in
         c7x0 | tosa | akita | spitz | collie | poodle | h2200 | h4000 | hx4700 | jornada6xx )
+            install -d ${D}${sysconfdir}
             install -m 0644 ${WORKDIR}/keymap-*.map	${D}${sysconfdir}
             ;;
         *)
