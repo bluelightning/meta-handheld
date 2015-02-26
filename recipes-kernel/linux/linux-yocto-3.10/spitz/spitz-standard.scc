@@ -1,7 +1,0 @@
-define KMACHINE spitz
-define KTYPE standard
-define KARCH arm
-
-include ktypes/standard/standard.scc
-
-include spitz.scc
