@@ -20,7 +20,7 @@ XSERVER = "xserver-xorg xf86-video-fbdev xf86-input-keyboard xf86-input-mouse xf
 # kernel
 ########
 
-PREFERRED_PROVIDER_virtual/kernel = "linux-yocto"
+PREFERRED_PROVIDER_virtual/kernel = "linux-handheld"
 
 # Default bootloader expects "zImage", use "uImage" for u-boot
 # Note: kexecboot can boot both kind of images
