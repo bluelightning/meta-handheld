@@ -1,0 +1,39 @@
+From 334353f837455e036445880d106415d3d4432b01 Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Tue, 2 Dec 2014 20:34:50 +0300
+Subject: [PATCH 03/04] ARM: pxa: declare battery device on poodle
+
+Declare a battery platform device for SL-5600 (poodle) platform.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ arch/arm/mach-pxa/poodle.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/mach-pxa/poodle.c b/arch/arm/mach-pxa/poodle.c
+index 596e756..90d679a 100644
+--- a/arch/arm/mach-pxa/poodle.c
++++ b/arch/arm/mach-pxa/poodle.c
+@@ -466,6 +466,11 @@ static struct platform_device poodle_power_device = {
+ 	.dev.platform_data	= &poodle_power_data,
+ };
+ 
++static struct platform_device poodle_battery_device = {
++	.name			= "poodle-battery",
++	.id			= -1,
++};
++
+ static struct platform_device *devices[] __initdata = {
+ 	&poodle_locomo_device,
+ 	&poodle_scoop_device,
+@@ -474,6 +479,7 @@ static struct platform_device *devices[] __initdata = {
+ 	&sharpsl_nand_device,
+ 	&sharpsl_rom_device,
+ 	&poodle_power_device,
++	&poodle_battery_device,
+ };
+ 
+ static struct i2c_board_info __initdata poodle_i2c_devices[] = {
+-- 
+1.9.1
+

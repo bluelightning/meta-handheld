@@ -1,0 +1,43 @@
+From 3e683f8559e21a7328d74f907d1bbc3c2c5fc4b7 Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Mon, 27 Jan 2014 16:55:17 +0400
+Subject: [PATCH 3/7] tmio: call tmiofb_set_par in tmiofb_probe
+
+Call tmiofb_set_par() to initlaize fixed variable before registering
+framebuffer. This is necessary for current kexecboot.
+
+Rebased for 3.17-rc6
+
+Upstream-Status: Rejected [should fix kexecboot instead].
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ drivers/video/fbdev/tmiofb.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/video/fbdev/tmiofb.c b/drivers/video/fbdev/tmiofb.c
+index 7fb4e32..4ba1ded 100644
+--- a/drivers/video/fbdev/tmiofb.c
++++ b/drivers/video/fbdev/tmiofb.c
+@@ -774,6 +774,10 @@ static int tmiofb_probe(struct platform_device *dev)
+ 	if (retval)
+ 		goto err_hw_init;
+ 
++	retval = tmiofb_set_par(info);
++	if (retval)
++		goto err_set_par;
++
+ 	fb_videomode_to_modelist(data->modes, data->num_modes,
+ 				 &info->modelist);
+ 
+@@ -786,7 +790,7 @@ static int tmiofb_probe(struct platform_device *dev)
+ 	return 0;
+ 
+ err_register_framebuffer:
+-/*err_set_par:*/
++err_set_par:
+ 	tmiofb_hw_stop(dev);
+ err_hw_init:
+ 	if (cell->disable)
+-- 
+1.8.5.2
+

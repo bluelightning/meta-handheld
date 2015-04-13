@@ -1,0 +1,307 @@
+From da5b9945a361dd6dfc060cbca45fffff6889d992 Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Wed, 3 Dec 2014 02:56:33 +0300
+Subject: [PATCH 04/04] power: add poodle battery driver
+
+Add a driver supporting battery charging on Sharp SL-5600 (poodle).
+Voltage and temperature readings are provided through add7846 hwmon
+interface. Battery voltage is in1_input (mV) and temp in in0_input
+(values unknown, but should be less than 2441).
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ drivers/power/Kconfig          |   7 ++
+ drivers/power/Makefile         |   1 +
+ drivers/power/poodle_battery.c | 250 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 258 insertions(+)
+ create mode 100644 drivers/power/poodle_battery.c
+
+diff --git a/drivers/power/Kconfig b/drivers/power/Kconfig
+index 27b751b..678f23e 100644
+--- a/drivers/power/Kconfig
++++ b/drivers/power/Kconfig
+@@ -137,6 +137,13 @@ config BATTERY_COLLIE
+ 	  Say Y to enable support for the battery on the Sharp Zaurus
+ 	  SL-5500 (collie) models.
+ 
++config BATTERY_POODLE
++	tristate "Sharp SL-5600 (poodle) battery"
++	depends on MACH_POODLE
++	help
++	  Say Y to enable support for the battery on the Sharp Zaurus
++	  SL-5600 (poodle) models.
++
+ config BATTERY_IPAQ_MICRO
+ 	tristate "iPAQ Atmel Micro ASIC battery driver"
+ 	depends on MFD_IPAQ_MICRO
+diff --git a/drivers/power/Makefile b/drivers/power/Makefile
+index 36f9e0d..ff3e793 100644
+--- a/drivers/power/Makefile
++++ b/drivers/power/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_BATTERY_PMU)	+= pmu_battery.o
+ obj-$(CONFIG_BATTERY_OLPC)	+= olpc_battery.o
+ obj-$(CONFIG_BATTERY_TOSA)	+= tosa_battery.o
+ obj-$(CONFIG_BATTERY_COLLIE)	+= collie_battery.o
++obj-$(CONFIG_BATTERY_POODLE)	+= poodle_battery.o
+ obj-$(CONFIG_BATTERY_IPAQ_MICRO) += ipaq_micro_battery.o
+ obj-$(CONFIG_BATTERY_WM97XX)	+= wm97xx_battery.o
+ obj-$(CONFIG_BATTERY_SBS)	+= sbs-battery.o
+diff --git a/drivers/power/poodle_battery.c b/drivers/power/poodle_battery.c
+new file mode 100644
+index 0000000..ad96e13
+--- /dev/null
++++ b/drivers/power/poodle_battery.c
+@@ -0,0 +1,250 @@
++/*
++ * Battery handler for Sharp SL-5600 Poodle device
++ *
++ * Copyright (c) 2014 Dmitry Eremin-Solenikov
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#include <linux/delay.h>
++#include <linux/gpio.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/power_supply.h>
++
++#include <mach/poodle.h>
++
++struct poodle_bat {
++	int status;
++	struct power_supply psy;
++
++	struct mutex work_lock; /* protects data */
++
++	bool (*is_present)(struct poodle_bat *bat);
++	int technology;
++};
++
++static DEFINE_MUTEX(bat_lock); /* protects gpio pins */
++static struct work_struct bat_work;
++
++static struct poodle_bat poodle_bat_main;
++
++static int poodle_bat_get_property(struct power_supply *psy,
++			    enum power_supply_property psp,
++			    union power_supply_propval *val)
++{
++	int ret = 0;
++	struct poodle_bat *bat = container_of(psy, struct poodle_bat, psy);
++
++	if (bat->is_present && !bat->is_present(bat)
++			&& psp != POWER_SUPPLY_PROP_PRESENT) {
++		return -ENODEV;
++	}
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_STATUS:
++		val->intval = bat->status;
++		break;
++	case POWER_SUPPLY_PROP_TECHNOLOGY:
++		val->intval = bat->technology;
++		break;
++	case POWER_SUPPLY_PROP_PRESENT:
++		val->intval = bat->is_present ? bat->is_present(bat) : 1;
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
++	return ret;
++}
++
++static bool poodle_bat_is_present(struct poodle_bat *bat)
++{
++	return gpio_get_value(POODLE_GPIO_BAT_COVER);
++}
++
++static void poodle_bat_external_power_changed(struct power_supply *psy)
++{
++	schedule_work(&bat_work);
++}
++
++static irqreturn_t poodle_bat_gpio_isr(int irq, void *data)
++{
++	pr_info("poodle_bat_gpio irq\n");
++	schedule_work(&bat_work);
++	return IRQ_HANDLED;
++}
++
++static void poodle_bat_update(struct poodle_bat *bat)
++{
++	int old;
++	struct power_supply *psy = &bat->psy;
++
++	mutex_lock(&bat->work_lock);
++
++	old = bat->status;
++
++	if (bat->is_present && !bat->is_present(bat)) {
++		pr_info("%s not present\n", psy->name);
++		bat->status = POWER_SUPPLY_STATUS_UNKNOWN;
++		gpio_set_value(POODLE_GPIO_JK_B, 0);
++		gpio_set_value(POODLE_GPIO_CHRG_ON, 0);
++	} else if (power_supply_am_i_supplied(psy)) {
++		gpio_set_value(POODLE_GPIO_JK_B, 1);
++		if (bat->status == POWER_SUPPLY_STATUS_DISCHARGING) {
++			gpio_set_value(POODLE_GPIO_CHRG_ON, 1);
++			msleep(20);
++		}
++
++		if (gpio_get_value(POODLE_GPIO_CHRG_FULL)) {
++			gpio_set_value(POODLE_GPIO_CHRG_ON, 0);
++			bat->status = POWER_SUPPLY_STATUS_FULL;
++		} else {
++			gpio_set_value(POODLE_GPIO_CHRG_ON, 1);
++			bat->status = POWER_SUPPLY_STATUS_CHARGING;
++		}
++	} else {
++		gpio_set_value(POODLE_GPIO_JK_B, 0);
++		gpio_set_value(POODLE_GPIO_CHRG_ON, 0);
++		bat->status = POWER_SUPPLY_STATUS_DISCHARGING;
++	}
++
++	if (old != bat->status)
++		power_supply_changed(psy);
++
++	mutex_unlock(&bat->work_lock);
++}
++
++static void poodle_bat_work(struct work_struct *work)
++{
++	poodle_bat_update(&poodle_bat_main);
++}
++
++static enum power_supply_property poodle_bat_main_props[] = {
++	POWER_SUPPLY_PROP_STATUS,
++	POWER_SUPPLY_PROP_TECHNOLOGY,
++	POWER_SUPPLY_PROP_PRESENT,
++};
++
++static struct poodle_bat poodle_bat_main = {
++	.status = POWER_SUPPLY_STATUS_DISCHARGING,
++	.psy = {
++		.name		= "main-battery",
++		.type		= POWER_SUPPLY_TYPE_BATTERY,
++		.properties	= poodle_bat_main_props,
++		.num_properties	= ARRAY_SIZE(poodle_bat_main_props),
++		.get_property	= poodle_bat_get_property,
++		.external_power_changed = poodle_bat_external_power_changed,
++		.use_for_apm	= 1,
++	},
++
++	.is_present = poodle_bat_is_present,
++
++	.technology = POWER_SUPPLY_TECHNOLOGY_LIPO,
++};
++
++static struct gpio poodle_batt_gpios[] = {
++	{ POODLE_GPIO_BAT_COVER,    GPIOF_IN,		"main battery cover" },
++	{ POODLE_GPIO_CHRG_FULL,    GPIOF_IN,		"main battery full" },
++	{ POODLE_GPIO_JK_B,	    GPIOF_OUT_INIT_LOW,	"main charge on" },
++	{ POODLE_GPIO_CHRG_ON,	    GPIOF_OUT_INIT_LOW,	"main charge on" },
++	{ POODLE_GPIO_BYPASS_ON,    GPIOF_OUT_INIT_LOW,	"main charge bypass" },
++	/* on for now */
++	{ POODLE_GPIO_ADC_TEMP_ON,  GPIOF_OUT_INIT_HIGH, "main battery temp" },
++};
++
++#ifdef CONFIG_PM
++static int poodle_battery_suspend(struct device *dev)
++{
++	/* flush all pending status updates */
++	flush_work(&bat_work);
++	return 0;
++}
++
++static int poodle_battery_resume(struct device *dev)
++{
++	/* things may have changed while we were away */
++	schedule_work(&bat_work);
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(poodle_battery_pm,
++		poodle_battery_suspend,
++		poodle_battery_resume);
++
++#define POODLE_BATTERY_PM (&poodle_battery_pm)
++
++#else
++#define POODLE_BATTERY_PM NULL
++#endif
++
++static int poodle_battery_probe(struct platform_device *dev)
++{
++	int ret;
++
++	ret = gpio_request_array(poodle_batt_gpios,
++				 ARRAY_SIZE(poodle_batt_gpios));
++	if (ret)
++		return ret;
++
++	mutex_init(&poodle_bat_main.work_lock);
++
++	INIT_WORK(&bat_work, poodle_bat_work);
++
++	ret = power_supply_register(&dev->dev, &poodle_bat_main.psy);
++	if (ret)
++		goto err_psy_reg_main;
++
++	ret = devm_request_irq(&dev->dev, gpio_to_irq(POODLE_GPIO_CHRG_FULL),
++				poodle_bat_gpio_isr,
++				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
++				"main full", NULL);
++	if (ret)
++		goto err_psy_irq;
++
++	ret = devm_request_irq(&dev->dev, gpio_to_irq(POODLE_GPIO_BAT_COVER),
++				poodle_bat_gpio_isr,
++				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
++				"battery cover", NULL);
++	if (ret)
++		goto err_psy_irq;
++
++	return 0;
++
++err_psy_irq:
++	power_supply_unregister(&poodle_bat_main.psy);
++
++	cancel_work_sync(&bat_work);
++err_psy_reg_main:
++	gpio_free_array(poodle_batt_gpios, ARRAY_SIZE(poodle_batt_gpios));
++
++	return ret;
++}
++
++static int poodle_battery_remove(struct platform_device *dev)
++{
++	power_supply_unregister(&poodle_bat_main.psy);
++
++	cancel_work_sync(&bat_work);
++
++	gpio_free_array(poodle_batt_gpios, ARRAY_SIZE(poodle_batt_gpios));
++
++	return 0;
++}
++
++static struct platform_driver poodle_battery_driver = {
++	.driver.name	= "poodle-battery",
++	.probe		= poodle_battery_probe,
++	.remove		= poodle_battery_remove,
++	.driver.pm	= POODLE_BATTERY_PM,
++};
++
++module_platform_driver(poodle_battery_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Dmitry Eremin-Solenikov");
++MODULE_DESCRIPTION("Poodle battery driver");
++MODULE_ALIAS("platform:poodle-battery");
+-- 
+1.9.1
+

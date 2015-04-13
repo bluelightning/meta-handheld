@@ -1,0 +1,26 @@
+From 8bab2ab9f758aa15ea1f97e4c11f27bcd094b4d1 Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Fri, 28 Nov 2014 15:27:51 +0300
+Subject: [PATCH 19/20] poodle gpio uart hack
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ drivers/gpio/gpio-locomo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-locomo.c b/drivers/gpio/gpio-locomo.c
+index d8e5880..c8510fa 100644
+--- a/drivers/gpio/gpio-locomo.c
++++ b/drivers/gpio/gpio-locomo.c
+@@ -224,7 +224,7 @@ static int locomo_gpio_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, lg);
+ 
+-	regmap_write(lg->regmap, LOCOMO_GPO, 0x00);
++	regmap_write(lg->regmap, LOCOMO_GPO, 1 << 12);
+ 	regmap_write(lg->regmap, LOCOMO_GPE, 0x00);
+ 	regmap_write(lg->regmap, LOCOMO_GPD, 0x00);
+ 	regmap_write(lg->regmap, LOCOMO_GIE, 0x00);
+-- 
+1.9.1
+

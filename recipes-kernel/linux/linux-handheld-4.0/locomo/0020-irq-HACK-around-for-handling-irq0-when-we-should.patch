@@ -1,0 +1,29 @@
+From c87b3232a374940cf5cf45242eeae2da48395799 Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Wed, 24 Dec 2014 12:27:21 +0300
+Subject: [PATCH 20/20] irq: HACK around for handling irq0 when we should
+
+Instead of backporting large patches changing IRQ handling on sa1100,
+just make handle_domain_irq handle irq 0 as usual.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ kernel/irq/irqdesc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index 99793b9..06ca4e6 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -381,7 +381,7 @@ int __handle_domain_irq(struct irq_domain *domain, unsigned int hwirq,
+ 	 * Some hardware gives randomly wrong interrupts.  Rather
+ 	 * than crashing, do something sensible.
+ 	 */
+-	if (unlikely(!irq || irq >= nr_irqs)) {
++	if (unlikely(/*!irq || */irq >= nr_irqs)) {
+ 		ack_bad_irq(irq);
+ 		ret = -EINVAL;
+ 	} else {
+-- 
+1.9.1
+
