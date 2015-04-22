@@ -3,7 +3,7 @@ SECTION = "kernel"
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 
-COMPATIBLE_MACHINE .= "|akita|c7x0|collie|h3600|hx4700|poodle|spitz|tosa"
+COMPATIBLE_MACHINE .= "|akita|c7x0|collie|h1940|h3600|hx4700|poodle|spitz|tosa"
 
 SRC_URI = "${KERNELORG_MIRROR}/linux/kernel/v4.x/linux-4.0.tar.xz;name=kernel"
 SRC_URI[kernel.md5sum] = "a86916bd12798220da9eb4a1eec3616d"
@@ -44,6 +44,25 @@ SRC_URI_append_c7x0 = " \
 SRC_URI_append_collie = " \
            file://defconfig \
            file://OE-qvga-logo.patch \
+           "
+SRC_URI_append_h1940 = " \
+           file://defconfig \
+           file://OE-qvga-logo.patch \
+           file://0001-rfkill-add-IR-type.patch \
+           file://0002-ARM-s3c24xx-add-dma_coherent_mask-for-DMA-devices.patch \
+           file://0003-ARM-s3c24xx-Add-DMA-resources-for-SDI-and-I2S.patch \
+           file://0004-ARM-s3c24xx-drop-RFKILL-driver-for-H1940-bluetooth.patch \
+           file://0005-ARM-s3c24xx-h1940-Add-nand-device.patch \
+           file://0006-ARM-s3c24xx-h1940-don-t-touch-UPLLCON.patch \
+           file://0007-ARM-s3c24xx-h1940-unlock-reset-button.patch \
+           file://0008-ARM-s3c24xx-h1940-increase-oversampling-shift.patch \
+           file://0009-ARM-s3c24xx-h1940-Add-DMA-device.patch \
+           file://0010-ARM-s3c24xx-h1940-add-bluetooth-RF-kill-switch.patch \
+           file://0011-ARM-s3c24xx-h1940-add-IR-switch.patch \
+           file://0012-ARM-s3c24xx-ADC-port-to-common-clock-framework.patch \
+           file://0013-ARM-s3c24xx-H1940-Move-gpiochip_add-call-into-core_i.patch \
+           file://0014-i2c-s3c2410-fix-oops-in-suspend-callback-for-non-dt-.patch \
+           file://0015-ASoC-uda1380-Avoid-accessing-i2c-bus-when-codec-is-d.patch \
            "
 SRC_URI_append_h3600 = " \
            file://defconfig \

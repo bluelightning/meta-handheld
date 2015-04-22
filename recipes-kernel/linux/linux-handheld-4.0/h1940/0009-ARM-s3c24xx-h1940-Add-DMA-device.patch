@@ -1,0 +1,27 @@
+From 5bc33329474a43df520f405f1b4974400635a1e8 Mon Sep 17 00:00:00 2001
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Sun, 18 May 2014 12:46:09 +0300
+Subject: [PATCH 09/15] ARM: s3c24xx: h1940: Add DMA device
+
+To use new s3c24xx-dma driver we need to add appropriate platform device.
+
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ arch/arm/mach-s3c24xx/mach-h1940.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index 0ecd849..d87824e 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -694,6 +694,7 @@ static struct platform_device h1940_dev_buttons = {
+ 
+ static struct platform_device *h1940_devices[] __initdata = {
+ 	&h1940_dev_buttons,
++	&s3c2410_device_dma,
+ 	&s3c_device_ohci,
+ 	&s3c_device_lcd,
+ 	&s3c_device_wdt,
+-- 
+2.3.5
+

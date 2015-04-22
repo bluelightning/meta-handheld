@@ -1,0 +1,76 @@
+From 55f97c828986e04d71a6182ef03330ef47085206 Mon Sep 17 00:00:00 2001
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Sun, 18 Dec 2011 11:29:30 +0300
+Subject: [PATCH 11/15] ARM: s3c24xx: h1940: add IR switch
+
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ arch/arm/mach-s3c24xx/mach-h1940.c | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index 067be00..86d9ec7 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -709,9 +709,30 @@ static struct platform_device h1940_bluetooth = {
+ };
+ 
+ static struct gpiod_lookup_table bt_gpio_lookup = {
+-	.dev_id = "h1940-bt",
++	.dev_id = "rfkill_gpio.0",
+ 	.table = {
+-		GPIO_LOOKUP_IDX("H1940_LATCH", 13, NULL, 0, 0),
++		GPIO_LOOKUP_IDX("H1940_LATCH", 13, NULL, 1, 0),
++		{ },
++	},
++};
++
++static struct rfkill_gpio_platform_data h1940_ir_rfkill_pdata = {
++	.name		= "h1940-ir",
++	.type		= RFKILL_TYPE_IR,
++};
++
++static struct platform_device h1940_irda = {
++	.name		= "rfkill_gpio",
++	.id		= 1,
++	.dev		= {
++		.platform_data = &h1940_ir_rfkill_pdata,
++	},
++};
++
++static struct gpiod_lookup_table ir_gpio_lookup = {
++	.dev_id = "rfkill_gpio.1",
++	.table = {
++		GPIO_LOOKUP_IDX("GPIOB", 9, NULL, 1, GPIO_ACTIVE_LOW),
+ 		{ },
+ 	},
+ };
+@@ -738,6 +759,7 @@ static struct platform_device *h1940_devices[] __initdata = {
+ 	&power_supply,
+ 	&h1940_battery,
+ 	&h1940_bluetooth,
++	&h1940_irda,
+ };
+ 
+ static void __init h1940_map_io(void)
+@@ -823,10 +845,17 @@ static void __init h1940_init(void)
+ 	s3c_gpio_cfgpin(S3C2410_GPH(3), S3C2410_GPH3_RXD0);
+ 	s3c_gpio_setpull(S3C2410_GPH(3), S3C_GPIO_PULL_NONE);
+ 
++	/* Configure IR serial port GPIOs */
++	s3c_gpio_cfgpin(S3C2410_GPH(6), S3C2410_GPH6_TXD2);
++	s3c_gpio_setpull(S3C2410_GPH(6), S3C_GPIO_PULL_NONE);
++	s3c_gpio_cfgpin(S3C2410_GPH(7), S3C2410_GPH7_RXD2);
++	s3c_gpio_setpull(S3C2410_GPH(7), S3C_GPIO_PULL_NONE);
++
+ 	gpio_request(S3C2410_GPC(9), "BT reset");
+ 	gpio_direction_output(S3C2410_GPC(9), 1);
+ 
+ 	gpiod_add_lookup_table(&bt_gpio_lookup);
++	gpiod_add_lookup_table(&ir_gpio_lookup);
+ 	platform_add_devices(h1940_devices, ARRAY_SIZE(h1940_devices));
+ 
+ 	gpio_request(S3C2410_GPA(1), "Red LED blink");
+-- 
+2.3.5
+

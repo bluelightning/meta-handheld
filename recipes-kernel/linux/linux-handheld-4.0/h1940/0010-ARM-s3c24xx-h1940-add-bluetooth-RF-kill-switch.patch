@@ -1,0 +1,107 @@
+From 910bb9afd79a00d707c9eb603fabf092dd6368d6 Mon Sep 17 00:00:00 2001
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Sat, 17 Dec 2011 13:14:51 +0300
+Subject: [PATCH 10/15] ARM: s3c24xx: h1940: add bluetooth RF kill switch
+
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ arch/arm/mach-s3c24xx/h1940.h      |  4 +++-
+ arch/arm/mach-s3c24xx/mach-h1940.c | 39 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 42 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-s3c24xx/h1940.h b/arch/arm/mach-s3c24xx/h1940.h
+index 596d9f6..899176c 100644
+--- a/arch/arm/mach-s3c24xx/h1940.h
++++ b/arch/arm/mach-s3c24xx/h1940.h
+@@ -48,7 +48,9 @@ extern int h1940_led_blink_set(struct gpio_desc *desc, int state,
+ #define H1940_LATCH_SM803_ENABLE	H1940_LATCH_GPIO(10)
+ #define H1940_LATCH_LCD_P4		H1940_LATCH_GPIO(11)
+ #define H1940_LATCH_SD_POWER		H1940_LATCH_GPIO(12)
+-#define H1940_LATCH_BLUETOOTH_POWER	H1940_LATCH_GPIO(13)
++#define H1940_LATCH_BT_POWER_IDX	13
++#define H1940_LATCH_BLUETOOTH_POWER \
++			H1940_LATCH_GPIO(H1940_LATCH_BT_POWER_IDX)
+ #define H1940_LATCH_LED_GREEN		H1940_LATCH_GPIO(14)
+ #define H1940_LATCH_LED_FLASH		H1940_LATCH_GPIO(15)
+ 
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index d87824e..067be00 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -31,6 +31,7 @@
+ #include <linux/pda_power.h>
+ #include <linux/s3c_adc_battery.h>
+ #include <linux/delay.h>
++#include <linux/rfkill-gpio.h>
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/partitions.h>
+@@ -40,6 +41,8 @@
+ #include <linux/mmc/host.h>
+ #include <linux/export.h>
+ 
++#include <linux/gpio/machine.h>
++
+ #include <asm/irq.h>
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+@@ -692,6 +695,27 @@ static struct platform_device h1940_dev_buttons = {
+ 	}
+ };
+ 
++static struct rfkill_gpio_platform_data h1940_bt_rfkill_pdata = {
++	.name		= "h1940-bt",
++	.type		= RFKILL_TYPE_BLUETOOTH,
++};
++
++static struct platform_device h1940_bluetooth = {
++	.name		= "rfkill_gpio",
++	.id		= 0,
++	.dev		= {
++		.platform_data = &h1940_bt_rfkill_pdata,
++	},
++};
++
++static struct gpiod_lookup_table bt_gpio_lookup = {
++	.dev_id = "h1940-bt",
++	.table = {
++		GPIO_LOOKUP_IDX("H1940_LATCH", 13, NULL, 0, 0),
++		{ },
++	},
++};
++
+ static struct platform_device *h1940_devices[] __initdata = {
+ 	&h1940_dev_buttons,
+ 	&s3c2410_device_dma,
+@@ -713,6 +737,7 @@ static struct platform_device *h1940_devices[] __initdata = {
+ 	&s3c_device_ts,
+ 	&power_supply,
+ 	&h1940_battery,
++	&h1940_bluetooth,
+ };
+ 
+ static void __init h1940_map_io(void)
+@@ -788,6 +813,20 @@ static void __init h1940_init(void)
+ 	gpio_request(H1940_LATCH_SD_POWER, "SD power");
+ 	gpio_direction_output(H1940_LATCH_SD_POWER, 0);
+ 
++	/* Configures BT serial port GPIOs */
++	s3c_gpio_cfgpin(S3C2410_GPH(0), S3C2410_GPH0_nCTS0);
++	s3c_gpio_setpull(S3C2410_GPH(0), S3C_GPIO_PULL_NONE);
++	s3c_gpio_cfgpin(S3C2410_GPH(1), S3C2410_GPH1_nRTS0);
++	s3c_gpio_setpull(S3C2410_GPH(1), S3C_GPIO_PULL_NONE);
++	s3c_gpio_cfgpin(S3C2410_GPH(2), S3C2410_GPH2_TXD0);
++	s3c_gpio_setpull(S3C2410_GPH(2), S3C_GPIO_PULL_NONE);
++	s3c_gpio_cfgpin(S3C2410_GPH(3), S3C2410_GPH3_RXD0);
++	s3c_gpio_setpull(S3C2410_GPH(3), S3C_GPIO_PULL_NONE);
++
++	gpio_request(S3C2410_GPC(9), "BT reset");
++	gpio_direction_output(S3C2410_GPC(9), 1);
++
++	gpiod_add_lookup_table(&bt_gpio_lookup);
+ 	platform_add_devices(h1940_devices, ARRAY_SIZE(h1940_devices));
+ 
+ 	gpio_request(S3C2410_GPA(1), "Red LED blink");
+-- 
+2.3.5
+

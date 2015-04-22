@@ -1,0 +1,28 @@
+From 2854395d914a51fe0fff926effee9d75b66352c7 Mon Sep 17 00:00:00 2001
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Wed, 22 Apr 2015 22:54:12 +0300
+Subject: [PATCH 14/15] i2c: s3c2410: fix oops in suspend callback for non-dt
+ platforms
+
+Initialize sysreg by default, otherwise driver will crash in suspend callback.
+
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 958c8db..297e9c9 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1143,6 +1143,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	i2c->quirks = s3c24xx_get_device_quirks(pdev);
++	i2c->sysreg = ERR_PTR(-ENOENT);
+ 	if (pdata)
+ 		memcpy(i2c->pdata, pdata, sizeof(*pdata));
+ 	else
+-- 
+2.3.5
+

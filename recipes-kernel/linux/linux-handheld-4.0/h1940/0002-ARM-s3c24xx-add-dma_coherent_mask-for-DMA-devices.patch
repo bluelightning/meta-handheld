@@ -1,0 +1,35 @@
+From 22ea8a2a006bc62235d25dacfc5e51dfa4db9e53 Mon Sep 17 00:00:00 2001
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Sun, 18 May 2014 12:44:52 +0300
+Subject: [PATCH 02/15] ARM: s3c24xx: add dma_coherent_mask for DMA devices
+
+Otherwise dma_alloc_coherent() fails.
+
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ arch/arm/mach-s3c24xx/common.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index bf50328..7ed0853 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -355,6 +355,7 @@ struct platform_device s3c2410_device_dma = {
+ 	.resource	= s3c2410_dma_resource,
+ 	.dev	= {
+ 		.platform_data	= &s3c2410_dma_platdata,
++		.coherent_dma_mask = ~0,
+ 	},
+ };
+ #endif
+@@ -452,6 +453,7 @@ struct platform_device s3c2440_device_dma = {
+ 	.resource	= s3c2410_dma_resource,
+ 	.dev	= {
+ 		.platform_data	= &s3c2440_dma_platdata,
++		.coherent_dma_mask = ~0,
+ 	},
+ };
+ #endif
+-- 
+2.3.5
+

@@ -1,0 +1,37 @@
+From 9a55093973be59c1ae7364b4c59cee36103937d2 Mon Sep 17 00:00:00 2001
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Tue, 21 Apr 2015 21:05:32 +0300
+Subject: [PATCH 12/15] ARM: s3c24xx: ADC: port to common clock framework
+
+Replace clk_enable/clk_disable with clk_prepare_enable/clk_disable_unprepare
+
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ arch/arm/plat-samsung/adc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
+index e2be70d..38444b9 100644
+--- a/arch/arm/plat-samsung/adc.c
++++ b/arch/arm/plat-samsung/adc.c
+@@ -389,7 +389,7 @@ static int s3c_adc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	clk_enable(adc->clk);
++	clk_prepare_enable(adc->clk);
+ 
+ 	tmp = adc->prescale | S3C2410_ADCCON_PRSCEN;
+ 
+@@ -413,7 +413,7 @@ static int s3c_adc_remove(struct platform_device *pdev)
+ {
+ 	struct adc_device *adc = platform_get_drvdata(pdev);
+ 
+-	clk_disable(adc->clk);
++	clk_disable_unprepare(adc->clk);
+ 	regulator_disable(adc->vdd);
+ 
+ 	return 0;
+-- 
+2.3.5
+

@@ -1,0 +1,121 @@
+From 8ea33d882cda31e97a2dd17e635c45434cc69bdd Mon Sep 17 00:00:00 2001
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Thu, 17 Oct 2013 12:13:29 +0300
+Subject: [PATCH 05/15] ARM: s3c24xx: h1940: Add nand device
+
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ arch/arm/mach-s3c24xx/mach-h1940.c | 69 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
+
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index d40d4f5..bdb99e5 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -32,6 +32,9 @@
+ #include <linux/s3c_adc_battery.h>
+ #include <linux/delay.h>
+ 
++#include <linux/mtd/mtd.h>
++#include <linux/mtd/partitions.h>
++
+ #include <video/platform_lcd.h>
+ 
+ #include <linux/mmc/host.h>
+@@ -47,6 +50,7 @@
+ #include <linux/platform_data/mmc-s3cmci.h>
+ #include <linux/platform_data/touchscreen-s3c2410.h>
+ #include <linux/platform_data/usb-s3c2410_udc.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
+ 
+ #include <sound/uda1380.h>
+ 
+@@ -469,6 +473,69 @@ static struct s3c24xx_mci_pdata h1940_mmc_cfg __initdata = {
+ 	.ocr_avail     = MMC_VDD_32_33,
+ };
+ 
++static struct mtd_partition h1940_nand_part[] = {
++	[0] = {
++			.name = "Boot0",
++			.offset = 0,
++			.size = SZ_16K,
++			.mask_flags = MTD_WRITEABLE,
++	},
++	[1] = {
++			.name = "Boot1",
++			.offset = MTDPART_OFS_APPEND,
++			.size = SZ_1K * 240,
++			.mask_flags = 0,
++	},
++	[2] = {
++			.name = "Env",
++			.offset = MTDPART_OFS_APPEND,
++			.size = SZ_16K,
++			.mask_flags = 0,
++	},
++	[3] = {
++			.name = "Opts",
++			.offset = MTDPART_OFS_APPEND,
++			.size = SZ_32K,
++			.mask_flags = 0,
++	},
++	[4] = {
++			.name = "Kernel",
++			.offset = MTDPART_OFS_APPEND,
++			.size = SZ_1M * 3,
++			.mask_flags = 0,
++	},
++	[5] = {
++			.name = "Filesystem",
++			.offset = MTDPART_OFS_APPEND,
++			.size = MTDPART_SIZ_FULL,
++			.mask_flags = 0,
++	},
++};
++
++static struct nand_ecclayout h1940_ecc_layout = {
++	.eccbytes = 3,
++	.eccpos = {8, 9, 10},
++	.oobfree = {{2, 6}, {11, 5}}
++};
++
++static struct s3c2410_nand_set h1940_nand_sets[] = {
++	[0] = {
++		.name = "Internal",
++		.nr_chips = 1,
++		.nr_partitions = ARRAY_SIZE(h1940_nand_part),
++		.partitions = h1940_nand_part,
++		.ecc_layout = &h1940_ecc_layout,
++	},
++};
++
++static struct s3c2410_platform_nand h1940_nand_info = {
++	.tacls = 14,
++	.twrph0 = 44,
++	.twrph1 = 20,
++	.nr_sets = ARRAY_SIZE(h1940_nand_sets),
++	.sets = h1940_nand_sets,
++};
++
+ static int h1940_backlight_init(struct device *dev)
+ {
+ 	gpio_request(S3C2410_GPB(0), "Backlight");
+@@ -637,6 +704,7 @@ static struct platform_device *h1940_devices[] __initdata = {
+ 	&h1940_device_bluetooth,
+ 	&s3c_device_sdi,
+ 	&s3c_device_rtc,
++	&s3c_device_nand,
+ 	&samsung_device_pwm,
+ 	&h1940_backlight,
+ 	&h1940_lcd_powerdev,
+@@ -686,6 +754,7 @@ static void __init h1940_init(void)
+  	s3c24xx_udc_set_platdata(&h1940_udc_cfg);
+ 	s3c24xx_ts_set_platdata(&h1940_ts_cfg);
+ 	s3c_i2c0_set_platdata(NULL);
++	s3c_nand_set_platdata(&h1940_nand_info);
+ 
+ 	/* Turn off suspend on both USB ports, and switch the
+ 	 * selectable USB port to USB device mode. */
+-- 
+2.3.5
+
