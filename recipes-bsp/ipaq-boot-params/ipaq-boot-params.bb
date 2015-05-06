@@ -6,6 +6,8 @@ COMPATIBLE_MACHINE = "h3600"
 
 SRC_URI = "file://params"
 
+S = "${WORKDIR}"
+
 do_install() {
         install -d ${D}/boot
         install -m 0644 ${WORKDIR}/params ${D}/boot/
