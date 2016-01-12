@@ -1,0 +1,31 @@
+From b346cc8ec2b5d706e98b46e2122eb14fb8b0f8be Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Wed, 6 Nov 2013 01:21:01 +0400
+Subject: [PATCH 14/44] ARM: pxa: poodle: don't preallocate IRQ space for
+ locomo
+
+As new locomo driver supports SPARSE_IRQ, don't preallocate NR_IRQS
+space for it on poodle.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+ arch/arm/mach-pxa/include/mach/poodle.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-pxa/include/mach/poodle.h b/arch/arm/mach-pxa/include/mach/poodle.h
+index 5905cf1..71b6383 100644
+--- a/arch/arm/mach-pxa/include/mach/poodle.h
++++ b/arch/arm/mach-pxa/include/mach/poodle.h
+@@ -81,7 +81,7 @@
+ #define POODLE_GPIO_L_LCLK	(POODLE_SCOOP_GPIO_BASE + 10)
+ #define POODLE_GPIO_HS_OUT	(POODLE_SCOOP_GPIO_BASE + 11)
+ 
+-#define POODLE_NR_IRQS		(IRQ_BOARD_START + 4)	/* 4 for LoCoMo */
++#define POODLE_NR_IRQS		IRQ_BOARD_START
+ 
+ extern struct platform_device poodle_locomo_device;
+ 
+-- 
+1.9.1
+

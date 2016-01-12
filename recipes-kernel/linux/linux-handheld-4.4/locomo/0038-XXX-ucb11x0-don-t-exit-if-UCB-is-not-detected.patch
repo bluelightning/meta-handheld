@@ -1,0 +1,26 @@
+From 1867465504b6d6d76901fc0ff82f4fb32ee6a5cd Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Mon, 27 Apr 2015 20:25:20 +0300
+Subject: [PATCH 38/44] XXX: ucb11x0: don't exit if UCB is not detected
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ drivers/mfd/ucb1x00-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/ucb1x00-core.c b/drivers/mfd/ucb1x00-core.c
+index dd4127d2..5542b4c 100644
+--- a/drivers/mfd/ucb1x00-core.c
++++ b/drivers/mfd/ucb1x00-core.c
+@@ -441,7 +441,7 @@ static int ucb1x00_probe(struct mcp *mcp)
+ 
+ 	if (id != UCB_ID_1200 && id != UCB_ID_1300 && id != UCB_ID_TC35143) {
+ 		printk(KERN_WARNING "UCB1x00 ID not found: %04x\n", id);
+-		goto out;
++//		goto out;
+ 	}
+ 
+ 	ucb = kzalloc(sizeof(struct ucb1x00), GFP_KERNEL);
+-- 
+1.9.1
+

@@ -1,0 +1,121 @@
+From 639666054bfa12078c1db3e584f82c30ede6bcfc Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Fri, 24 Oct 2014 23:35:07 +0400
+Subject: [PATCH 12/44] ASoC: pxa: poodle: make use of new locomo GPIO
+ interface
+
+Since LoCoMo driver has been converted to provide proper gpiolib
+interface, make poodle ASoC platform driver use gpiolib API.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/pxa/poodle.c | 52 +++++++++++++++++++-------------------------------
+ 1 file changed, 20 insertions(+), 32 deletions(-)
+
+diff --git a/sound/soc/pxa/poodle.c b/sound/soc/pxa/poodle.c
+index 84d0e2e..8c01b2a 100644
+--- a/sound/soc/pxa/poodle.c
++++ b/sound/soc/pxa/poodle.c
+@@ -20,15 +20,11 @@
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+ #include <linux/platform_device.h>
++#include <linux/gpio/consumer.h>
+ #include <sound/core.h>
+ #include <sound/pcm.h>
+ #include <sound/soc.h>
+ 
+-#include <asm/mach-types.h>
+-#include <asm/hardware/locomo.h>
+-#include <mach/poodle.h>
+-#include <mach/audio.h>
+-
+ #include "../codecs/wm8731.h"
+ #include "pxa2xx-i2s.h"
+ 
+@@ -42,22 +38,18 @@
+ 
+ static int poodle_jack_func;
+ static int poodle_spk_func;
++static struct gpio_desc *poodle_mute_l, *poodle_mute_r, *poodle_amp_on;
+ 
+ static void poodle_ext_control(struct snd_soc_dapm_context *dapm)
+ {
+ 	/* set up jack connection */
+ 	if (poodle_jack_func == POODLE_HP) {
+-		/* set = unmute headphone */
+-		locomo_gpio_write(&poodle_locomo_device.dev,
+-			POODLE_LOCOMO_GPIO_MUTE_L, 1);
+-		locomo_gpio_write(&poodle_locomo_device.dev,
+-			POODLE_LOCOMO_GPIO_MUTE_R, 1);
++		gpiod_set_value(poodle_mute_l, 0);
++		gpiod_set_value(poodle_mute_r, 0);
+ 		snd_soc_dapm_enable_pin(dapm, "Headphone Jack");
+ 	} else {
+-		locomo_gpio_write(&poodle_locomo_device.dev,
+-			POODLE_LOCOMO_GPIO_MUTE_L, 0);
+-		locomo_gpio_write(&poodle_locomo_device.dev,
+-			POODLE_LOCOMO_GPIO_MUTE_R, 0);
++		gpiod_set_value(poodle_mute_l, 1);
++		gpiod_set_value(poodle_mute_r, 1);
+ 		snd_soc_dapm_disable_pin(dapm, "Headphone Jack");
+ 	}
+ 
+@@ -84,11 +76,8 @@ static int poodle_startup(struct snd_pcm_substream *substream)
+ /* we need to unmute the HP at shutdown as the mute burns power on poodle */
+ static void poodle_shutdown(struct snd_pcm_substream *substream)
+ {
+-	/* set = unmute headphone */
+-	locomo_gpio_write(&poodle_locomo_device.dev,
+-		POODLE_LOCOMO_GPIO_MUTE_L, 1);
+-	locomo_gpio_write(&poodle_locomo_device.dev,
+-		POODLE_LOCOMO_GPIO_MUTE_R, 1);
++	gpiod_set_value(poodle_mute_l, 0);
++	gpiod_set_value(poodle_mute_r, 0);
+ }
+ 
+ static int poodle_hw_params(struct snd_pcm_substream *substream,
+@@ -178,12 +167,7 @@ static int poodle_set_spk(struct snd_kcontrol *kcontrol,
+ static int poodle_amp_event(struct snd_soc_dapm_widget *w,
+ 	struct snd_kcontrol *k, int event)
+ {
+-	if (SND_SOC_DAPM_EVENT_ON(event))
+-		locomo_gpio_write(&poodle_locomo_device.dev,
+-			POODLE_LOCOMO_GPIO_AMP_ON, 0);
+-	else
+-		locomo_gpio_write(&poodle_locomo_device.dev,
+-			POODLE_LOCOMO_GPIO_AMP_ON, 1);
++	gpiod_set_value(poodle_amp_on, (SND_SOC_DAPM_EVENT_ON(event)));
+ 
+ 	return 0;
+ }
+@@ -257,13 +241,17 @@ static int poodle_probe(struct platform_device *pdev)
+ 	struct snd_soc_card *card = &poodle;
+ 	int ret;
+ 
+-	locomo_gpio_set_dir(&poodle_locomo_device.dev,
+-		POODLE_LOCOMO_GPIO_AMP_ON, 0);
+-	/* should we mute HP at startup - burning power ?*/
+-	locomo_gpio_set_dir(&poodle_locomo_device.dev,
+-		POODLE_LOCOMO_GPIO_MUTE_L, 0);
+-	locomo_gpio_set_dir(&poodle_locomo_device.dev,
+-		POODLE_LOCOMO_GPIO_MUTE_R, 0);
++	poodle_mute_l = devm_gpiod_get(&pdev->dev, "mute-l", GPIOD_OUT_HIGH);
++	if (IS_ERR(poodle_mute_l))
++		return PTR_ERR(poodle_mute_l);
++
++	poodle_mute_r = devm_gpiod_get(&pdev->dev, "mute-r", GPIOD_OUT_HIGH);
++	if (IS_ERR(poodle_mute_r))
++		return PTR_ERR(poodle_mute_l);
++
++	poodle_amp_on = devm_gpiod_get(&pdev->dev, "amp-on", GPIOD_OUT_LOW);
++	if (IS_ERR(poodle_amp_on))
++		return PTR_ERR(poodle_amp_on);
+ 
+ 	card->dev = &pdev->dev;
+ 
+-- 
+1.9.1
+

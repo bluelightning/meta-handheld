@@ -1,0 +1,28 @@
+From 67fb433a040d0b4490a55e83d74d23c0fd1ae970 Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Sat, 15 Nov 2014 14:16:15 +0300
+Subject: [PATCH 35/44] mfd: ucb1x00: add irq field to the platform data
+
+To allow boards to specify the irq that is used by UCB1x00 chip, add irq
+field to the platform data structure.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ include/linux/mfd/ucb1x00.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/mfd/ucb1x00.h b/include/linux/mfd/ucb1x00.h
+index e1345ff..9a2dacb 100644
+--- a/include/linux/mfd/ucb1x00.h
++++ b/include/linux/mfd/ucb1x00.h
+@@ -118,6 +118,7 @@ struct ucb1x00_plat_data {
+ 	unsigned		irq_base;
+ 	int			gpio_base;
+ 	unsigned		can_wakeup;
++	int			irq;
+ };
+ 
+ struct ucb1x00 {
+-- 
+1.9.1
+

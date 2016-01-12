@@ -1,0 +1,128 @@
+From d7d672ee6621b0dad7850f3d80403c104ad441a1 Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Tue, 28 Oct 2014 22:25:36 +0300
+Subject: [PATCH 34/44] mfd: ucb1x00: drop old io accessors
+
+Drop ucb1x00_io_* functions previously used to access I/O pins on
+ucb1x00 devices. These functions are now replaced with GPIOLIB calls and
+thus can be dropped.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ drivers/mfd/ucb1x00-core.c  | 77 ---------------------------------------------
+ include/linux/mfd/ucb1x00.h |  4 ---
+ 2 files changed, 81 deletions(-)
+
+diff --git a/drivers/mfd/ucb1x00-core.c b/drivers/mfd/ucb1x00-core.c
+index f691d7e..ecceee5 100644
+--- a/drivers/mfd/ucb1x00-core.c
++++ b/drivers/mfd/ucb1x00-core.c
+@@ -34,79 +34,6 @@ static DEFINE_MUTEX(ucb1x00_mutex);
+ static LIST_HEAD(ucb1x00_drivers);
+ static LIST_HEAD(ucb1x00_devices);
+ 
+-/**
+- *	ucb1x00_io_set_dir - set IO direction
+- *	@ucb: UCB1x00 structure describing chip
+- *	@in:  bitfield of IO pins to be set as inputs
+- *	@out: bitfield of IO pins to be set as outputs
+- *
+- *	Set the IO direction of the ten general purpose IO pins on
+- *	the UCB1x00 chip.  The @in bitfield has priority over the
+- *	@out bitfield, in that if you specify a pin as both input
+- *	and output, it will end up as an input.
+- *
+- *	ucb1x00_enable must have been called to enable the comms
+- *	before using this function.
+- *
+- *	This function takes a spinlock, disabling interrupts.
+- */
+-void ucb1x00_io_set_dir(struct ucb1x00 *ucb, unsigned int in, unsigned int out)
+-{
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&ucb->io_lock, flags);
+-	ucb->io_dir |= out;
+-	ucb->io_dir &= ~in;
+-
+-	ucb1x00_reg_write(ucb, UCB_IO_DIR, ucb->io_dir);
+-	spin_unlock_irqrestore(&ucb->io_lock, flags);
+-}
+-
+-/**
+- *	ucb1x00_io_write - set or clear IO outputs
+- *	@ucb:   UCB1x00 structure describing chip
+- *	@set:   bitfield of IO pins to set to logic '1'
+- *	@clear: bitfield of IO pins to set to logic '0'
+- *
+- *	Set the IO output state of the specified IO pins.  The value
+- *	is retained if the pins are subsequently configured as inputs.
+- *	The @clear bitfield has priority over the @set bitfield -
+- *	outputs will be cleared.
+- *
+- *	ucb1x00_enable must have been called to enable the comms
+- *	before using this function.
+- *
+- *	This function takes a spinlock, disabling interrupts.
+- */
+-void ucb1x00_io_write(struct ucb1x00 *ucb, unsigned int set, unsigned int clear)
+-{
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&ucb->io_lock, flags);
+-	ucb->io_out |= set;
+-	ucb->io_out &= ~clear;
+-
+-	ucb1x00_reg_write(ucb, UCB_IO_DATA, ucb->io_out);
+-	spin_unlock_irqrestore(&ucb->io_lock, flags);
+-}
+-
+-/**
+- *	ucb1x00_io_read - read the current state of the IO pins
+- *	@ucb: UCB1x00 structure describing chip
+- *
+- *	Return a bitfield describing the logic state of the ten
+- *	general purpose IO pins.
+- *
+- *	ucb1x00_enable must have been called to enable the comms
+- *	before using this function.
+- *
+- *	This function does not take any mutexes or spinlocks.
+- */
+-unsigned int ucb1x00_io_read(struct ucb1x00 *ucb)
+-{
+-	return ucb1x00_reg_read(ucb, UCB_IO_DATA);
+-}
+-
+ static void ucb1x00_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ {
+ 	struct ucb1x00 *ucb = container_of(chip, struct ucb1x00, gpio);
+@@ -769,10 +696,6 @@ static void __exit ucb1x00_exit(void)
+ module_init(ucb1x00_init);
+ module_exit(ucb1x00_exit);
+ 
+-EXPORT_SYMBOL(ucb1x00_io_set_dir);
+-EXPORT_SYMBOL(ucb1x00_io_write);
+-EXPORT_SYMBOL(ucb1x00_io_read);
+-
+ EXPORT_SYMBOL(ucb1x00_adc_enable);
+ EXPORT_SYMBOL(ucb1x00_adc_read);
+ EXPORT_SYMBOL(ucb1x00_adc_disable);
+diff --git a/include/linux/mfd/ucb1x00.h b/include/linux/mfd/ucb1x00.h
+index 88f90cb..e1345ff 100644
+--- a/include/linux/mfd/ucb1x00.h
++++ b/include/linux/mfd/ucb1x00.h
+@@ -246,10 +246,6 @@ static inline void ucb1x00_set_telecom_divisor(struct ucb1x00 *ucb, unsigned int
+ 	mcp_set_telecom_divisor(ucb->mcp, div);
+ }
+ 
+-void ucb1x00_io_set_dir(struct ucb1x00 *ucb, unsigned int, unsigned int);
+-void ucb1x00_io_write(struct ucb1x00 *ucb, unsigned int, unsigned int);
+-unsigned int ucb1x00_io_read(struct ucb1x00 *ucb);
+-
+ #define UCB_NOSYNC	(0)
+ #define UCB_SYNC	(1)
+ 
+-- 
+1.9.1
+

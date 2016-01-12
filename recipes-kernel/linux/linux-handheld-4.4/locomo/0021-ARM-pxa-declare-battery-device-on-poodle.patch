@@ -1,0 +1,65 @@
+From 587ab248224ed14171100ebacc91ffc0d6de90a5 Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Tue, 2 Dec 2014 20:34:50 +0300
+Subject: [PATCH 21/44] ARM: pxa: declare battery device on poodle
+
+Declare a battery platform device for SL-5600 (poodle) platform.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ arch/arm/mach-pxa/poodle.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/arch/arm/mach-pxa/poodle.c b/arch/arm/mach-pxa/poodle.c
+index c775fdd..9269703 100644
+--- a/arch/arm/mach-pxa/poodle.c
++++ b/arch/arm/mach-pxa/poodle.c
+@@ -466,6 +466,11 @@ static struct platform_device poodle_power_device = {
+ 	.dev.platform_data	= &poodle_power_data,
+ };
+ 
++static struct platform_device poodle_battery_device = {
++	.name			= "poodle-battery",
++	.id			= -1,
++};
++
+ static struct platform_device *devices[] __initdata = {
+ 	&poodle_locomo_device,
+ 	&poodle_scoop_device,
+@@ -474,6 +479,7 @@ static struct platform_device *devices[] __initdata = {
+ 	&sharpsl_nand_device,
+ 	&sharpsl_rom_device,
+ 	&poodle_power_device,
++	&poodle_battery_device,
+ };
+ 
+ static struct i2c_board_info __initdata poodle_i2c_devices[] = {
+@@ -523,6 +529,17 @@ static struct gpiod_lookup_table poodle_lcd_gpios_table = {
+ 		GPIO_LOOKUP("locomo-gpio", 7, "MOD", GPIO_ACTIVE_HIGH),
+ 		{ },
+ 	},
++}, poodle_battery_gpios_table = {
++	.dev_id = "poodle-battery",
++	.table = {
++		GPIO_LOOKUP("gpio-0", 13, "bat-cover", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("gpio-0", 16, "bat-full", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("locomo-gpio", 13, "charge-power", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("gpio-1", 6, "charge-on", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("gpio-1", 4, "charge-bypass", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("gpio-0", 21, "adc-temp", GPIO_ACTIVE_HIGH),
++		{ },
++	},
+ };
+ 
+ static void poodle_poweroff(void)
+@@ -552,6 +569,7 @@ static void __init poodle_init(void)
+ 	gpiod_add_lookup_table(&poodle_audio_gpios_table);
+ 	gpiod_add_lookup_table(&poodle_bl_gpios_table);
+ 	gpiod_add_lookup_table(&poodle_lcd_gpios_table);
++	gpiod_add_lookup_table(&poodle_battery_gpios_table);
+ 
+ 	ret = platform_add_devices(devices, ARRAY_SIZE(devices));
+ 	if (ret)
+-- 
+1.9.1
+

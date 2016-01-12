@@ -1,0 +1,225 @@
+From d0a17a9fd8f894f0cd291eddd256088917ed3620 Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Mon, 11 Nov 2013 03:03:21 +0400
+Subject: [PATCH 07/44] gpio: port LoCoMo gpio support from old driver
+
+Add gpiolib driver for gpio pins placed on the LoCoMo GA.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig       |  12 ++++
+ drivers/gpio/Makefile      |   1 +
+ drivers/gpio/gpio-locomo.c | 165 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 178 insertions(+)
+ create mode 100644 drivers/gpio/gpio-locomo.c
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index b18bea0..13cc886 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -783,6 +783,18 @@ config GPIO_KEMPLD
+ 	  This driver can also be built as a module. If so, the module will be
+ 	  called gpio-kempld.
+ 
++config GPIO_LOCOMO
++	bool "Sharp LoCoMo GPIO support"
++	depends on MFD_LOCOMO
++	help
++	  Select this to support GPIO pins on Sharp LoCoMo Grid Array found
++	  in Sharp Zaurus collie and poodle models.
++
++	  Sat Yes if you have such PDA, say No otherwise.
++
++	  This driver can also be built as a module. If so, the module will be
++	  called gpio-locomo.
++
+ config GPIO_LP3943
+ 	tristate "TI/National Semiconductor LP3943 GPIO expander"
+ 	depends on MFD_LP3943
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 986dbd8..1bb593d 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -47,6 +47,7 @@ obj-$(CONFIG_GPIO_JANZ_TTL)	+= gpio-janz-ttl.o
+ obj-$(CONFIG_GPIO_KEMPLD)	+= gpio-kempld.o
+ obj-$(CONFIG_ARCH_KS8695)	+= gpio-ks8695.o
+ obj-$(CONFIG_GPIO_INTEL_MID)	+= gpio-intel-mid.o
++obj-$(CONFIG_GPIO_LOCOMO)	+= gpio-locomo.o
+ obj-$(CONFIG_GPIO_LOONGSON)	+= gpio-loongson.o
+ obj-$(CONFIG_GPIO_LP3943)	+= gpio-lp3943.o
+ obj-$(CONFIG_GPIO_LPC18XX)	+= gpio-lpc18xx.o
+diff --git a/drivers/gpio/gpio-locomo.c b/drivers/gpio/gpio-locomo.c
+new file mode 100644
+index 0000000..57fc686
+--- /dev/null
++++ b/drivers/gpio/gpio-locomo.c
+@@ -0,0 +1,165 @@
++/*
++ * Sharp LoCoMo support for GPIO
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This file contains all generic LoCoMo support.
++ *
++ * All initialization functions provided here are intended to be called
++ * from machine specific code with proper arguments when required.
++ */
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/gpio.h>
++#include <linux/io.h>
++#include <linux/regmap.h>
++#include <linux/mfd/locomo.h>
++
++struct locomo_gpio {
++	struct regmap *regmap;
++
++	struct gpio_chip gpio;
++
++	unsigned int save_gpo;
++	unsigned int save_gpe;
++	unsigned int save_gpd;
++};
++
++static int locomo_gpio_get(struct gpio_chip *chip,
++		unsigned offset)
++{
++	struct locomo_gpio *lg = container_of(chip, struct locomo_gpio, gpio);
++	unsigned int gpl;
++
++	regmap_read(lg->regmap, LOCOMO_GPL, &gpl);
++
++	return !!(gpl & BIT(offset));
++}
++
++static void locomo_gpio_set(struct gpio_chip *chip,
++		unsigned offset, int value)
++{
++	struct locomo_gpio *lg = container_of(chip, struct locomo_gpio, gpio);
++
++	regmap_update_bits(lg->regmap, LOCOMO_GPO,
++			BIT(offset),
++			value ? BIT(offset) : 0);
++}
++
++static int locomo_gpio_direction_input(struct gpio_chip *chip,
++			unsigned offset)
++{
++	struct locomo_gpio *lg = container_of(chip, struct locomo_gpio, gpio);
++
++	regmap_update_bits(lg->regmap, LOCOMO_GPD, BIT(offset), BIT(offset));
++	regmap_update_bits(lg->regmap, LOCOMO_GPE, BIT(offset), BIT(offset));
++
++	return 0;
++}
++
++static int locomo_gpio_direction_output(struct gpio_chip *chip,
++			unsigned offset, int value)
++{
++	struct locomo_gpio *lg = container_of(chip, struct locomo_gpio, gpio);
++
++	regmap_update_bits(lg->regmap, LOCOMO_GPO,
++			BIT(offset),
++			value ? BIT(offset) : 0);
++	regmap_update_bits(lg->regmap, LOCOMO_GPD, BIT(offset), 0);
++	regmap_update_bits(lg->regmap, LOCOMO_GPE, BIT(offset), 0);
++
++	return 0;
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int locomo_gpio_suspend(struct device *dev)
++{
++	struct locomo_gpio *lg = dev_get_drvdata(dev);
++
++	regmap_read(lg->regmap, LOCOMO_GPO, &lg->save_gpo);
++	regmap_read(lg->regmap, LOCOMO_GPD, &lg->save_gpd);
++	regmap_read(lg->regmap, LOCOMO_GPE, &lg->save_gpe);
++
++	return 0;
++}
++
++static int locomo_gpio_resume(struct device *dev)
++{
++	struct locomo_gpio *lg = dev_get_drvdata(dev);
++
++	regmap_write(lg->regmap, LOCOMO_GPO, lg->save_gpo);
++	regmap_write(lg->regmap, LOCOMO_GPD, lg->save_gpd);
++	regmap_write(lg->regmap, LOCOMO_GPE, lg->save_gpe);
++
++	return 0;
++}
++static SIMPLE_DEV_PM_OPS(locomo_gpio_pm,
++		locomo_gpio_suspend, locomo_gpio_resume);
++#define LOCOMO_GPIO_PM	(&locomo_gpio_pm)
++#else
++#define LOCOMO_GPIO_PM	NULL
++#endif
++
++static int locomo_gpio_probe(struct platform_device *pdev)
++{
++	struct locomo_gpio *lg;
++	int ret;
++	struct locomo_gpio_platform_data *pdata = dev_get_platdata(&pdev->dev);
++
++	lg = devm_kzalloc(&pdev->dev, sizeof(struct locomo_gpio),
++			GFP_KERNEL);
++	if (!lg)
++		return -ENOMEM;
++
++	lg->regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!lg->regmap)
++		return -EINVAL;
++
++	platform_set_drvdata(pdev, lg);
++
++	regmap_write(lg->regmap, LOCOMO_GIE, 0x00);
++
++	lg->gpio.base = pdata ? pdata->gpio_base : -1;
++	lg->gpio.label = "locomo-gpio";
++	lg->gpio.ngpio = 16;
++	lg->gpio.set = locomo_gpio_set;
++	lg->gpio.get = locomo_gpio_get;
++	lg->gpio.direction_input = locomo_gpio_direction_input;
++	lg->gpio.direction_output = locomo_gpio_direction_output;
++
++	ret = gpiochip_add(&lg->gpio);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static int locomo_gpio_remove(struct platform_device *pdev)
++{
++	struct locomo_gpio *lg = platform_get_drvdata(pdev);
++
++	gpiochip_remove(&lg->gpio);
++
++	return 0;
++}
++
++static struct platform_driver locomo_gpio_driver = {
++	.probe		= locomo_gpio_probe,
++	.remove		= locomo_gpio_remove,
++	.driver		= {
++		.name	= "locomo-gpio",
++		.pm	= LOCOMO_GPIO_PM,
++	},
++};
++module_platform_driver(locomo_gpio_driver);
++
++MODULE_DESCRIPTION("Sharp LoCoMo GPIO driver");
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("John Lenz <lenz@cs.wisc.edu>");
++MODULE_ALIAS("platform:locomo-gpio");
+-- 
+1.9.1
+

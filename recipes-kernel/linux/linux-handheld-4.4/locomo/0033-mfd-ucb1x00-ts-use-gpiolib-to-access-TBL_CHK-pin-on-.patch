@@ -1,0 +1,93 @@
+From b9072761a6af15e7e67a019e09a883c97c7dead4 Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Tue, 28 Oct 2014 22:22:00 +0300
+Subject: [PATCH 33/44] mfd: ucb1x00-ts: use gpiolib to access TBL_CHK pin on
+ collie
+
+ucb1x00-ts uses ucb1x00_io_write function to access touchscreen control
+pin on collie. Change the driver to use gpiolib API to access the pin.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ arch/arm/mach-sa1100/include/mach/collie.h |  2 +-
+ drivers/mfd/ucb1x00-ts.c                   | 16 +++++++++++++---
+ 2 files changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-sa1100/include/mach/collie.h b/arch/arm/mach-sa1100/include/mach/collie.h
+index 89d0457..c515ecf 100644
+--- a/arch/arm/mach-sa1100/include/mach/collie.h
++++ b/arch/arm/mach-sa1100/include/mach/collie.h
+@@ -78,7 +78,7 @@ extern void locomolcd_power(int on);
+ /* GPIO's on the TC35143AF (Toshiba Analog Frontend) */
+ #define COLLIE_TC35143_GPIO_BASE	(GPIO_MAX + 13)
+ #define COLLIE_TC35143_GPIO_VERSION0    UCB_IO_0
+-#define COLLIE_TC35143_GPIO_TBL_CHK     UCB_IO_1
++#define COLLIE_GPIO_TBL_CHK		(COLLIE_TC35143_GPIO_BASE + 1)
+ #define COLLIE_TC35143_GPIO_VPEN_ON     UCB_IO_2
+ #define COLLIE_GPIO_IR_ON		(COLLIE_TC35143_GPIO_BASE + 3)
+ #define COLLIE_GPIO_AMP1_ON		(COLLIE_TC35143_GPIO_BASE + 4)
+diff --git a/drivers/mfd/ucb1x00-ts.c b/drivers/mfd/ucb1x00-ts.c
+index 1e0e20c..d65c87d 100644
+--- a/drivers/mfd/ucb1x00-ts.c
++++ b/drivers/mfd/ucb1x00-ts.c
+@@ -31,6 +31,7 @@
+ #include <linux/freezer.h>
+ #include <linux/slab.h>
+ #include <linux/kthread.h>
++#include <linux/gpio.h>
+ #include <linux/mfd/ucb1x00.h>
+ 
+ #include <mach/collie.h>
+@@ -92,7 +93,7 @@ static inline void ucb1x00_ts_mode_int(struct ucb1x00_ts *ts)
+ static inline unsigned int ucb1x00_ts_read_pressure(struct ucb1x00_ts *ts)
+ {
+ 	if (machine_is_collie()) {
+-		ucb1x00_io_write(ts->ucb, COLLIE_TC35143_GPIO_TBL_CHK, 0);
++		gpio_set_value(COLLIE_GPIO_TBL_CHK, 1);
+ 		ucb1x00_reg_write(ts->ucb, UCB_TS_CR,
+ 				  UCB_TS_CR_TSPX_POW | UCB_TS_CR_TSMX_POW |
+ 				  UCB_TS_CR_MODE_POS | UCB_TS_CR_BIAS_ENA);
+@@ -119,7 +120,7 @@ static inline unsigned int ucb1x00_ts_read_pressure(struct ucb1x00_ts *ts)
+ static inline unsigned int ucb1x00_ts_read_xpos(struct ucb1x00_ts *ts)
+ {
+ 	if (machine_is_collie())
+-		ucb1x00_io_write(ts->ucb, 0, COLLIE_TC35143_GPIO_TBL_CHK);
++		gpio_set_value(COLLIE_GPIO_TBL_CHK, 0);
+ 	else {
+ 		ucb1x00_reg_write(ts->ucb, UCB_TS_CR,
+ 				  UCB_TS_CR_TSMX_GND | UCB_TS_CR_TSPX_POW |
+@@ -146,7 +147,7 @@ static inline unsigned int ucb1x00_ts_read_xpos(struct ucb1x00_ts *ts)
+ static inline unsigned int ucb1x00_ts_read_ypos(struct ucb1x00_ts *ts)
+ {
+ 	if (machine_is_collie())
+-		ucb1x00_io_write(ts->ucb, 0, COLLIE_TC35143_GPIO_TBL_CHK);
++		gpio_set_value(COLLIE_GPIO_TBL_CHK, 0);
+ 	else {
+ 		ucb1x00_reg_write(ts->ucb, UCB_TS_CR,
+ 				  UCB_TS_CR_TSMY_GND | UCB_TS_CR_TSPY_POW |
+@@ -377,6 +378,13 @@ static int ucb1x00_ts_add(struct ucb1x00_dev *dev)
+ 		goto fail;
+ 	}
+ 
++	if (machine_is_collie()) {
++		err = gpio_request_one(COLLIE_GPIO_TBL_CHK,
++				GPIOF_OUT_INIT_LOW, "Touchscreen");
++		if (err < 0)
++			goto fail;
++	}
++
+ 	ts->ucb = dev->ucb;
+ 	ts->idev = idev;
+ 	ts->adcsync = adcsync ? UCB_SYNC : UCB_NOSYNC;
+@@ -421,6 +429,8 @@ static void ucb1x00_ts_remove(struct ucb1x00_dev *dev)
+ 	struct ucb1x00_ts *ts = dev->priv;
+ 
+ 	input_unregister_device(ts->idev);
++	if (machine_is_collie())
++		gpio_free(COLLIE_GPIO_TBL_CHK);
+ 	kfree(ts);
+ }
+ 
+-- 
+1.9.1
+

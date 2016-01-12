@@ -1,0 +1,76 @@
+From bfbf5444f03de457c925340440fef4f36a59bab2 Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date: Wed, 3 Dec 2014 20:26:56 +0300
+Subject: [PATCH 40/44] input: locomokbd: provide an Alt-SysRQ combination
+
+It is usefull sometimes to have an Alt-SysRQ combo on the keyboard to be
+able to trigger sysrq functions directly. Add an option providing sysrq
+mapping for Contact-Home keys.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+---
+ drivers/input/keyboard/Kconfig     |  7 +++++++
+ drivers/input/keyboard/locomokbd.c | 14 +++++++++++---
+ 2 files changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
+index 9b56423..74971b3 100644
+--- a/drivers/input/keyboard/Kconfig
++++ b/drivers/input/keyboard/Kconfig
+@@ -344,6 +344,13 @@ config KEYBOARD_LOCOMO
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called locomokbd.
+ 
++config KEYBOARD_LOCOMO_SYSRQ
++	bool "Provide SysRQ key on LoCoMo keyboard"
++	depends on KEYBOARD_LOCOMO
++	help
++	  Say Y here to be able to use Contact-Home as Alt-Sysrq combo.
++	  Say N if you want to use them as usual keys.
++
+ config KEYBOARD_LPC32XX
+ 	tristate "LPC32XX matrix key scanner support"
+ 	depends on ARCH_LPC32XX && OF
+diff --git a/drivers/input/keyboard/locomokbd.c b/drivers/input/keyboard/locomokbd.c
+index 73d6e58..f0e86c6 100644
+--- a/drivers/input/keyboard/locomokbd.c
++++ b/drivers/input/keyboard/locomokbd.c
+@@ -40,6 +40,14 @@
+ #define KEY_CONTACT		KEY_F18
+ #define KEY_CENTER		KEY_F15
+ 
++#ifdef CONFIG_KEYBOARD_LOCOMOKBD_SYSRQ
++#define LOCOMO_KEY_CONTACT	KEY_LEFTALT
++#define LOCOMO_KEY_HOME		KEY_SYSRQ
++#else
++#define LOCOMO_KEY_CONTACT	KEY_CONTACT
++#define LOCOMO_KEY_HOME		KEY_HOME
++#endif
++
+ #define KB_ROWS			16
+ #define KB_COLS			8
+ #define LOCOMOKBD_NUMKEYS	(KB_ROWS * KB_COLS)
+@@ -48,7 +56,7 @@
+ static const unsigned char
+ locomokbd_keycode[LOCOMOKBD_NUMKEYS] = {
+ 	0, KEY_ESC, KEY_ACTIVITY, 0, 0, 0, 0, 0, 0, 0,				/* 0 - 9 */
+-	0, 0, 0, 0, 0, 0, 0, KEY_MENU, 0, KEY_CONTACT,				/* 10 - 19 */
++	0, 0, 0, 0, 0, 0, 0, KEY_MENU, 0, LOCOMO_KEY_CONTACT,			/* 10 - 19 */
+ 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,						/* 20 - 29 */
+ 	0, 0, 0, KEY_CENTER, 0, KEY_MAIL, 0, 0, 0, 0,				/* 30 - 39 */
+ 	0, 0, 0, 0, 0, 0, 0, 0, 0, KEY_RIGHT,					/* 40 - 49 */
+@@ -282,9 +290,9 @@ static int locomokbd_probe(struct platform_device *dev)
+ 			sizeof(locomokbd->keycode));
+ 
+ 	if (machine_is_collie())
+-		locomokbd->keycode[18] = KEY_HOME;
++		locomokbd->keycode[18] = LOCOMO_KEY_HOME;
+ 	else
+-		locomokbd->keycode[3] = KEY_HOME;
++		locomokbd->keycode[3] = LOCOMO_KEY_HOME;
+ 
+ 	for (i = 0; i < LOCOMOKBD_NUMKEYS; i++)
+ 		input_set_capability(input_dev, EV_KEY, locomokbd->keycode[i]);
+-- 
+1.9.1
+
