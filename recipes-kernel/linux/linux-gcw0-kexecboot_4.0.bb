@@ -11,7 +11,7 @@ KERNEL_IMAGE_SYMLINK_NAME = "${KERNEL_IMAGETYPE}-gcw0-kexecboot-${MACHINE}"
 KERNEL_IMAGETYPE = "vmlinuz.bin"
 
 INITRAMFS_IMAGE = "initramfs-kexecboot-klibc-image"
-INITRAMFS_TASK = "${INITRAMFS_IMAGE}:do_rootfs"
+INITRAMFS_TASK = "${INITRAMFS_IMAGE}:do_image_complete"
 
 # disable unneeded tasks
 do_install[noexec] = "1"
