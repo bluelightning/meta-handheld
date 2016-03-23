@@ -52,7 +52,7 @@ do_install_append() {
 	install -m 0755 "${WORKDIR}/zaurus-hinge.matchbox-portrait" "${D}/etc/zaurusd/hinge-portrait.d/20-matchbox-portrait"
 }
 
-inherit autotools pkgconfig update-rc.d
+inherit autotools-brokensep pkgconfig update-rc.d
 
 INITSCRIPT_NAME = "zaurusd"
 INITSCRIPT_PARAMS = "start 99 5 2 . stop 20 0 1 6 ."
