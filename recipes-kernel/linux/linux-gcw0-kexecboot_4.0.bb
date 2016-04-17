@@ -1,4 +1,4 @@
-require recipes-kernel/linux/linux-gcw0_4.0.bb
+require recipes-kernel/linux/linux-gcw0_${PV}.bb
 SUMMARY = "GCW Zero kernel embedding a minimalistic kexecboot initramfs"
 
 PACKAGES = ""
