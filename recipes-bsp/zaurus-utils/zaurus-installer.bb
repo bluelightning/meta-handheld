@@ -1,7 +1,7 @@
 DESCRIPTION = "Installkit for kexecboot-kernel"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d690"
-DEPENDS = "${@base_conditional('MACHINE', 'collie', 'linux-yocto-tiny-kexecboot', 'zaurus-updater linux-yocto-tiny-kexecboot', d)}"
+DEPENDS = "${@base_conditional('MACHINE', 'collie', 'linux-kexecboot', 'zaurus-updater linux-kexecboot', d)}"
 DEPENDS += "${@base_conditional('MACHINE', 'spitz', 'zaurus-legacy-tar', '', d)}"
 PR = "r7"
 
@@ -24,7 +24,7 @@ do_deploy() {
         cd ${DEPLOY_DIR_IMAGE}
         rm -rf ${DEPLOY_DIR_IMAGE}/installkit-${MACHINE}/
         mkdir installkit-${MACHINE}/
-        [ -f "${KERNEL_IMAGETYPE}-yocto-tiny-kexecboot-${MACHINE}.bin" ] && cp ${KERNEL_IMAGETYPE}-yocto-tiny-kexecboot-${MACHINE}.bin installkit-${MACHINE}/${KERNEL_IMAGETYPE}
+        [ -f "${KERNEL_IMAGETYPE}-kexecboot-${MACHINE}.bin" ] && cp ${KERNEL_IMAGETYPE}-kexecboot-${MACHINE}.bin installkit-${MACHINE}/${KERNEL_IMAGETYPE}
         if [ ! "${MACHINE}" = "collie" ]; then
                 cp updater.sh installkit-${MACHINE}/updater.sh
         fi
