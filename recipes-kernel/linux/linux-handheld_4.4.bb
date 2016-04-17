@@ -6,12 +6,12 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 COMPATIBLE_MACHINE = "akita|c7x0|collie|h3600|hx4700|poodle|spitz|tosa"
 
 SRC_URI = "${KERNELORG_MIRROR}/linux/kernel/v4.x/linux-${PV}.tar.xz;name=kernel \
-           ${KERNELORG_MIRROR}/linux/kernel/v4.x/patch-${PV}.6.xz;apply=yes;name=stablepatch \
+           ${KERNELORG_MIRROR}/linux/kernel/v4.x/patch-${PV}.7.xz;apply=yes;name=stablepatch \
            "
 SRC_URI[kernel.md5sum] = "9a78fa2eb6c68ca5a40ed5af08142599"
 SRC_URI[kernel.sha256sum] = "401d7c8fef594999a460d10c72c5a94e9c2e1022f16795ec51746b0d165418b2"
-SRC_URI[stablepatch.md5sum] = "d48f09bf61f2500d70f839e190dc7c5a"
-SRC_URI[stablepatch.sha256sum] = "efea93ff30955d445344a83c36678fa8e64111219eeafea2a41fd4ee11f79d68"
+SRC_URI[stablepatch.md5sum] = "2286314f215706401dd51bf07b179ae4"
+SRC_URI[stablepatch.sha256sum] = "34a0e0bc123fe2224a83e13a4da25f7f816438fd77c58dce19588441f5166f0e"
 
 LOCOMO_PATCHES = "\
            file://locomo/0001-mfd-add-new-driver-for-Sharp-LoCoMo.patch \
