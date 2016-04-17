@@ -56,10 +56,10 @@ MACHINE_EXTRA_RDEPENDS_collie = "zaurusd mtd-utils mtd-utils-jffs2 mtd-utils-ubi
 
 ##################################
 # Zaurus rootfs are booted by
-# linux-yocto-tiny-kexecboot
+# linux-kexecboot
 ##################################
 
-# If set here, each image will also build linux-yocto-tiny-kexecboot and the updater
+# If set here, each image will also build linux-kexecboot and the updater
 # EXTRA_IMAGEDEPENDS += "zaurus-installer"
 
 # Install /boot/boot.cfg in target images and formfactor (psplash checks rotation)
