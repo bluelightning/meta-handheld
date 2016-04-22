@@ -13,6 +13,8 @@ SRC_URI[kernel.sha256sum] = "401d7c8fef594999a460d10c72c5a94e9c2e1022f16795ec517
 SRC_URI[stablepatch.md5sum] = "2286314f215706401dd51bf07b179ae4"
 SRC_URI[stablepatch.sha256sum] = "34a0e0bc123fe2224a83e13a4da25f7f816438fd77c58dce19588441f5166f0e"
 
+SRC_URI += "file://snd-soc-pxa2xx-modalias.patch"
+
 LOCOMO_PATCHES = "\
            file://locomo/0001-mfd-add-new-driver-for-Sharp-LoCoMo.patch \
            file://locomo/0002-leds-port-locomo-leds-driver-to-new-locomo-core.patch \
