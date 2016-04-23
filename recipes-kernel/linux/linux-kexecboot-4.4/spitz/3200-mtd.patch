@@ -1,0 +1,13 @@
+diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
+index 953a919..14e7736 100644
+--- a/arch/arm/mach-pxa/spitz.c
++++ b/arch/arm/mach-pxa/spitz.c
+@@ -802,7 +802,7 @@ static void __init spitz_nand_init(void)
+ 		spitz_nand_bbt.len = 1;
+ 		spitz_nand_pdata.ecc_layout = &akita_oobinfo;
+ 	} else if (machine_is_borzoi()) {
+-		spitz_nand_partitions[1].size = 32 * 1024 * 1024;
++		spitz_nand_partitions[1].size = 43 * 1024 * 1024;
+ 		spitz_nand_bbt.len = 1;
+ 		spitz_nand_pdata.ecc_layout = &akita_oobinfo;
+ 	}
