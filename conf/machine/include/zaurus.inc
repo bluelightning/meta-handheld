@@ -54,6 +54,8 @@ MACHINE_FEATURES_append_tosa  = " usbhost wifi"
 MACHINE_EXTRA_RDEPENDS = "zaurusd mtd-utils mtd-utils-jffs2 mtd-utils-ubifs nandlogical"
 MACHINE_EXTRA_RDEPENDS_collie = "zaurusd mtd-utils mtd-utils-jffs2 mtd-utils-ubifs"
 
+BAD_RECOMMENDATIONS += "eudev-hwdb"
+
 ##################################
 # Zaurus rootfs are booted by
 # linux-kexecboot
