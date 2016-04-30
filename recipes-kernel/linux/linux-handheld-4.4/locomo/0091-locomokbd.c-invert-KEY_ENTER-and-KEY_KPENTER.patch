@@ -1,0 +1,31 @@
+From 16bda0a5cd07b0dd172e8ad288f24668a708fca4 Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Thu, 28 Apr 2016 23:53:59 +0200
+Subject: [PATCH 1/1] locomokbd.c: invert KEY_ENTER and KEY_KPENTER
+
+Allow to use the OK button in kexecboot.
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ drivers/input/keyboard/locomokbd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/input/keyboard/locomokbd.c b/drivers/input/keyboard/locomokbd.c
+index 6e8499b..2d1d62e 100644
+--- a/drivers/input/keyboard/locomokbd.c
++++ b/drivers/input/keyboard/locomokbd.c
+@@ -61,9 +61,9 @@ locomokbd_keycode[LOCOMOKBD_NUMKEYS] = {
+ 	0, 0, 0, LOCOMO_KEY_CENTER, 0, KEY_MAIL, 0, 0, 0, 0,			/* 30 - 39 */
+ 	0, 0, 0, 0, 0, 0, 0, 0, 0, KEY_RIGHT,					/* 40 - 49 */
+ 	KEY_UP, KEY_LEFT, 0, 0, KEY_P, 0, KEY_O, KEY_I, KEY_Y, KEY_T,		/* 50 - 59 */
+-	KEY_E, KEY_W, 0, 0, 0, 0, KEY_DOWN, KEY_KPENTER, 0, 0,			/* 60 - 69 */
++	KEY_E, KEY_W, 0, 0, 0, 0, KEY_DOWN, KEY_ENTER, 0, 0,			/* 60 - 69 */
+ 	KEY_BACKSPACE, 0, KEY_L, KEY_U, KEY_H, KEY_R, KEY_D, KEY_Q, 0, 0,	/* 70 - 79 */
+-	0, 0, 0, 0, 0, 0, KEY_ENTER, KEY_RIGHTSHIFT, KEY_K, KEY_J,		/* 80 - 89 */
++	0, 0, 0, 0, 0, 0, KEY_KPENTER, KEY_RIGHTSHIFT, KEY_K, KEY_J,		/* 80 - 89 */
+ 	KEY_G, KEY_F, KEY_X, KEY_S, 0, 0, 0, 0, 0, 0,				/* 90 - 99 */
+ 	0, 0, KEY_DOT, 0, KEY_COMMA, KEY_N, KEY_B, KEY_C, KEY_Z, KEY_A,		/* 100 - 109 */
+ 	KEY_LEFTSHIFT, KEY_TAB, KEY_LEFTCTRL, 0, 0, 0, 0, 0, 0, 0,		/* 110 - 119 */
+-- 
+1.9.1
+

@@ -5,6 +5,8 @@ SUMMARY = "Linux kernel embedding a minimalistic kexecboot initramfs"
 
 COMPATIBLE_MACHINE = "|akita|c7x0|collie|poodle|spitz|tosa"
 
+LOCOMO_PATCHES += "file://locomo/0091-locomokbd.c-invert-KEY_ENTER-and-KEY_KPENTER.patch"
+
 # only for SL-C3200 (terrier)
 # SRC_URI_append_spitz += "file://3200-mtd.patch"
 
