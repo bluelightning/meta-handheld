@@ -49,6 +49,8 @@ LOCOMO_PATCHES = "\
            file://locomo/0039-XXX-don-t-emit-added-moved-or-deleted-file-warning.patch \
            file://locomo/0040-input-locomokbd-provide-an-Alt-SysRQ-combination.patch \
            "
+LOCOMO_PATCHES += "file://locomo/0090-locomokbd.c-fix-missing-KEY_CENTER.patch"
+
 SRC_URI_append_akita = " \
            file://defconfig \
            file://OE-vga-logo.patch \

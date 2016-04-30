@@ -1,0 +1,39 @@
+From 81161968b08d8adf1a70cc3b9dc8b82ede4d6e36 Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Thu, 28 Apr 2016 22:06:26 +0200
+Subject: [PATCH 1/1] locomokbd.c: fix missing KEY_CENTER
+
+The select/center key on keypad is defined as KEY_F15 (185) as default.
+Unbind it assigning LOCOMO_KEY_CENTER to KEY_F5 as done in the previous
+2.6 hack.
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ drivers/input/keyboard/locomokbd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/input/keyboard/locomokbd.c b/drivers/input/keyboard/locomokbd.c
+index f0e86c6..6e8499b 100644
+--- a/drivers/input/keyboard/locomokbd.c
++++ b/drivers/input/keyboard/locomokbd.c
+@@ -38,7 +38,7 @@
+ 
+ #define KEY_ACTIVITY		KEY_F16
+ #define KEY_CONTACT		KEY_F18
+-#define KEY_CENTER		KEY_F15
++#define LOCOMO_KEY_CENTER		KEY_F5
+ 
+ #ifdef CONFIG_KEYBOARD_LOCOMOKBD_SYSRQ
+ #define LOCOMO_KEY_CONTACT	KEY_LEFTALT
+@@ -58,7 +58,7 @@ locomokbd_keycode[LOCOMOKBD_NUMKEYS] = {
+ 	0, KEY_ESC, KEY_ACTIVITY, 0, 0, 0, 0, 0, 0, 0,				/* 0 - 9 */
+ 	0, 0, 0, 0, 0, 0, 0, KEY_MENU, 0, LOCOMO_KEY_CONTACT,			/* 10 - 19 */
+ 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,						/* 20 - 29 */
+-	0, 0, 0, KEY_CENTER, 0, KEY_MAIL, 0, 0, 0, 0,				/* 30 - 39 */
++	0, 0, 0, LOCOMO_KEY_CENTER, 0, KEY_MAIL, 0, 0, 0, 0,			/* 30 - 39 */
+ 	0, 0, 0, 0, 0, 0, 0, 0, 0, KEY_RIGHT,					/* 40 - 49 */
+ 	KEY_UP, KEY_LEFT, 0, 0, KEY_P, 0, KEY_O, KEY_I, KEY_Y, KEY_T,		/* 50 - 59 */
+ 	KEY_E, KEY_W, 0, 0, 0, 0, KEY_DOWN, KEY_KPENTER, 0, 0,			/* 60 - 69 */
+-- 
+1.9.1
+
