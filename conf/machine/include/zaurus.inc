@@ -5,7 +5,7 @@
 IMAGE_FSTYPES ?= "tar.gz jffs2 jffs2.sum ubi ubifs"
 JFFS2_SUM_EXTRA_ARGS = "-p -l -e ${JFFS2_ERASEBLOCK} -n"
 
-INITRAMFS_FSTYPES ?= "cpio.gz cpio.lzma"
+INITRAMFS_FSTYPES ?= "cpio.gz cpio.xz"
 IMAGE_DEVICE_TABLES = ""
 
 #########
