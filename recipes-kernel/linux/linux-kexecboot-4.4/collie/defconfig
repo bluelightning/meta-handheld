@@ -6,10 +6,10 @@ CONFIG_KERNEL_XZ=y
 # CONFIG_USELIB is not set
 CONFIG_NO_HZ_IDLE=y
 CONFIG_BLK_DEV_INITRD=y
-CONFIG_INITRAMFS_SOURCE="initramfs.cpio.lzma"
+CONFIG_INITRAMFS_SOURCE="initramfs.cpio.xz"
 # CONFIG_RD_GZIP is not set
 # CONFIG_RD_BZIP2 is not set
-# CONFIG_RD_XZ is not set
+# CONFIG_RD_LZMA is not set
 # CONFIG_RD_LZO is not set
 # CONFIG_RD_LZ4 is not set
 CONFIG_CC_OPTIMIZE_FOR_SIZE=y
@@ -156,7 +156,6 @@ CONFIG_FRAME_WARN=2048
 # CONFIG_ARM_UNWIND is not set
 # CONFIG_CRYPTO_ECHAINIV is not set
 # CONFIG_CRYPTO_HW is not set
-CONFIG_XZ_DEC=y
 # CONFIG_XZ_DEC_X86 is not set
 # CONFIG_XZ_DEC_POWERPC is not set
 # CONFIG_XZ_DEC_IA64 is not set
