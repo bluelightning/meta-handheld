@@ -46,7 +46,6 @@ LOCOMO_PATCHES = "\
            file://locomo/0036-ARM-sa1100-populate-codec-platform-data-with-irq.patch \
            file://locomo/0037-mfd-ucb1x00-make-use-of-provided-irq.patch \
            file://locomo/0038-XXX-ucb11x0-don-t-exit-if-UCB-is-not-detected.patch \
-           file://locomo/0039-XXX-don-t-emit-added-moved-or-deleted-file-warning.patch \
            file://locomo/0040-input-locomokbd-provide-an-Alt-SysRQ-combination.patch \
            "
 LOCOMO_PATCHES += "file://locomo/0090-locomokbd.c-fix-missing-KEY_CENTER.patch"
