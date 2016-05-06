@@ -13,7 +13,7 @@ SRC_URI[kernel.sha256sum] = "401d7c8fef594999a460d10c72c5a94e9c2e1022f16795ec517
 SRC_URI[stablepatch.md5sum] = "c1d8f46e5b2ee7c925fc38f20a3726d3"
 SRC_URI[stablepatch.sha256sum] = "11ec99ae0600bd831ff8d71b77e64592f4b6918b7857fd9ff0284ea4cf267b4e"
 
-SRC_URI += "file://snd-soc-pxa2xx-modalias.patch"
+SRC_URI += "file://ASoC-pxa-fix-module-autoload-for-platform-drivers.patch"
 
 LOCOMO_PATCHES = "\
            file://locomo/0001-mfd-add-new-driver-for-Sharp-LoCoMo.patch \
