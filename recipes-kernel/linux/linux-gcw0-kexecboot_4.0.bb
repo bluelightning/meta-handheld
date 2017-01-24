@@ -4,8 +4,8 @@ SUMMARY = "GCW Zero kernel embedding a minimalistic kexecboot initramfs"
 PACKAGES = ""
 PROVIDES = ""
 
-KERNEL_IMAGE_BASE_NAME = "${KERNEL_IMAGETYPE}-gcw0-kexecboot-${PV}-${MACHINE}"
-KERNEL_IMAGE_SYMLINK_NAME = "${KERNEL_IMAGETYPE}-gcw0-kexecboot-${MACHINE}"
+KERNEL_IMAGE_BASE_NAME = "gcw0-kexecboot-${PV}-${MACHINE}"
+KERNEL_IMAGE_SYMLINK_NAME = "gcw0-kexecboot-${MACHINE}"
 
 # RAW for ubiboot
 KERNEL_IMAGETYPE = "vmlinuz.bin"
