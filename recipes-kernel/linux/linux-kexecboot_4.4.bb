@@ -31,6 +31,4 @@ INITRAMFS_IMAGE = "initramfs-kexecboot-klibc-image"
 INITRAMFS_TASK = "${INITRAMFS_IMAGE}:do_image_complete"
 
 # disable unneeded tasks
-do_shared_workdir[noexec] = "1"
 do_install[noexec] = "1"
-do_populate_sysroot[noexec] = "1"
