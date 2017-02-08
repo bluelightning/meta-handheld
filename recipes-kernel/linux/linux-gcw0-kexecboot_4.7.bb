@@ -1,6 +1,9 @@
 require recipes-kernel/linux/linux-gcw0_${PV}.bb
 SUMMARY = "GCW Zero kernel embedding a minimalistic kexecboot initramfs"
 
+# disable packaging related tasks
+inherit nopackages
+
 PACKAGES = ""
 PROVIDES = ""
 
@@ -16,15 +19,4 @@ INITRAMFS_TASK = "${INITRAMFS_IMAGE}:do_image_complete"
 # disable unneeded tasks
 do_shared_workdir[noexec] = "1"
 do_install[noexec] = "1"
-do_package[noexec] = "1"
-do_package_qa[noexec] = "1"
-do_packagedata[noexec] = "1"
-do_package_deb[noexec] = "1"
-do_package_ipk[noexec] = "1"
-do_package_rpm[noexec] = "1"
-do_package_tar[noexec] = "1"
-do_package_write_deb[noexec] = "1"
-do_package_write_ipk[noexec] = "1"
-do_package_write_rpm[noexec] = "1"
-do_package_write_tar[noexec] = "1"
 do_populate_sysroot[noexec] = "1"
