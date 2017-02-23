@@ -21,6 +21,6 @@ do_configure[noexec] = "1"
 do_compile[noexec] = "1"
 
 do_deploy() {
-        install -d ${DEPLOY_DIR_IMAGE}
-        install -m 0755 ${WORKDIR}/zaurus-legacy-tar ${DEPLOY_DIR_IMAGE}/gnu-tar
+        install -d ${DEPLOYDIR}
+        install -m 0755 ${WORKDIR}/zaurus-legacy-tar ${DEPLOYDIR}/gnu-tar
 }

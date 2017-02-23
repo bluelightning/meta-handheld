@@ -21,17 +21,17 @@ inherit deploy
 addtask deploy before do_populate_sysroot after do_compile
 
 do_deploy() {
-        cd ${DEPLOY_DIR_IMAGE}
-        rm -rf ${DEPLOY_DIR_IMAGE}/installkit-${MACHINE}/
+        cd ${DEPLOYDIR}
+        rm -rf ${DEPLOYDIR}/installkit-${MACHINE}/
         mkdir installkit-${MACHINE}/
-        [ -f "${KERNEL_IMAGETYPE}-kexecboot-${MACHINE}.bin" ] && cp ${KERNEL_IMAGETYPE}-kexecboot-${MACHINE}.bin installkit-${MACHINE}/${KERNEL_IMAGETYPE}
+        [ -f "${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-kexecboot-${MACHINE}.bin" ] && cp ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-kexecboot-${MACHINE}.bin installkit-${MACHINE}/${KERNEL_IMAGETYPE}
         if [ ! "${MACHINE}" = "collie" ]; then
-                cp updater.sh installkit-${MACHINE}/updater.sh
+                cp ${DEPLOY_DIR_IMAGE}/updater.sh installkit-${MACHINE}/updater.sh
         fi
         if [ "${MACHINE}" = "spitz" ]; then
                 cp ${DEPLOY_DIR_IMAGE}/gnu-tar installkit-${MACHINE}/gnu-tar
         fi
-        tar czf ${DEPLOY_DIR_IMAGE}/installkit-${MACHINE}.tar.gz installkit-${MACHINE}/
-        md5sum ${DEPLOY_DIR_IMAGE}/installkit-${MACHINE}.tar.gz > ${DEPLOY_DIR_IMAGE}/installkit-${MACHINE}.tar.gz.md5
-        rm -rf ${DEPLOY_DIR_IMAGE}/installkit-${MACHINE}/
+        tar czf ${DEPLOYDIR}/installkit-${MACHINE}.tar.gz installkit-${MACHINE}/
+        md5sum ${DEPLOYDIR}/installkit-${MACHINE}.tar.gz > ${DEPLOYDIR}/installkit-${MACHINE}.tar.gz.md5
+        rm -rf ${DEPLOYDIR}/installkit-${MACHINE}/
 }

@@ -29,6 +29,6 @@ inherit deploy
 addtask deploy before do_populate_sysroot after do_compile
 
 do_deploy() {
-        install -d ${DEPLOY_DIR_IMAGE}
-        install -m 0755 updater.sh ${DEPLOY_DIR_IMAGE}/updater.sh
+        install -d ${DEPLOYDIR}
+        install -m 0755 updater.sh ${DEPLOYDIR}/updater.sh
 }
