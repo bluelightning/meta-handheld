@@ -11,6 +11,5 @@ SRC_URI = "git://github.com/gcwnow/linux.git;branch=jz-4.7 \
 SRCREV = "6bc18038a011e5627c2a6f00d2181a5d3e4bebc9"
 
 inherit kernel
-addtask kernel_link_images after do_compile before do_strip
 
 S = "${WORKDIR}/git"
