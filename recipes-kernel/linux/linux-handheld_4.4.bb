@@ -6,12 +6,12 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 COMPATIBLE_MACHINE = "akita|c7x0|collie|h3600|hx4700|poodle|spitz|tosa"
 
 SRC_URI = "${KERNELORG_MIRROR}/linux/kernel/v4.x/linux-${PV}.tar.xz;name=kernel \
-           ${KERNELORG_MIRROR}/linux/kernel/v4.x/patch-${PV}.10.xz;apply=yes;name=stablepatch \
+           ${KERNELORG_MIRROR}/linux/kernel/v4.x/patch-${PV}.66.xz;apply=yes;name=stablepatch \
            "
 SRC_URI[kernel.md5sum] = "9a78fa2eb6c68ca5a40ed5af08142599"
 SRC_URI[kernel.sha256sum] = "401d7c8fef594999a460d10c72c5a94e9c2e1022f16795ec51746b0d165418b2"
-SRC_URI[stablepatch.md5sum] = "1b9a296c0d0b778e8173299618f2d84f"
-SRC_URI[stablepatch.sha256sum] = "df66bd2532cac85dfb85d6ca9b750689e02278442652a0b047304e3322947d17"
+SRC_URI[stablepatch.md5sum] = "7a4add56481e23ffb7d4e5a18e1f7731"
+SRC_URI[stablepatch.sha256sum] = "ecb99a1731914a93cde9d49d4bad35f32f7fa6d57de110c2e12ee9ad9e44f5fb"
 
 SRC_URI += "\
            file://ASoC-pxa-fix-module-autoload-for-platform-drivers.patch \
