@@ -70,7 +70,7 @@ UNPACKED_ROOTFS=0   # spitz only
 
 RO_MTD_LINE=`cat /proc/mtd | grep "root" | tail -n 1`
 if [ "$RO_MTD_LINE" = "" ]; then
-    RO_MTD_LINE=`cat /proc/mtd | grep "\<NAND\>.*\<2\>" | tail -n 1`
+    RO_MTD_LINE=`cat /proc/mtd | grep "\<NAND\>.*\<1\>" | tail -n 1`
 fi
 RO_MTD_NO=`echo $RO_MTD_LINE | cut -d: -f1 | cut -dd -f2`
 RO_MTD=/dev/mtd$RO_MTD_NO
