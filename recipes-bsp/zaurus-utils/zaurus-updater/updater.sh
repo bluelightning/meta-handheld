@@ -82,7 +82,7 @@ if [ "$RW_MTD_LINE" = "" ]; then
 fi
 RW_MTD_NO=`echo $RW_MTD_LINE | cut -d: -f1 | cut -dd -f2`
 RW_MTD=/dev/mtd$RW_MTD_NO
-HOMEFS_SIZE=`echo $RO_MTD_LINE | cut -d" " -f2`
+HOMEFS_SIZE=`echo $RW_MTD_LINE | cut -d" " -f2`
 
 LOGOCAL_MTD=/dev/mtd1
 
