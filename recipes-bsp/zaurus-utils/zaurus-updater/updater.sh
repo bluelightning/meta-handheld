@@ -55,9 +55,6 @@
 # 2010.04.18 Andrea 'ant' Adami
 # - Add support for flashing pure jffs2 rootfs, without Sharp headers
 
-# Set to "yes" to enable
-ENABLE_UBOOT_UPDATER="no"
-
 DATAPATH=$1
 TMPPATH=/tmp/update
 TMPDATA=$TMPPATH/tmpdata.bin
@@ -316,53 +313,6 @@ do_flashing()
         fi
 }
 
-update_uboot() {
-        # The flashing part of this function is based on pdaXrom's
-        # updater.sh
-
-        if test "$ENABLE_UBOOT_UPDATER" != "yes" -o -z "$1"
-        then
-                echo 'u-boot updates not allowed.'
-                return
-        fi
-
-        echo ''
-        echo 'Installing u-boot bootloader:'
-
-        DATASIZE=`wc -c $TARGETFILE`
-        FSIZE=`echo $DATASIZE | cut -d' ' -f1`
-
-        echo -n '* Creating backup ('$FSIZE' Bytes)...'
-        if ( nandlogical /dev/mtd1 READ 0 $FSIZE /tmp/sharploader.bin ) > /dev/null 2>&1
-        then
-                echo 'Ok'
-
-                echo -n '* Flashing u-boot...'
-                if ( nandlogical /dev/mtd1 WRITE 0 $FSIZE $1 ) > /dev/null 2>&1
-                then
-                        echo 'Success'
-                else
-                        echo 'FAILED'
-                        echo 'Error: Installation of u-boot failed!'
-
-                        echo -n '* Trying to restore backup...'
-                        if ( nandlogical /dev/mtd1 WRITE 0 $FSIZE /tmp/sharploader.bin ) > /dev/null 2>&1
-                        then
-                                echo 'Success'
-                                echo 'Your old bootloader has been restored'
-                        else
-                                echo 'FAILED'
-                                echo "Sorry, it's NAND-Restore time for you =("
-                        fi
-                fi
-        else
-                echo 'FAILED'
-                echo 'Could not create backup, aborting!'
-                echo 'Your bootloader has not been altered in any way.'
-                exit 1
-        fi
-}
-
 mainte_fix()
 {
 # binaries taken from Cacko 1.23 installer
@@ -426,9 +376,9 @@ mkdir -p $TMPPATH > /dev/null 2>&1
 
 cd $DATAPATH/
 
-for TARGETFILE in u-boot.bin U-BOOT.BIN zimage zImage zImage.bin zimage.bin ZIMAGE ZIMAGE.BIN \
-                initrd.bin INITRD.BIN hdimage1.tgz HDIMAGE1.TGZ home.bin HOME.BIN \
-                mainte_fix.bin MAINTE_FIX.BIN
+for TARGETFILE in zimage zImage zImage.bin zimage.bin ZIMAGE ZIMAGE.BIN \
+                initrd.bin INITRD.BIN hdimage1.tgz HDIMAGE1.TGZ home.bin \
+                HOME.BIN mainte_fix.bin MAINTE_FIX.BIN
 do
     if [ ! -e $TARGETFILE ]
     then
@@ -512,14 +462,6 @@ do
         if [ $UNPACKED_ROOTFS = 0 ]
         then
                 do_rootfs_extraction
-        fi
-        ;;
-
-    u-boot.bin)
-        if [ $FLASHED_UBOOT != 1 ]
-        then
-                update_uboot "$TARGETFILE"
-                FLASHED_UBOOT="1"
         fi
         ;;
 
