@@ -368,7 +368,7 @@ case "$MODEL" in
 esac
 
 clear
-echo '---- Universal Zaurus Updater ZAURUS_UPDATER_VERSION ----'
+echo 'Universal Zaurus Updater (ZAURUS_UPDATER_VERSION)'
 echo 'MODEL: '$MODEL' ('$ZAURUS')'
 echo ''
 
