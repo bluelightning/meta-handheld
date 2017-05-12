@@ -8,7 +8,6 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=94d55d512a9ba36caa9b7df079bae19f"
 
 SRCREV = "8"
 PV = "0.12+svnr${SRCREV}"
-PR = "r0"
 
 SRC_URI = "svn://projects.linuxtogo.org/svn/kbdd;module=trunk;protocol=svn \
            file://nostrip.patch \
