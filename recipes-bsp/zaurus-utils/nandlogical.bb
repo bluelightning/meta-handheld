@@ -1,9 +1,9 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:${THISDIR}/files:"
 
-DESCRIPTION = "Nandlogical for Sharp mtd1"
+DESCRIPTION = "Nandlogical for Sharp SL FTL reserved partition"
 LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://nandlogical.c;endline=15;md5=77804e7fdf625e56869f32d9aec762a2"
-
+PV = "1.1.0"
 SRC_URI = "http://distro.ibiblio.org/pub/linux/distributions/pdaxrom/download/1.1.0beta4/src/survive-1.1.0.tar.bz2 \
            file://oobblock-to-writesize.patch"
 
