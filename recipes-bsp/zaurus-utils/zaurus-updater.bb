@@ -1,8 +1,8 @@
 DESCRIPTION = "Encrypted shellscript for the Zaurus ROM update"
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://updater.sh;endline=59;md5=667f442c1e555f21adb58957306612cc"
+LIC_FILES_CHKSUM = "file://updater.sh;endline=69;md5=0d6bbac0e2abe4edc46690fe4efbaa9b"
 DEPENDS = "encdec-updater-native"
-PR = "r27"
+PV = "2017.05"
 
 INHIBIT_DEFAULT_DEPS = "1"
 
@@ -11,7 +11,7 @@ SRC_URI = "file://updater.sh"
 S = "${WORKDIR}"
 
 do_configure() {
-        sed -i "s/ZAURUS_UPDATER_VERSION/${PR}/" "${S}/updater.sh"
+        sed -i "s/ZAURUS_UPDATER_VERSION/${PV}/" "${S}/updater.sh"
 }
 do_compile() {
         encdec-updater -e updater.sh
