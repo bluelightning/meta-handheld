@@ -22,6 +22,11 @@ URI: git://git.openembedded.org/meta-openembedded
 branch: master
 revision: HEAD
 
+layer: meta-oe
+URI: git://git.openembedded.org/meta-openembedded
+branch: master
+revision: HEAD
+
 
 Maintenance
 -----------
