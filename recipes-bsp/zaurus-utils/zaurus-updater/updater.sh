@@ -63,6 +63,7 @@ TMPPATH=/tmp/update
 TMPDATA=$TMPPATH/tmpdata.bin
 TMPHEAD=$TMPPATH/tmphead.bin
 
+FLASHED_MAINTE=0
 FLASHED_KERNEL=0
 FLASHED_ROOTFS=0
 FLASHED_HOMEFS=0
@@ -362,6 +363,29 @@ update_uboot() {
         fi
 }
 
+mainte_fix()
+{
+# binaries taken from Cacko 1.23 installer
+case "$MODEL" in
+        SL-C760|SL-C860|SL-C1000|SL-C3100|SL-C3200)
+            echo -n 'Flashing Mainte fix for 128M flash...'
+            if ( /sbin/nandlogical $LOGOCAL_MTD WRITE 0x00, 327680, $TARGETFILE ) > /dev/null 2>&1
+            then
+                echo 'done'
+                # unnecessary fix for FSRW end addr / size ? (kernel parser sharpslpart ignores it)
+                # OUTFILE=$TMPPATH/128M_fix.bin
+                # printf '\x08' > $OUTFILE
+                # /sbin/nandlogical $LOGOCAL_MTD WRITE 0x60027, 1, $OUTFILE > /dev/null 2>&1
+                # /sbin/nandlogical $LOGOCAL_MTD WRITE 0x64027, 1, $OUTFILE > /dev/null 2>&1
+                # rm -f $OUTFILE > /dev/null 2>&1
+                exit 0
+            fi
+        ;;
+    *)
+        ;;
+esac
+}
+
 ### Check model ###
 /sbin/writerominfo
 MODEL=`cat /proc/deviceinfo/product`
@@ -403,7 +427,8 @@ mkdir -p $TMPPATH > /dev/null 2>&1
 cd $DATAPATH/
 
 for TARGETFILE in u-boot.bin U-BOOT.BIN zimage zImage zImage.bin zimage.bin ZIMAGE ZIMAGE.BIN \
-                initrd.bin INITRD.BIN hdimage1.tgz HDIMAGE1.TGZ home.bin HOME.BIN
+                initrd.bin INITRD.BIN hdimage1.tgz HDIMAGE1.TGZ home.bin HOME.BIN \
+                mainte_fix.bin MAINTE_FIX.BIN
 do
     if [ ! -e $TARGETFILE ]
     then
@@ -495,6 +520,15 @@ do
         then
                 update_uboot "$TARGETFILE"
                 FLASHED_UBOOT="1"
+        fi
+        ;;
+
+    mainte_fix.bin)
+        echo 'Mainte fix for models with 128M flash'
+        if [ $FLASHED_MAINTE != 1 ]
+        then
+                mainte_fix
+                FLASHED_MAINTE="1"
         fi
         ;;
 
