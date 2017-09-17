@@ -33,9 +33,11 @@ XZ_COMPRESSION_LEVEL = "-2e"
 # machine tuning
 ################
 
+ARM_INSTRUCTION_SET = "thumb"
+ARM_INSTRUCTION_SET_collie = "arm"
+
 SERIAL_CONSOLE = "115200 ttyS0"
 SERIAL_CONSOLE_collie = "115200 ttySA0"
-
 
 CMDLINE_akita = "console=ttyS0,115200n8 console=tty1 fbcon=rotate:1"
 CMDLINE_c7x0 = "console=ttyS0,115200n8 console=tty1"
