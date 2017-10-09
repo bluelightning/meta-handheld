@@ -6,16 +6,16 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 COMPATIBLE_MACHINE = "akita|c7x0|collie|h3600|hx4700|poodle|spitz|tosa"
 
 SRC_URI = "${KERNELORG_MIRROR}/linux/kernel/v4.x/linux-${PV}.tar.xz;name=kernel \
-           ${KERNELORG_MIRROR}/linux/kernel/v4.x/patch-${PV}.68.xz;apply=yes;name=stablepatch \
+           ${KERNELORG_MIRROR}/linux/kernel/v4.x/patch-${PV}.90.xz;apply=yes;name=stablepatch \
            "
 SRC_URI[kernel.md5sum] = "9a78fa2eb6c68ca5a40ed5af08142599"
 SRC_URI[kernel.sha256sum] = "401d7c8fef594999a460d10c72c5a94e9c2e1022f16795ec51746b0d165418b2"
-SRC_URI[stablepatch.md5sum] = "def995f7c91d6682256b24d0ba5933fb"
-SRC_URI[stablepatch.sha256sum] = "ca4fdd5cb4336a07f8ba7ea08a812b47278b43db3060a2f76623bab91b454e1a"
+SRC_URI[stablepatch.md5sum] = "8186b1fec7b797f341040ccd4ae45ce0"
+SRC_URI[stablepatch.sha256sum] = "fe52e3ae90ea5cc2bc6da70efcb085cb80257cfb2dd058d09e5efcadcc7ed275"
 
 SRC_URI += "\
            file://ASoC-pxa-fix-module-autoload-for-platform-drivers.patch \
-           file://dmaengine-mmp-pdma-add-number-of-requestors.patch \
+           \
            file://sharpslpart/0001-mtd-sharpsl-add-sharpslpart-MTD-partition-parser.patch \
            file://sharpslpart/0002-mtd-nand-sharpsl.c-prefer-sharpslpart-MTD-partition-.patch \
            file://sharpslpart/0003-mtd-nand-tmio_nand.c-prefer-sharpslpart-MTD-partitio.patch \
