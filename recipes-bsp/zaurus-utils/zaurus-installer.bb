@@ -1,8 +1,11 @@
 DESCRIPTION = "Installkit for kexecboot-kernel"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
-DEPENDS = "${@base_conditional('MACHINE', 'collie', 'linux-kexecboot', 'zaurus-updater linux-kexecboot', d)}"
-DEPENDS += "${@base_conditional('MACHINE', 'spitz', 'zaurus-legacy-tar', '', d)}"
+
+DEPENDS = "zaurus-updater linux-kexecboot"
+DEPENDS_collie = "linux-kexecboot"
+DEPENDS_append_spitz = " zaurus-legacy-tar"
+
 PV = "2017.05"
 
 INHIBIT_DEFAULT_DEPS = "1"
