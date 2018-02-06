@@ -18,7 +18,7 @@ S = "${WORKDIR}/git"
 
 inherit kernel
 
-FILES_kernel-image = "/boot/uImage*"
+FILES_${KERNEL_PACKAGE_NAME}-image = "/boot/uImage*"
 
 do_configure_prepend() {
 	install -m 0644 ${S}/arch/mips/configs/qi_lb60_defconfig ${S}/.config
