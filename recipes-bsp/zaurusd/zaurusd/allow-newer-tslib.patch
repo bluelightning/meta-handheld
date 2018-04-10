@@ -1,0 +1,31 @@
+From 368e025220842db13e8b5d95bfe12877d752a7c8 Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Wed, 11 Apr 2018 00:14:49 +0200
+Subject: [PATCH] zaurusd: relax Autoconf macro to allow tslib >= 1.0
+
+Fix build after 72ef78e tslib: Upgrade to 1.15 release
+
+| checking for "tslib-1.0"... no
+| configure: error: TSKeys requires tslib.
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 36f858c..b207dcf 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -45,7 +45,7 @@ if test "x$HAVE_TSKEYS" != "x"; then
+ 	#
+         # Checks for tslib
+ 	#
+-	PKG_CHECK_MODULES(TSLIB, "tslib-1.0", :, AC_MSG_ERROR([TSKeys requires tslib.]))
++	PKG_CHECK_MODULES(TSLIB, [tslib >= 1.0], :, AC_MSG_ERROR([TSKeys requires tslib.]))
+ 	AC_SUBST(TSLIB_CFLAGS)
+ 	AC_SUBST(TSLIB_LIBS)
+ fi
+-- 
+2.7.4
+
