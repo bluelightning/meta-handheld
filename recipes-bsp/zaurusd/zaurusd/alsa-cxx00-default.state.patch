@@ -1,4 +1,9 @@
-NOTE: Patch slightly modified from original; unmodified comments from 
+From 335105e985d0935afce84c215eb12baed1f7006d Mon Sep 17 00:00:00 2001
+From: Paul Eggleton <paul.eggleton@linux.intel.com>
+Date: Sun, 24 Jul 2011 19:12:32 +0100
+Subject: [PATCH] initial commit of meta-handheld
+
+NOTE: Patch slightly modified from original; unmodified comments from
 original patch copied below.
 =============================================================================
 http://bugs.openembedded.net/show_bug.cgi?id=2617
@@ -16,9 +21,15 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
   * Enabled Zero Cross volume changes.
 - Do not alter incorrect mixer levels by zaurus-mixer-callback.
 
---- zaurusd/config/alsa/cxx00-default.state	2009-04-25 22:57:30.000000000 +0100
-+++ zaurusd/config/alsa/cxx00-default.state	2009-05-14 10:41:29.000000000 +0100
-@@ -6,8 +6,8 @@
+---
+ config/alsa/cxx00-default.state | 66 ++++++++++++++++++++---------------------
+ 1 file changed, 33 insertions(+), 33 deletions(-)
+
+diff --git a/config/alsa/cxx00-default.state b/config/alsa/cxx00-default.state
+index d218543..d1bacfb 100644
+--- a/config/alsa/cxx00-default.state
++++ b/config/alsa/cxx00-default.state
+@@ -6,8 +6,8 @@ state.Spitz {
  		comment.range '0 - 63'
  		iface MIXER
  		name 'Capture Volume'
@@ -29,7 +40,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.2 {
  		comment.access 'read write'
-@@ -15,8 +15,8 @@
+@@ -15,8 +15,8 @@ state.Spitz {
  		comment.count 2
  		iface MIXER
  		name 'Capture ZC Switch'
@@ -40,7 +51,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.3 {
  		comment.access 'read write'
-@@ -24,8 +24,8 @@
+@@ -24,8 +24,8 @@ state.Spitz {
  		comment.count 2
  		iface MIXER
  		name 'Capture Switch'
@@ -51,7 +62,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.4 {
  		comment.access 'read write'
-@@ -33,8 +33,8 @@
+@@ -33,8 +33,8 @@ state.Spitz {
  		comment.count 2
  		iface MIXER
  		name 'Headphone Playback ZC Switch'
@@ -62,7 +73,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.5 {
  		comment.access 'read write'
-@@ -42,8 +42,8 @@
+@@ -42,8 +42,8 @@ state.Spitz {
  		comment.count 2
  		iface MIXER
  		name 'Speaker Playback ZC Switch'
@@ -73,7 +84,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.6 {
  		comment.access 'read write'
-@@ -92,8 +92,8 @@
+@@ -92,8 +92,8 @@ state.Spitz {
  		comment.range '0 - 255'
  		iface MIXER
  		name 'PCM Volume'
@@ -84,7 +95,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.11 {
  		comment.access 'read write'
-@@ -131,7 +131,7 @@
+@@ -131,7 +131,7 @@ state.Spitz {
  		comment.range '0 - 15'
  		iface MIXER
  		name 'Treble Volume'
@@ -93,7 +104,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.15 {
  		comment.access 'read write'
-@@ -188,7 +188,7 @@
+@@ -188,7 +188,7 @@ state.Spitz {
  		comment.item.1 Playback
  		iface MIXER
  		name '3D Mode'
@@ -102,7 +113,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.21 {
  		comment.access 'read write'
-@@ -226,7 +226,7 @@
+@@ -226,7 +226,7 @@ state.Spitz {
  		comment.count 1
  		iface MIXER
  		name 'ALC Capture ZC Switch'
@@ -111,7 +122,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.25 {
  		comment.access 'read write'
-@@ -235,7 +235,7 @@
+@@ -235,7 +235,7 @@ state.Spitz {
  		comment.range '0 - 15'
  		iface MIXER
  		name 'ALC Capture Hold Time'
@@ -120,7 +131,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.26 {
  		comment.access 'read write'
-@@ -244,7 +244,7 @@
+@@ -244,7 +244,7 @@ state.Spitz {
  		comment.range '0 - 15'
  		iface MIXER
  		name 'ALC Capture Decay Time'
@@ -129,7 +140,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.27 {
  		comment.access 'read write'
-@@ -253,7 +253,7 @@
+@@ -253,7 +253,7 @@ state.Spitz {
  		comment.range '0 - 15'
  		iface MIXER
  		name 'ALC Capture Attack Time'
@@ -138,7 +149,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.28 {
  		comment.access 'read write'
-@@ -306,7 +306,7 @@
+@@ -306,7 +306,7 @@ state.Spitz {
  		comment.count 1
  		iface MIXER
  		name 'ZC Timeout Switch'
@@ -147,7 +158,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.34 {
  		comment.access 'read write'
-@@ -331,8 +331,8 @@
+@@ -331,8 +331,8 @@ state.Spitz {
  		comment.range '0 - 3'
  		iface MIXER
  		name 'Mic Boost'
@@ -158,7 +169,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.37 {
  		comment.access 'read write'
-@@ -341,8 +341,8 @@
+@@ -341,8 +341,8 @@ state.Spitz {
  		comment.range '0 - 7'
  		iface MIXER
  		name 'Bypass Left Playback Volume'
@@ -169,7 +180,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.38 {
  		comment.access 'read write'
-@@ -361,8 +361,8 @@
+@@ -361,8 +361,8 @@ state.Spitz {
  		comment.range '0 - 7'
  		iface MIXER
  		name 'Bypass Mono Playback Volume'
@@ -180,7 +191,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.40 {
  		comment.access 'read write'
-@@ -379,8 +379,8 @@
+@@ -379,8 +379,8 @@ state.Spitz {
  		comment.range '0 - 127'
  		iface MIXER
  		name 'Headphone Playback Volume'
@@ -191,7 +202,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.42 {
  		comment.access 'read write'
-@@ -389,8 +389,8 @@
+@@ -389,8 +389,8 @@ state.Spitz {
  		comment.range '0 - 127'
  		iface MIXER
  		name 'Speaker Playback Volume'
@@ -202,7 +213,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.43 {
  		comment.access 'read write'
-@@ -399,7 +399,7 @@
+@@ -399,7 +399,7 @@ state.Spitz {
  		comment.range '0 - 127'
  		iface MIXER
  		name 'Mono Playback Volume'
@@ -211,7 +222,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.44 {
  		comment.access 'read write'
-@@ -411,7 +411,7 @@
+@@ -411,7 +411,7 @@ state.Spitz {
  		comment.item.3 'Digital Mono'
  		iface MIXER
  		name 'Right ADC Mux'
@@ -220,7 +231,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.45 {
  		comment.access 'read write'
-@@ -423,7 +423,7 @@
+@@ -423,7 +423,7 @@ state.Spitz {
  		comment.item.3 'Digital Mono'
  		iface MIXER
  		name 'Left ADC Mux'
@@ -229,7 +240,7 @@ http://bugs.openembedded.net/show_bug.cgi?id=2617
  	}
  	control.46 {
  		comment.access 'read write'
-@@ -471,7 +471,7 @@
+@@ -471,7 +471,7 @@ state.Spitz {
  		comment.item.4 Differential
  		iface MIXER
  		name 'Left Line Mux'

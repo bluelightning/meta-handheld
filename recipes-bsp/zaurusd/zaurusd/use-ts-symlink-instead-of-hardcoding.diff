@@ -1,6 +1,23 @@
---- /tmp/mach-akita-vars.in	2009-04-28 16:39:58.000000000 +0200
-+++ zaurusd/config/mach-config/mach-akita-vars.in	2009-04-28 16:40:06.000000000 +0200
-@@ -5,6 +5,6 @@
+From ba8caa82de5e947469f74477b0c41feb8a0824ef Mon Sep 17 00:00:00 2001
+From: Paul Eggleton <paul.eggleton@linux.intel.com>
+Date: Sun, 24 Jul 2011 19:12:32 +0100
+
+---
+ config/mach-config/mach-akita-vars.in    | 3 +--
+ config/mach-config/mach-borzoi-vars.in   | 3 +--
+ config/mach-config/mach-corgi-vars.in    | 3 +--
+ config/mach-config/mach-husky-vars.in    | 3 +--
+ config/mach-config/mach-poodle-vars.in   | 3 +--
+ config/mach-config/mach-shepherd-vars.in | 3 +--
+ config/mach-config/mach-spitz-vars.in    | 3 +--
+ config/mach-config/mach-tosa-vars.in     | 3 +--
+ 8 files changed, 8 insertions(+), 16 deletions(-)
+
+diff --git a/config/mach-config/mach-akita-vars.in b/config/mach-config/mach-akita-vars.in
+index c4cb671..dffc694 100644
+--- a/config/mach-config/mach-akita-vars.in
++++ b/config/mach-config/mach-akita-vars.in
+@@ -5,9 +5,8 @@ export SWITCH_EVENT_ZMIXER=1
  SWITCH_EVENT_DEVICE=/dev/input/event0
  
  TSKEYS_CONF=@appconfdir@/tskeys/zaurus-cxx00.conf
@@ -8,10 +25,14 @@
 +TSKEYS_DEVICE=/dev/input/touchscreen0
  
  ALSA_MIXER_INIT=@appconfdir@/alsa/cxx00-default.state
-\ No newline at end of file
---- /tmp/mach-borzoi-vars.in	2009-04-28 16:39:58.000000000 +0200
-+++ zaurusd/config/mach-config/mach-borzoi-vars.in	2009-04-28 16:40:06.000000000 +0200
-@@ -5,6 +5,6 @@
+-
+ export XRANDR_LANDSCAPE=right
+ export XRANDR_PORTRAIT=normal
+diff --git a/config/mach-config/mach-borzoi-vars.in b/config/mach-config/mach-borzoi-vars.in
+index 55cba7f..d27bf2f 100644
+--- a/config/mach-config/mach-borzoi-vars.in
++++ b/config/mach-config/mach-borzoi-vars.in
+@@ -5,9 +5,8 @@ export SWITCH_EVENT_ZMIXER=1
  SWITCH_EVENT_DEVICE=/dev/input/event0
  
  TSKEYS_CONF=@appconfdir@/tskeys/zaurus-cxx00.conf
@@ -19,10 +40,14 @@
 +TSKEYS_DEVICE=/dev/input/touchscreen0
  
  ALSA_MIXER_INIT=@appconfdir@/alsa/cxx00-default.state
-\ No newline at end of file
---- /tmp/mach-corgi-vars.in	2009-04-28 16:39:58.000000000 +0200
-+++ zaurusd/config/mach-config/mach-corgi-vars.in	2009-04-28 16:40:06.000000000 +0200
-@@ -5,6 +5,6 @@
+-
+ export XRANDR_LANDSCAPE=right
+ export XRANDR_PORTRAIT=normal
+diff --git a/config/mach-config/mach-corgi-vars.in b/config/mach-config/mach-corgi-vars.in
+index 548ada2..fac5a0a 100644
+--- a/config/mach-config/mach-corgi-vars.in
++++ b/config/mach-config/mach-corgi-vars.in
+@@ -5,9 +5,8 @@ export SWITCH_EVENT_ZMIXER=1
  SWITCH_EVENT_DEVICE=/dev/input/event0
  
  TSKEYS_CONF=@appconfdir@/tskeys/zaurus-c7x0.conf
@@ -30,10 +55,14 @@
 +TSKEYS_DEVICE=/dev/input/touchscreen0
  
  ALSA_MIXER_INIT=@appconfdir@/alsa/c7x0-default.state
-\ No newline at end of file
---- /tmp/mach-husky-vars.in	2009-04-28 16:39:58.000000000 +0200
-+++ zaurusd/config/mach-config/mach-husky-vars.in	2009-04-28 16:40:06.000000000 +0200
-@@ -5,6 +5,6 @@
+-
+ export XRANDR_LANDSCAPE=normal
+ export XRANDR_PORTRAIT=left
+diff --git a/config/mach-config/mach-husky-vars.in b/config/mach-config/mach-husky-vars.in
+index b6e4ab8..ef7c09e 100644
+--- a/config/mach-config/mach-husky-vars.in
++++ b/config/mach-config/mach-husky-vars.in
+@@ -5,9 +5,8 @@ export SWITCH_EVENT_ZMIXER=1
  SWITCH_EVENT_DEVICE=/dev/input/event0
  
  TSKEYS_CONF=@appconfdir@/tskeys/zaurus-c7x0.conf
@@ -41,10 +70,14 @@
 +TSKEYS_DEVICE=/dev/input/touchscreen0
  
  ALSA_MIXER_INIT=@appconfdir@/alsa/c7x0-default.state
-\ No newline at end of file
---- /tmp/mach-poodle-vars.in	2009-04-28 16:39:58.000000000 +0200
-+++ zaurusd/config/mach-config/mach-poodle-vars.in	2009-04-28 16:40:06.000000000 +0200
-@@ -4,6 +4,6 @@
+-
+ export XRANDR_LANDSCAPE=normal
+ export XRANDR_PORTRAIT=left
+diff --git a/config/mach-config/mach-poodle-vars.in b/config/mach-config/mach-poodle-vars.in
+index 71af6d7..fc3e2c7 100644
+--- a/config/mach-config/mach-poodle-vars.in
++++ b/config/mach-config/mach-poodle-vars.in
+@@ -4,9 +4,8 @@ export SWITCH_EVENT_ZMIXER=1
  SWITCH_EVENT_DEVICE=/dev/input/event0
  
  #TSKEYS_CONF=@appconfdir@/tskeys/zaurus-clamshell.conf
@@ -52,10 +85,14 @@
 +#TSKEYS_DEVICE=/dev/input/touchscreen0
  
  ALSA_MIXER_INIT=@appconfdir@/alsa/poodle-default.state
-\ No newline at end of file
---- /tmp/mach-shepherd-vars.in	2009-04-28 16:39:58.000000000 +0200
-+++ zaurusd/config/mach-config/mach-shepherd-vars.in	2009-04-28 16:40:06.000000000 +0200
-@@ -5,6 +5,6 @@
+-
+ export XRANDR_LANDSCAPE=normal
+ export XRANDR_PORTRAIT=left
+diff --git a/config/mach-config/mach-shepherd-vars.in b/config/mach-config/mach-shepherd-vars.in
+index c77eb56..90f5ab3 100644
+--- a/config/mach-config/mach-shepherd-vars.in
++++ b/config/mach-config/mach-shepherd-vars.in
+@@ -5,9 +5,8 @@ export SWITCH_EVENT_ZMIXER=1
  SWITCH_EVENT_DEVICE=/dev/input/event0
  
  TSKEYS_CONF=@appconfdir@/tskeys/zaurus-c7x0.conf
@@ -63,10 +100,14 @@
 +TSKEYS_DEVICE=/dev/input/touchscreen0
  
  ALSA_MIXER_INIT=@appconfdir@/alsa/c7x0-default.state
-\ No newline at end of file
---- /tmp/mach-spitz-vars.in	2009-04-28 16:39:58.000000000 +0200
-+++ zaurusd/config/mach-config/mach-spitz-vars.in	2009-04-28 16:40:06.000000000 +0200
-@@ -5,6 +5,6 @@
+-
+ export XRANDR_LANDSCAPE=normal
+ export XRANDR_PORTRAIT=left
+diff --git a/config/mach-config/mach-spitz-vars.in b/config/mach-config/mach-spitz-vars.in
+index 55cba7f..d27bf2f 100644
+--- a/config/mach-config/mach-spitz-vars.in
++++ b/config/mach-config/mach-spitz-vars.in
+@@ -5,9 +5,8 @@ export SWITCH_EVENT_ZMIXER=1
  SWITCH_EVENT_DEVICE=/dev/input/event0
  
  TSKEYS_CONF=@appconfdir@/tskeys/zaurus-cxx00.conf
@@ -74,10 +115,14 @@
 +TSKEYS_DEVICE=/dev/input/touchscreen0
  
  ALSA_MIXER_INIT=@appconfdir@/alsa/cxx00-default.state
-\ No newline at end of file
---- /tmp/mach-tosa-vars.in	2009-04-28 16:39:58.000000000 +0200
-+++ zaurusd/config/mach-config/mach-tosa-vars.in	2009-04-28 16:40:06.000000000 +0200
-@@ -4,6 +4,6 @@
+-
+ export XRANDR_LANDSCAPE=right
+ export XRANDR_PORTRAIT=normal
+diff --git a/config/mach-config/mach-tosa-vars.in b/config/mach-config/mach-tosa-vars.in
+index 97f0e93..97f75b9 100644
+--- a/config/mach-config/mach-tosa-vars.in
++++ b/config/mach-config/mach-tosa-vars.in
+@@ -4,9 +4,8 @@ export SWITCH_EVENT_ZMIXER=1
  SWITCH_EVENT_DEVICE=/dev/input/event0
  
  #TSKEYS_CONF=@appconfdir@/tskeys/zaurus-clamshell.conf
@@ -85,4 +130,6 @@
 +#TSKEYS_DEVICE=/dev/input/touchscreen0
  
  ALSA_MIXER_INIT=@appconfdir@/alsa/6000x-default.state
-\ No newline at end of file
+-
+ export XRANDR_LANDSCAPE=normal
+ export XRANDR_PORTRAIT=left

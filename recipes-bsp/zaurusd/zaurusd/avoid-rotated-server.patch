@@ -1,8 +1,24 @@
-Index: zaurusd/config/mach-config/mach-akita-vars.in
-===================================================================
---- zaurusd.orig/config/mach-config/mach-akita-vars.in	2009-03-07 11:04:43.000000000 +0000
-+++ zaurusd/config/mach-config/mach-akita-vars.in	2009-06-22 20:51:47.000000000 +0000
-@@ -7,4 +7,7 @@
+From bef06331c6454c7d7815930e19fdcb2c3409fbe3 Mon Sep 17 00:00:00 2001
+From: Paul Eggleton <paul.eggleton@linux.intel.com>
+Date: Sun, 24 Jul 2011 19:12:32 +0100
+
+---
+ config/mach-config/mach-akita-vars.in     | 5 ++++-
+ config/mach-config/mach-borzoi-vars.in    | 5 ++++-
+ config/mach-config/mach-corgi-vars.in     | 5 ++++-
+ config/mach-config/mach-htcuniversal-vars | 3 +++
+ config/mach-config/mach-husky-vars.in     | 5 ++++-
+ config/mach-config/mach-poodle-vars.in    | 5 ++++-
+ config/mach-config/mach-shepherd-vars.in  | 5 ++++-
+ config/mach-config/mach-spitz-vars.in     | 5 ++++-
+ config/mach-config/mach-tosa-vars.in      | 5 ++++-
+ 9 files changed, 35 insertions(+), 8 deletions(-)
+
+diff --git a/config/mach-config/mach-akita-vars.in b/config/mach-config/mach-akita-vars.in
+index d5b831f..c4cb671 100644
+--- a/config/mach-config/mach-akita-vars.in
++++ b/config/mach-config/mach-akita-vars.in
+@@ -7,4 +7,7 @@ SWITCH_EVENT_DEVICE=/dev/input/event0
  TSKEYS_CONF=@appconfdir@/tskeys/zaurus-cxx00.conf
  TSKEYS_DEVICE=/dev/input/event1
  
@@ -12,11 +28,11 @@ Index: zaurusd/config/mach-config/mach-akita-vars.in
 +
 +export XRANDR_LANDSCAPE=right
 +export XRANDR_PORTRAIT=normal
-Index: zaurusd/config/mach-config/mach-borzoi-vars.in
-===================================================================
---- zaurusd.orig/config/mach-config/mach-borzoi-vars.in	2009-03-07 11:04:43.000000000 +0000
-+++ zaurusd/config/mach-config/mach-borzoi-vars.in	2009-06-22 20:51:00.000000000 +0000
-@@ -7,4 +7,7 @@
+diff --git a/config/mach-config/mach-borzoi-vars.in b/config/mach-config/mach-borzoi-vars.in
+index 0d0a8ca..55cba7f 100644
+--- a/config/mach-config/mach-borzoi-vars.in
++++ b/config/mach-config/mach-borzoi-vars.in
+@@ -7,4 +7,7 @@ SWITCH_EVENT_DEVICE=/dev/input/event0
  TSKEYS_CONF=@appconfdir@/tskeys/zaurus-cxx00.conf
  TSKEYS_DEVICE=/dev/input/event1
  
@@ -26,11 +42,11 @@ Index: zaurusd/config/mach-config/mach-borzoi-vars.in
 +
 +export XRANDR_LANDSCAPE=right
 +export XRANDR_PORTRAIT=normal
-Index: zaurusd/config/mach-config/mach-corgi-vars.in
-===================================================================
---- zaurusd.orig/config/mach-config/mach-corgi-vars.in	2009-03-07 11:04:43.000000000 +0000
-+++ zaurusd/config/mach-config/mach-corgi-vars.in	2009-06-22 20:51:47.000000000 +0000
-@@ -7,4 +7,7 @@
+diff --git a/config/mach-config/mach-corgi-vars.in b/config/mach-config/mach-corgi-vars.in
+index 54fceaa..548ada2 100644
+--- a/config/mach-config/mach-corgi-vars.in
++++ b/config/mach-config/mach-corgi-vars.in
+@@ -7,4 +7,7 @@ SWITCH_EVENT_DEVICE=/dev/input/event0
  TSKEYS_CONF=@appconfdir@/tskeys/zaurus-c7x0.conf
  TSKEYS_DEVICE=/dev/input/event1
  
@@ -40,22 +56,22 @@ Index: zaurusd/config/mach-config/mach-corgi-vars.in
 +
 +export XRANDR_LANDSCAPE=normal
 +export XRANDR_PORTRAIT=left
-Index: zaurusd/config/mach-config/mach-htcuniversal-vars
-===================================================================
---- zaurusd.orig/config/mach-config/mach-htcuniversal-vars	2009-03-07 11:04:43.000000000 +0000
-+++ zaurusd/config/mach-config/mach-htcuniversal-vars	2009-06-22 20:49:01.000000000 +0000
-@@ -2,3 +2,6 @@
+diff --git a/config/mach-config/mach-htcuniversal-vars b/config/mach-config/mach-htcuniversal-vars
+index 490c020..7c2c6da 100644
+--- a/config/mach-config/mach-htcuniversal-vars
++++ b/config/mach-config/mach-htcuniversal-vars
+@@ -2,3 +2,6 @@ MACHINE=htcuniversal
  
  export SWITCH_EVENT_ZHINGE=1
  SWITCH_EVENT_DEVICE=/dev/input/event3
 +
 +export XRANDR_LANDSCAPE=normal
 +export XRANDR_PORTRAIT=left
-Index: zaurusd/config/mach-config/mach-husky-vars.in
-===================================================================
---- zaurusd.orig/config/mach-config/mach-husky-vars.in	2009-03-07 11:04:43.000000000 +0000
-+++ zaurusd/config/mach-config/mach-husky-vars.in	2009-06-22 20:51:47.000000000 +0000
-@@ -7,4 +7,7 @@
+diff --git a/config/mach-config/mach-husky-vars.in b/config/mach-config/mach-husky-vars.in
+index 64e1238..b6e4ab8 100644
+--- a/config/mach-config/mach-husky-vars.in
++++ b/config/mach-config/mach-husky-vars.in
+@@ -7,4 +7,7 @@ SWITCH_EVENT_DEVICE=/dev/input/event0
  TSKEYS_CONF=@appconfdir@/tskeys/zaurus-c7x0.conf
  TSKEYS_DEVICE=/dev/input/event1
  
@@ -65,11 +81,11 @@ Index: zaurusd/config/mach-config/mach-husky-vars.in
 +
 +export XRANDR_LANDSCAPE=normal
 +export XRANDR_PORTRAIT=left
-Index: zaurusd/config/mach-config/mach-poodle-vars.in
-===================================================================
---- zaurusd.orig/config/mach-config/mach-poodle-vars.in	2009-06-22 20:49:01.000000000 +0000
-+++ zaurusd/config/mach-config/mach-poodle-vars.in	2009-06-22 20:51:47.000000000 +0000
-@@ -6,4 +6,7 @@
+diff --git a/config/mach-config/mach-poodle-vars.in b/config/mach-config/mach-poodle-vars.in
+index cbb1478..71af6d7 100644
+--- a/config/mach-config/mach-poodle-vars.in
++++ b/config/mach-config/mach-poodle-vars.in
+@@ -6,4 +6,7 @@ SWITCH_EVENT_DEVICE=/dev/input/event0
  #TSKEYS_CONF=@appconfdir@/tskeys/zaurus-clamshell.conf
  #TSKEYS_DEVICE=/dev/input/event1
  
@@ -79,11 +95,11 @@ Index: zaurusd/config/mach-config/mach-poodle-vars.in
 +
 +export XRANDR_LANDSCAPE=normal
 +export XRANDR_PORTRAIT=left
-Index: zaurusd/config/mach-config/mach-shepherd-vars.in
-===================================================================
---- zaurusd.orig/config/mach-config/mach-shepherd-vars.in	2009-03-07 11:04:43.000000000 +0000
-+++ zaurusd/config/mach-config/mach-shepherd-vars.in	2009-06-22 20:51:47.000000000 +0000
-@@ -7,4 +7,7 @@
+diff --git a/config/mach-config/mach-shepherd-vars.in b/config/mach-config/mach-shepherd-vars.in
+index 1d3987e..c77eb56 100644
+--- a/config/mach-config/mach-shepherd-vars.in
++++ b/config/mach-config/mach-shepherd-vars.in
+@@ -7,4 +7,7 @@ SWITCH_EVENT_DEVICE=/dev/input/event0
  TSKEYS_CONF=@appconfdir@/tskeys/zaurus-c7x0.conf
  TSKEYS_DEVICE=/dev/input/event1
  
@@ -93,11 +109,11 @@ Index: zaurusd/config/mach-config/mach-shepherd-vars.in
 +
 +export XRANDR_LANDSCAPE=normal
 +export XRANDR_PORTRAIT=left
-Index: zaurusd/config/mach-config/mach-spitz-vars.in
-===================================================================
---- zaurusd.orig/config/mach-config/mach-spitz-vars.in	2009-03-07 11:04:43.000000000 +0000
-+++ zaurusd/config/mach-config/mach-spitz-vars.in	2009-06-22 20:51:47.000000000 +0000
-@@ -7,4 +7,7 @@
+diff --git a/config/mach-config/mach-spitz-vars.in b/config/mach-config/mach-spitz-vars.in
+index 0d0a8ca..55cba7f 100644
+--- a/config/mach-config/mach-spitz-vars.in
++++ b/config/mach-config/mach-spitz-vars.in
+@@ -7,4 +7,7 @@ SWITCH_EVENT_DEVICE=/dev/input/event0
  TSKEYS_CONF=@appconfdir@/tskeys/zaurus-cxx00.conf
  TSKEYS_DEVICE=/dev/input/event1
  
@@ -107,11 +123,11 @@ Index: zaurusd/config/mach-config/mach-spitz-vars.in
 +
 +export XRANDR_LANDSCAPE=right
 +export XRANDR_PORTRAIT=normal
-Index: zaurusd/config/mach-config/mach-tosa-vars.in
-===================================================================
---- zaurusd.orig/config/mach-config/mach-tosa-vars.in	2009-03-07 11:04:43.000000000 +0000
-+++ zaurusd/config/mach-config/mach-tosa-vars.in	2009-06-22 20:51:47.000000000 +0000
-@@ -6,4 +6,7 @@
+diff --git a/config/mach-config/mach-tosa-vars.in b/config/mach-config/mach-tosa-vars.in
+index 7f52bb2..97f0e93 100644
+--- a/config/mach-config/mach-tosa-vars.in
++++ b/config/mach-config/mach-tosa-vars.in
+@@ -6,4 +6,7 @@ SWITCH_EVENT_DEVICE=/dev/input/event0
  #TSKEYS_CONF=@appconfdir@/tskeys/zaurus-clamshell.conf
  #TSKEYS_DEVICE=/dev/input/event1
  

@@ -1,6 +1,16 @@
---- zaurusd/config/config.in.orig	2007-05-21 21:58:14.000000000 +0000
-+++ zaurusd/config/config.in	2007-05-21 22:10:26.000000000 +0000
-@@ -11,11 +11,5 @@
+From 7675d11d0adc31ac7b5ad643d72b9ac724b94bdc Mon Sep 17 00:00:00 2001
+From: Paul Eggleton <paul.eggleton@linux.intel.com>
+Date: Sun, 24 Jul 2011 19:12:32 +0100
+
+---
+ config/config.in | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/config/config.in b/config/config.in
+index 166f3a9..cf0daa4 100755
+--- a/config/config.in
++++ b/config/config.in
+@@ -11,11 +11,5 @@ fi
  . @appconfdir@/mach-config-vars
  . @appconfdir@/mach-config-funcs
  

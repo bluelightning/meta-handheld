@@ -1,5 +1,15 @@
---- zaurusd/config/mach-config/mach-poodle-vars.in	(revision 418)
-+++ zaurusd/config/mach-config/mach-poodle-vars.in	(working copy)
+From 9edcb004b09cef8e01598482935fc6ba2a6beb81 Mon Sep 17 00:00:00 2001
+From: Paul Eggleton <paul.eggleton@linux.intel.com>
+Date: Sun, 24 Jul 2011 19:12:32 +0100
+
+---
+ config/mach-config/mach-poodle-vars.in | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/config/mach-config/mach-poodle-vars.in b/config/mach-config/mach-poodle-vars.in
+index 949460a..cbb1478 100644
+--- a/config/mach-config/mach-poodle-vars.in
++++ b/config/mach-config/mach-poodle-vars.in
 @@ -1,3 +1,9 @@
  MACHINE=poodle
  
