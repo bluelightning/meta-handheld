@@ -7,9 +7,6 @@ COMPATIBLE_MACHINE = "|akita|c7x0|collie|poodle|spitz|tosa"
 
 LOCOMO_PATCHES += "file://locomo/0091-locomokbd.c-invert-KEY_ENTER-and-KEY_KPENTER.patch"
 
-# only for SL-C3200 (terrier)
-# SRC_URI_append_spitz += "file://3200-mtd.patch"
-
 # Zaurus machines need kernel size-check.
 KERNEL_IMAGE_MAXSIZE_akita = "1264"
 KERNEL_IMAGE_MAXSIZE_c7x0 = "1264"
