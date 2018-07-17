@@ -20,6 +20,10 @@ XSERVER = "xserver-xorg xf86-video-fbdev xf86-input-keyboard xf86-input-mouse xf
 # kernel
 ########
 
+# kernel 4.4 fails to compile with gcc8.1
+GCCVERSION_collie ?= "7.%"
+GCCVERSION_poodle ?= "7.%"
+
 PREFERRED_PROVIDER_virtual/kernel = "linux-handheld"
 
 # Default bootloader expects "zImage", use "uImage" for u-boot
