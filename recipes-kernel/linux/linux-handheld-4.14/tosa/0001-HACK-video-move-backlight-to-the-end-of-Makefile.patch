@@ -1,0 +1,32 @@
+From 314fa2306f49b92d7f000584c4b33db9c9a47cfe Mon Sep 17 00:00:00 2001
+From: Dmitry Eremin-Solenikov <dmitry_eremin@mentor.com>
+Date: Wed, 9 Oct 2013 05:58:21 +0400
+Subject: [PATCH] HACK: video: move backlight/ to the end of Makefile
+
+Thus tosa-lcd/tosa-bl will be initialized after tmiofb is started.
+Otherwise tosa-lcd/tosa-bl can easily hang the unit.
+
+Signed-off-by: Dmitry Eremin-Solenikov <dmitry_eremin@mentor.com>
+
+---
+ drivers/video/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/video/Makefile b/drivers/video/Makefile
+index df7650a..213067b 100644
+--- a/drivers/video/Makefile
++++ b/drivers/video/Makefile
+@@ -5,7 +5,6 @@ obj-$(CONFIG_HDMI)                += hdmi.o
+ obj-$(CONFIG_VT)		  += console/
+ obj-$(CONFIG_FB_STI)		  += console/
+ obj-$(CONFIG_LOGO)		  += logo/
+-obj-y				  += backlight/
+ 
+ obj-y				  += fbdev/
+ 
+@@ -13,3 +12,5 @@ obj-$(CONFIG_VIDEOMODE_HELPERS) += display_timing.o videomode.o
+ ifeq ($(CONFIG_OF),y)
+ obj-$(CONFIG_VIDEOMODE_HELPERS) += of_display_timing.o of_videomode.o
+ endif
++
++obj-y				  += backlight/
