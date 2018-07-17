@@ -3,6 +3,7 @@
 ########################
 
 IMAGE_FSTYPES ?= "tar.gz jffs2 jffs2.sum ubi ubifs"
+IMAGE_FSTYPES_collie ?= "tar.gz jffs2 jffs2.sum"
 JFFS2_SUM_EXTRA_ARGS = "-p -l -e ${JFFS2_ERASEBLOCK} -n"
 
 INITRAMFS_FSTYPES ?= "cpio.gz cpio.xz"
