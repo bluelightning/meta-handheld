@@ -6,19 +6,23 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 COMPATIBLE_MACHINE = "akita|c7x0|collie|h3600|hx4700|poodle|spitz|tosa"
 
 SRC_URI = "${KERNELORG_MIRROR}/linux/kernel/v4.x/linux-${PV}.tar.xz;name=kernel \
-           ${KERNELORG_MIRROR}/linux/kernel/v4.x/patch-${PV}.141.xz;apply=yes;name=stablepatch \
+           ${KERNELORG_MIRROR}/linux/kernel/v4.x/patch-${PV}.147.xz;apply=yes;name=stablepatch \
            "
 SRC_URI[kernel.md5sum] = "9a78fa2eb6c68ca5a40ed5af08142599"
 SRC_URI[kernel.sha256sum] = "401d7c8fef594999a460d10c72c5a94e9c2e1022f16795ec51746b0d165418b2"
-SRC_URI[stablepatch.md5sum] = "079f0e943c94f48a5d77e5e5bcd2a297"
-SRC_URI[stablepatch.sha256sum] = "2432aeb37c478eee030685303f718e747c21c98a4a7a09c6dca630b6eebe3c5b"
+SRC_URI[stablepatch.md5sum] = "a38b9535d049266b3eb81d5b89335d61"
+SRC_URI[stablepatch.sha256sum] = "a03aca2026bd12dab45b5405482c1e2abe565c99f621825c834a131cc582093f"
 
 SRC_URI += "\
-           file://ASoC-pxa-fix-module-autoload-for-platform-drivers.patch \
-           \
-           file://sharpslpart/0001-mtd-sharpsl-add-sharpslpart-MTD-partition-parser.patch \
-           file://sharpslpart/0002-mtd-nand-sharpsl.c-prefer-sharpslpart-MTD-partition-.patch \
-           file://sharpslpart/0003-mtd-nand-tmio_nand.c-prefer-sharpslpart-MTD-partitio.patch \
+           file://sharpslpart/0001-mtd-sharpslpart-Add-sharpslpart-partition-parser.patch \
+           file://sharpslpart/0002-mtd-nand-sharpsl-Add-partition-parsers-platform-data.patch \
+           file://sharpslpart/0003-mfd-tmio-Add-partition-parsers-platform-data.patch \
+           file://sharpslpart/0004-mtd-nand-sharpsl-Register-partitions-using-the-parse.patch \
+           file://sharpslpart/0005-mtd-nand-tmio-Register-partitions-using-the-parsers.patch \
+           file://sharpslpart/0006-ARM-pxa-corgi-Remove-hardcoded-partitioning-use-shar.patch \
+           file://sharpslpart/0007-ARM-pxa-tosa-Remove-hardcoded-partitioning-use-sharp.patch \
+           file://sharpslpart/0008-ARM-pxa-spitz-Remove-hardcoded-partitioning-use-shar.patch \
+           file://sharpslpart/0009-ARM-pxa-poodle-Remove-hardcoded-partitioning-use-sha.patch \
            "
 
 LOCOMO_PATCHES = "\

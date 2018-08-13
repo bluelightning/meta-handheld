@@ -1,0 +1,32 @@
+From e33500e0391f27b39f38ff98923672e218ee9ebe Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Mon, 14 Aug 2017 16:23:26 +0200
+Subject: [PATCH v5 3/9] mfd: tmio: Add partition parsers platform data
+
+With the introduction of sharpslpart partition parser we can now read the
+offsets from NAND: we specify the list of the parsers as platform data, with
+cmdlinepart and ofpart parsers first allowing to override the part. table
+written in NAND. This is done in the board files using this driver.
+
+Thus, we need to extend tmio_nand_data to consider the partition parsers.
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ include/linux/mfd/tmio.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
+index 26e8f8c..357b6cfd 100644
+--- a/include/linux/mfd/tmio.h
++++ b/include/linux/mfd/tmio.h
+@@ -139,6 +139,7 @@ struct tmio_nand_data {
+ 	struct nand_bbt_descr	*badblock_pattern;
+ 	struct mtd_partition	*partition;
+ 	unsigned int		num_partitions;
++	const char *const	*part_parsers;
+ };
+ 
+ #define FBIO_TMIO_ACC_WRITE	0x7C639300
+-- 
+2.7.4
+

@@ -1,0 +1,33 @@
+From 18ff95a881a6148972b19daaa6b815e9cd388ea6 Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Mon, 14 Aug 2017 16:30:03 +0200
+Subject: [PATCH v5 4/9] mtd: nand: sharpsl: Register partitions using the parsers
+
+With the introduction of sharpslpart partition parser we can now read the
+offsets from NAND: we specify the list of the parsers as platform data, with
+cmdlinepart and ofpart parsers first allowing to override the part. table
+written in NAND. This is done in the board files using this driver.
+
+Use now these parsers.
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ drivers/mtd/nand/sharpsl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/nand/sharpsl.c b/drivers/mtd/nand/sharpsl.c
+index 082b600..47a9e0b 100644
+--- a/drivers/mtd/nand/sharpsl.c
++++ b/drivers/mtd/nand/sharpsl.c
+@@ -180,7 +180,7 @@ static int sharpsl_nand_probe(struct platform_device *pdev)
+ 	/* Register the partitions */
+ 	sharpsl->mtd.name = "sharpsl-nand";
+ 
+-	err = mtd_device_parse_register(&sharpsl->mtd, NULL, NULL,
++	err = mtd_device_parse_register(&sharpsl->mtd, data->part_parsers, NULL,
+					data->partitions, data->nr_partitions);
+ 	if (err)
+ 		goto err_add;
+-- 
+2.7.4
+

@@ -1,0 +1,79 @@
+From 069e1f02815874f9c825f110c9dad63848c55638 Mon Sep 17 00:00:00 2001
+From: Andrea Adami <andrea.adami@gmail.com>
+Date: Mon, 14 Aug 2017 17:00:41 +0200
+Subject: [PATCH v5 9/9] ARM: pxa/poodle: Remove hardcoded partitioning, use
+ sharpslpart parser
+
+With the introduction of sharpslpart partition parser we can now read the
+offsets from NAND: we specify the list of the parsers as platform data, with
+cmdlinepart and ofpart parsers first allowing to override the part. table
+written in NAND. This is done here in the board file.
+
+Signed-off-by: Andrea Adami <andrea.adami@gmail.com>
+---
+ arch/arm/mach-pxa/spitz.c | 33 +++++++++------------------------
+ 1 file changed, 9 insertions(+), 24 deletions(-)
+
+diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
+index f4e2e27..5204a3a 100644
+--- a/arch/arm/mach-pxa/spitz.c
++++ b/arch/arm/mach-pxa/spitz.c
+@@ -739,20 +739,6 @@ static inline void spitz_lcd_init(void) {}
+  * NAND Flash
+  ******************************************************************************/
+ #if defined(CONFIG_MTD_NAND_SHARPSL) || defined(CONFIG_MTD_NAND_SHARPSL_MODULE)
+-static struct mtd_partition spitz_nand_partitions[] = {
+-	{
+-		.name = "System Area",
+-		.offset = 0,
+-		.size = 7 * 1024 * 1024,
+-	}, {
+-		.name = "Root Filesystem",
+-		.offset = 7 * 1024 * 1024,
+-	}, {
+-		.name = "Home Filesystem",
+-		.offset = MTDPART_OFS_APPEND,
+-		.size = MTDPART_SIZ_FULL,
+-	},
+-};
+ 
+ static uint8_t scan_ff_pattern[] = { 0xff, 0xff };
+ 
+@@ -773,10 +759,16 @@ static struct nand_ecclayout akita_oobinfo = {
+ 	},
+ };
+ 
++static const char * const probes[] = {
++	"cmdlinepart",
++	"ofpart",
++	"sharpslpart",
++	NULL,
++};
++
+ static struct sharpsl_nand_platform_data spitz_nand_pdata = {
+ 	.badblock_pattern	= &spitz_nand_bbt,
+-	.partitions		= spitz_nand_partitions,
+-	.nr_partitions		= ARRAY_SIZE(spitz_nand_partitions),
++	.part_parsers		= probes,
+ };
+ 
+ static struct resource spitz_nand_resources[] = {
+@@ -799,14 +791,7 @@ static struct platform_device spitz_nand_device = {
+ 
+ static void __init spitz_nand_init(void)
+ {
+-	if (machine_is_spitz()) {
+-		spitz_nand_partitions[1].size = 5 * 1024 * 1024;
+-	} else if (machine_is_akita()) {
+-		spitz_nand_partitions[1].size = 58 * 1024 * 1024;
+-		spitz_nand_bbt.len = 1;
+-		spitz_nand_pdata.ecc_layout = &akita_oobinfo;
+-	} else if (machine_is_borzoi()) {
+-		spitz_nand_partitions[1].size = 32 * 1024 * 1024;
++	if (machine_is_akita() || machine_is_borzoi()) {
+ 		spitz_nand_bbt.len = 1;
+ 		spitz_nand_pdata.ecc_layout = &akita_oobinfo;
+ 	}
+-- 
+2.7.4
+
