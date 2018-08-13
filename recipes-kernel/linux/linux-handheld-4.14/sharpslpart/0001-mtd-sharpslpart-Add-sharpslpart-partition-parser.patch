@@ -58,8 +58,8 @@ Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
  drivers/mtd/parsers/Kconfig       |   8 +
  drivers/mtd/parsers/Makefile      |   1 +
- drivers/mtd/parsers/sharpslpart.c | 398 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 407 insertions(+)
+ drivers/mtd/parsers/sharpslpart.c | 399 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 408 insertions(+)
  create mode 100644 drivers/mtd/parsers/sharpslpart.c
 
 diff --git a/drivers/mtd/parsers/Kconfig b/drivers/mtd/parsers/Kconfig
@@ -90,7 +90,7 @@ new file mode 100644
 index 0000000..5fe0079
 --- /dev/null
 +++ b/drivers/mtd/parsers/sharpslpart.c
-@@ -0,0 +1,398 @@
+@@ -0,0 +1,399 @@
 +/*
 + * sharpslpart.c - MTD partition parser for NAND flash using the SHARP FTL
 + * for logical addressing, as used on the PXA models of the SHARP SL Series.
@@ -456,7 +456,8 @@ index 0000000..5fe0079
 +	}
 +
 +	sharpsl_nand_parts = kcalloc(SHARPSL_NAND_PARTS,
-+				     sizeof(*sharpsl_nand_parts), GFP_KERNEL);
++				     sizeof(*sharpsl_nand_parts),
++				     GFP_KERNEL);
 +	if (!sharpsl_nand_parts)
 +		return -ENOMEM;
 +
