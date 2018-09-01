@@ -7,8 +7,8 @@ inherit nopackages
 PACKAGES = ""
 PROVIDES = ""
 
-KERNEL_IMAGE_BASE_NAME = "gcw0-kexecboot-${PV}-${MACHINE}"
-KERNEL_IMAGE_SYMLINK_NAME = "gcw0-kexecboot-${MACHINE}"
+KERNEL_IMAGE_NAME = "gcw0-kexecboot-${PV}-${MACHINE}"
+KERNEL_IMAGE_LINK_NAME = "gcw0-kexecboot-${MACHINE}"
 
 # RAW for ubiboot
 KERNEL_IMAGETYPE = "vmlinuz.bin"

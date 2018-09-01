@@ -21,8 +21,8 @@ inherit nopackages
 PACKAGES = ""
 PROVIDES = ""
 
-KERNEL_IMAGE_BASE_NAME = "kexecboot-${PV}-${MACHINE}"
-KERNEL_IMAGE_SYMLINK_NAME = "kexecboot-${MACHINE}"
+KERNEL_IMAGE_NAME = "kexecboot-${PV}-${MACHINE}"
+KERNEL_IMAGE_LINK_NAME = "kexecboot-${MACHINE}"
 
 INITRAMFS_IMAGE = "initramfs-kexecboot-klibc-image"
 INITRAMFS_TASK = "${INITRAMFS_IMAGE}:do_image_complete"
