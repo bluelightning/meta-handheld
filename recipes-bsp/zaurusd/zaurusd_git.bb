@@ -24,7 +24,8 @@ SRC_URI = "git://git.yoctoproject.org/${BPN} \
            file://01-check-toggle-portait \
            file://use-ts-symlink-instead-of-hardcoding.diff \
            file://0001-zaurusd-add-support-for-collie.patch \
-           file://allow-newer-tslib.patch"
+           file://allow-newer-tslib.patch \
+           file://add_64bit_time_t.patch"
 
 
 S = "${WORKDIR}/git"
