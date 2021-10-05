@@ -3,8 +3,8 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 DEPENDS = "zaurus-updater linux-kexecboot"
-DEPENDS_collie = "linux-kexecboot"
-DEPENDS_append_spitz = " zaurus-legacy-tar"
+DEPENDS:collie = "linux-kexecboot"
+DEPENDS:append:spitz = " zaurus-legacy-tar"
 
 PV = "2017.05"
 

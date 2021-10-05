@@ -13,6 +13,5 @@ do_install() {
         install -m 0644 ${WORKDIR}/params ${D}/boot/
 }
 
-FILES_${PN} = "/boot/params"
+FILES:${PN} = "/boot/params"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
-

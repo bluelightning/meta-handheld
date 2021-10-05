@@ -60,38 +60,38 @@ LOCOMO_PATCHES = "\
            "
 LOCOMO_PATCHES += "file://locomo/0090-locomokbd.c-fix-missing-KEY_CENTER.patch"
 
-SRC_URI_append_akita = " \
+SRC_URI:append:akita = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            "
-SRC_URI_append_c7x0 = " \
+SRC_URI:append:c7x0 = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            "
-SRC_URI_append_collie = " \
+SRC_URI:append:collie = " \
            ${LOCOMO_PATCHES} \
            file://defconfig \
            file://OE-qvga-logo.patch \
            "
-SRC_URI_append_h3600 = " \
+SRC_URI:append:h3600 = " \
            file://defconfig \
            file://OE-qvga-logo.patch \
            "
-SRC_URI_append_hx4700 = " \
+SRC_URI:append:hx4700 = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            file://hx4700-change-led-trigger-assignments.patch \
            "
-SRC_URI_append_poodle = " \
+SRC_URI:append:poodle = " \
            ${LOCOMO_PATCHES} \
            file://defconfig \
            file://OE-qvga-logo.patch \
            "
-SRC_URI_append_spitz = " \
+SRC_URI:append:spitz = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            "
-SRC_URI_append_tosa = " \
+SRC_URI:append:tosa = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            file://0001-HACK-video-move-backlight-to-the-end-of-Makefile.patch \

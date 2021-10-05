@@ -33,19 +33,19 @@ SRC_URI += "\
            file://locomo/0020-irq-HACK-around-for-handling-irq0-when-we-should.patch \
            \
            "
-SRC_URI_append_akita = " \
+SRC_URI:append:akita = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            "
-SRC_URI_append_c7x0 = " \
+SRC_URI:append:c7x0 = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            "
-SRC_URI_append_collie = " \
+SRC_URI:append:collie = " \
            file://defconfig \
            file://OE-qvga-logo.patch \
            "
-SRC_URI_append_h1940 = " \
+SRC_URI:append:h1940 = " \
            file://defconfig \
            file://OE-qvga-logo.patch \
            file://0001-rfkill-add-IR-type.patch \
@@ -64,17 +64,17 @@ SRC_URI_append_h1940 = " \
            file://0014-i2c-s3c2410-fix-oops-in-suspend-callback-for-non-dt-.patch \
            file://0015-ASoC-uda1380-Avoid-accessing-i2c-bus-when-codec-is-d.patch \
            "
-SRC_URI_append_h3600 = " \
+SRC_URI:append:h3600 = " \
            file://defconfig \
            file://OE-qvga-logo.patch \
            file://0002-input-driver-for-microcontroller-keys-on-the-iPaq-h3.patch \
            "
-SRC_URI_append_hx4700 = " \
+SRC_URI:append:hx4700 = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            file://hx4700-change-led-trigger-assignments.patch \
            "
-SRC_URI_append_poodle = " \
+SRC_URI:append:poodle = " \
            file://defconfig \
            file://OE-qvga-logo.patch \
            file://0001-ARM-pxa-add-gpio-charger-configuration-on-poodle.patch \
@@ -82,11 +82,11 @@ SRC_URI_append_poodle = " \
            file://0003-ARM-pxa-declare-battery-device-on-poodle.patch \
            file://0004-power-add-poodle-battery-driver.patch \
            "
-SRC_URI_append_spitz = " \
+SRC_URI:append:spitz = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            "
-SRC_URI_append_tosa = " \
+SRC_URI:append:tosa = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            file://0001-HACK-video-move-backlight-to-the-end-of-Makefile.patch \

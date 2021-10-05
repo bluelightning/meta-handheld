@@ -35,15 +35,15 @@ do_install() {
 	install -m 0644 ${WORKDIR}/kbdd-modules ${D}${sysconfdir}/modutils/
 }
 
-pkg_postinst_${PN} () {
+pkg_postinst:${PN} () {
 	update-modules
 }
 
-pkg_postrm_${PN} () {
+pkg_postrm:${PN} () {
 	update-modules
 }
 
 INITSCRIPT_NAME = "kbdd"
 INITSCRIPT_PARAMS = "defaults"
 
-RRECOMMENDS_${PN} = "kernel-module-keybdev kernel-module-uinput"
+RRECOMMENDS:${PN} = "kernel-module-keybdev kernel-module-uinput"

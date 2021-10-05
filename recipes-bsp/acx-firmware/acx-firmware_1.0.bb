@@ -9,7 +9,7 @@ SRC_URI = "http://sdgsystems.net/pub/ipaq/hx4700/src/RADIO0d.BIN;name=radio0d \
            http://sdgsystems.net/pub/ipaq/hx4700/src/WLANGEN.BIN;name=wlangen "
 
 S = "${WORKDIR}"
-FILES_${PN} = "/lib"
+FILES:${PN} = "/lib"
 
 do_install() {
 	install -d ${D}/lib/firmware/

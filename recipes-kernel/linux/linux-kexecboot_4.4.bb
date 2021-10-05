@@ -1,5 +1,5 @@
 require recipes-kernel/linux/linux-handheld_${PV}.bb
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-${PV}:${THISDIR}/linux-handheld-${PV}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}-${PV}:${THISDIR}/linux-handheld-${PV}:"
 
 SUMMARY = "Linux kernel embedding a minimalistic kexecboot initramfs"
 

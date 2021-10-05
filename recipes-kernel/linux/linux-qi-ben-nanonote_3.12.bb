@@ -18,13 +18,13 @@ S = "${WORKDIR}/git"
 
 inherit kernel
 
-FILES_${KERNEL_PACKAGE_NAME}-image = "/boot/uImage*"
+FILES:${KERNEL_PACKAGE_NAME}-image = "/boot/uImage*"
 
-do_configure_prepend() {
+do_configure:prepend() {
 	install -m 0644 ${S}/arch/mips/configs/qi_lb60_defconfig ${S}/.config
 }
 
-do_install_append() {
+do_install:append() {
 	cd ${S}
 	kernel_entry=`nm vmlinux | grep " kernel_entry" | cut -d' ' -f1`
 
@@ -38,10 +38,10 @@ do_install_append() {
 	install -m 0644 uImage-${KERNEL_VERSION} ${D}/boot
 }
 
-pkg_postinst_kernel() {
+pkg_postinst:kernel() {
 	cd /${KERNEL_IMAGEDEST}; update-alternatives --install /${KERNEL_IMAGEDEST}/uImage uImage uImage-${KERNEL_VERSION} ${KERNEL_PRIORITY} || true
 }
 
-pkg_postrm_kernel() {
+pkg_postrm:kernel() {
 	cd /${KERNEL_IMAGEDEST}; update-alternatives --remove uImage uImage-${KERNEL_VERSION} || true
 }

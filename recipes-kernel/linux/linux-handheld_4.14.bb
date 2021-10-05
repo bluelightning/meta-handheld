@@ -23,19 +23,19 @@ SRC_URI += "\
 
 DEPENDS += "lz4-native"
 
-SRC_URI_append_akita = " \
+SRC_URI:append:akita = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            "
-SRC_URI_append_c7x0 = " \
+SRC_URI:append:c7x0 = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            "
-SRC_URI_append_spitz = " \
+SRC_URI:append:spitz = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            "
-SRC_URI_append_tosa = " \
+SRC_URI:append:tosa = " \
            file://defconfig \
            file://OE-vga-logo.patch \
            file://0001-HACK-video-move-backlight-to-the-end-of-Makefile.patch \

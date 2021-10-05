@@ -32,11 +32,11 @@ S = "${WORKDIR}/git"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-do_configure_prepend () {
+do_configure:prepend () {
 	cp ${WORKDIR}/zaurus-hinge.in ${S}/scripts
 }
 
-do_install_append() {
+do_install:append() {
 	install -d "${D}/etc/zaurusd/hinge-landscape.d"
 	install -d "${D}/etc/zaurusd/hinge-portrait.d"
 	install -d "${D}/etc/zaurusd/hinge-close.d"
@@ -59,5 +59,5 @@ inherit autotools-brokensep pkgconfig update-rc.d
 INITSCRIPT_NAME = "zaurusd"
 INITSCRIPT_PARAMS = "start 99 5 2 . stop 20 0 1 6 ."
 
-RRECOMMENDS_${PN} += "kernel-module-uinput"
+RRECOMMENDS:${PN} += "kernel-module-uinput"
 

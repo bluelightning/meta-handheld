@@ -1,4 +1,4 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:${THISDIR}/files:"
 
 DESCRIPTION = "Nandlogical for Sharp SL FTL reserved partition"
 LICENSE = "GPLv2+"
